@@ -14,10 +14,9 @@ from assets.api import GalleryResource
 from people.api import ArtistResource, OrganizationResource, StaffResource
 from diffusion.api import PlaceResource
 
-from .models import (Installation, Film, Performance,
-    Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,
-    ProductionOrganizationTask, OrganizationTask)
-
+from .models import Installation, Film, Performance, Event, Itinerary, Artwork
+from .models import ProductionOrganizationTask, OrganizationTask)
+from .models import FilmGenre, StaffTask, ProductionStaffTask
 
 class StaffTaskResource(ModelResource):
     class Meta:
