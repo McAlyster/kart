@@ -14,8 +14,8 @@ from assets.api import GalleryResource
 from people.api import ArtistResource, OrganizationResource, StaffResource, UserResource
 from diffusion.api import PlaceResource
 
-from .models import Installation, Film, Performance,
-Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,
+from .models import Installation, Film, Performance,\
+Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,\
 ProductionOrganizationTask, OrganizationTask
 
 
