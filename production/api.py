@@ -11,12 +11,12 @@ from tastypie.utils import trailing_slash
 
 from common.api import WebsiteResource, BTBeaconResource
 from assets.api import GalleryResource
-from people.api import ArtistResource, OrganizationResource, StaffResource, UserResource
+from people.api import ArtistResource, OrganizationResource, StaffResource
 from diffusion.api import PlaceResource
 
-from .models import Installation, Film, Performance,\
-Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,\
-ProductionOrganizationTask, OrganizationTask
+from .models import (Installation, Film, Performance,
+    Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,
+    ProductionOrganizationTask, OrganizationTask)
 
 
 class StaffTaskResource(ModelResource):
