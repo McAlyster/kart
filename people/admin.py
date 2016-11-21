@@ -21,7 +21,7 @@ class ArtistAdmin(admin.ModelAdmin):
         return obj.user.last_name
 
     formfield_overrides = {
-        models.TextField:{'widget': AdminPagedownWidget },
+        models.TextField: {'widget': AdminPagedownWidget},
     }
 
 
@@ -36,7 +36,7 @@ class FresnoyProfileAdmin(UserAdmin):
     list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff')
     add_form = UserCreateForm
 
-    add_fieldsets = ((None, {'fields':('username', 'password1', 'password2', 'first_name', 'last_name', 'email'),}),)
+    add_fieldsets = ((None, {'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email'), }), )
 
 
 admin.site.unregister(User)
