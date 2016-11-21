@@ -15,9 +15,8 @@ from people.api import ArtistResource, OrganizationResource, StaffResource, User
 from diffusion.api import PlaceResource
 
 from .models import Installation, Film, Performance,
-                    Event, Itinerary, Artwork,
-                    FilmGenre, StaffTask, ProductionStaffTask,
-                    ProductionOrganizationTask, OrganizationTask
+Event, Itinerary, Artwork, FilmGenre, StaffTask, ProductionStaffTask,
+ProductionOrganizationTask, OrganizationTask
 
 
 class StaffTaskResource(ModelResource):
@@ -50,7 +49,6 @@ class ProductionOrganizationTaskResource(ModelResource):
     task = fields.ForeignKey(StaffTaskResource, 'task', full=True)
 
 
-
 class ProductionResource(ModelResource):
     collaborators = fields.ToManyField(ProductionStaffTaskResource, 'collaborators')
     partners = fields.ToManyField(ProductionOrganizationTaskResource, 'partners')
@@ -81,10 +79,12 @@ class ArtworkResource(AbstractArtworkResource):
     class Meta:
         queryset = Artwork.objects.all()
         resource_name = 'production/artwork'
-        filtering = {'authors': ALL_WITH_RELATIONS,
-                        'events': ALL_WITH_RELATIONS,
-                        'title': ALL,
-                        'genres': ALL_WITH_RELATIONS}
+        filtering = {
+            'authors': ALL_WITH_RELATIONS,
+            'events': ALL_WITH_RELATIONS,
+            'title': ALL,
+            'genres': ALL_WITH_RELATIONS
+        }
         # cache = SimpleCache(timeout=10)
 
     authors = fields.ToManyField(ArtistResource, 'authors', full=True, full_detail=True, full_list=False)
