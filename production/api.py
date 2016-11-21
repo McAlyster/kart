@@ -15,7 +15,7 @@ from people.api import ArtistResource, OrganizationResource, StaffResource
 from diffusion.api import PlaceResource
 
 from .models import Installation, Film, Performance, Event, Itinerary, Artwork
-from .models import ProductionOrganizationTask, OrganizationTask)
+from .models import ProductionOrganizationTask, OrganizationTask
 from .models import FilmGenre, StaffTask, ProductionStaffTask
 
 class StaffTaskResource(ModelResource):
