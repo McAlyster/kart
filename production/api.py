@@ -18,6 +18,7 @@ from .models import Installation, Film, Performance, Event, Itinerary, Artwork
 from .models import ProductionOrganizationTask, OrganizationTask
 from .models import FilmGenre, StaffTask, ProductionStaffTask
 
+
 class StaffTaskResource(ModelResource):
     class Meta:
         queryset = StaffTask.objects.all()
