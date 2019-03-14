@@ -1,7 +1,9 @@
-from django.conf.urls import patterns, include, url
+from django.urls import include, path, re_path
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+
 
 from tastypie.api import Api
 from rest_framework import routers
@@ -20,6 +22,9 @@ from people.views import (
     ArtistViewSet, UserViewSet, FresnoyProfileViewSet,
     StaffViewSet, OrganizationViewSet
 )
+
+from people import views as people_views
+
 from school.views import (
     PromotionViewSet, StudentViewSet,
     StudentAutocompleteSearchViewSet, StudentApplicationViewSet, StudentApplicationSetupViewSet
@@ -31,6 +36,8 @@ from production.views import (
     ItineraryViewSet,
     CollaboratorViewSet, PartnerViewSet, OrganizationTaskViewSet
 )
+
+from assets import views as assets_views
 from diffusion.views import PlaceViewSet
 from common.views import BTBeaconViewSet, WebsiteViewSet
 from assets.views import GalleryViewSet, MediumViewSet
@@ -83,32 +90,59 @@ v2_api.register(r'assets/gallery', GalleryViewSet)
 v2_api.register(r'assets/medium', MediumViewSet)
 
 
-urlpatterns = patterns('',
-                       url(r'^v2/', include(v2_api.urls)),
-                       url(r'^v2/auth/', obtain_jwt_token),
-                       url(r'^account/activate/%s/$' % settings.PASSWORD_TOKEN,
-                           'people.views.activate', name='user-activate'),
+# urlpatterns = [
+#                        path('v2/', include(v2_api.urls)),
+#                        path('v2/auth/', obtain_jwt_token),
+#                        path('account/activate/%s/$' % settings.PASSWORD_TOKEN,
+#                            'people.views.activate', name='user-activate'),
+#                        # django user registration
+#                        path('v2/rest-auth/', include('rest_auth.urls')),
+#                        path('v2/rest-auth/registration/', include('rest_auth.registration.urls')),
+#                        # vimeo
+#                        path('v2/assets/vimeo/upload/token',
+#                            'assets.views.vimeo_get_upload_token', name='vimeo-upload-token'),
+#                        # send emails
+#                        path('v2/people/send-emails',
+#                            'people.views.send_custom_emails', name='send-emails'),
+#
+#                        # api v1
+#                        ('', include(v1_api.urls)),
+#                        ('grappelli/', include('grappelli.urls')),
+#                        path(r'v1/doc/',
+#                            include('tastypie_swagger.urls', namespace='kart_tastypie_swagger'),
+#                            kwargs={"tastypie_api_module": "kart.urls.v1_api",
+#                                    "namespace": "kart_tastypie_swagger"}),
+#                        path('static/(?P<path>.*)$',
+#                            'django.views.static.serve',
+#                            {'document_root': settings.STATIC_ROOT}),
+#                        path('admin/', include(admin.site.urls)),
+#                        static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+#                        static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)]
+
+
+print('coucou', settings.MEDIA_URL)
+
+urlpatterns = [
+                       path('v2/', include(v2_api.urls)),
+                       path('v2/auth/', obtain_jwt_token),
+                       re_path('account/activate/%s/$' % settings.PASSWORD_TOKEN,
+                               people_views.activate, name='user-activate'),
                        # django user registration
-                       url(r'^v2/rest-auth/', include('rest_auth.urls')),
-                       url(r'^v2/rest-auth/registration/', include('rest_auth.registration.urls')),
+                       path('v2/rest-auth/', include('rest_auth.urls')),
+                       path('v2/rest-auth/registration/', include('rest_auth.registration.urls')),
                        # vimeo
-                       url(r'^v2/assets/vimeo/upload/token',
-                           'assets.views.vimeo_get_upload_token', name='vimeo-upload-token'),
-                       # send emails
-                       url(r'^v2/people/send-emails',
-                           'people.views.send_custom_emails', name='send-emails'),
+                       path('v2/assets/vimeo/upload/token',
+                            assets_views.vimeo_get_upload_token, name='vimeo-upload-token'),
 
                        # api v1
-                       (r'^', include(v1_api.urls)),
-                       (r'^grappelli/', include('grappelli.urls')),
-                       url('^markdown/', include('django_markdown.urls')),
-                       url(r'v1/doc/',
-                           include('tastypie_swagger.urls', namespace='kart_tastypie_swagger'),
-                           kwargs={"tastypie_api_module": "kart.urls.v1_api",
-                                   "namespace": "kart_tastypie_swagger"}),
-                       url(r'^static/(?P<path>.*)$',
-                           'django.views.static.serve',
-                           {'document_root': settings.STATIC_ROOT}),
-                       url(r'^admin/', include(admin.site.urls)) \
-                       ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                       path('', include(v1_api.urls)),
+                       path('grappelli/', include('grappelli.urls')),
+                       # url(r'^markdownx/', include('markdownx.urls')),
+                       # path('v1/doc/',
+                       #     include('tastypie_swagger.urls', namespace='ifresnoy_tastypie_swagger'),
+                       #     kwargs={"tastypie_api_module": "ifresnoy.urls.v1_api",
+                       #             "namespace": "ifresnoy_tastypie_swagger"}),
+                       path('admin/', admin.site.urls),
+             ] \
+             + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+             + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,7 +21,7 @@ class Promotion(models.Model):
     ending_year = models.PositiveSmallIntegerField()
 
     def __unicode__(self):
-        return '{0} ({1}-{2})'.format(self.name, self.starting_year, self.ending_year)
+        return u'{0} ({1}-{2})'.format(self.name, self.starting_year, self.ending_year)
 
 
 class Student(models.Model):
@@ -29,14 +29,13 @@ class Student(models.Model):
     An artist, part of a promotion, studying for at least 2 years.
     """
     number = models.CharField(max_length=50, null=True, blank=True)
-    promotion = models.ForeignKey(Promotion, on_delete = models.PROTECT)
+    promotion = models.ForeignKey(Promotion)
     graduate = models.BooleanField(default=False)
-    # TODO : CASCADE ? PROTECT or SET_NULL (best) should allow us to keep the artist even if they are not a student anymore
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
-    artist = models.OneToOneField(Artist, related_name='student', on_delete = models.CASCADE)
+    user = models.OneToOneField(User)
+    artist = models.OneToOneField(Artist, related_name='student')
 
     def __unicode__(self):
-        return '{0} ({1})'.format(self.user, self.number)
+        return u'{0} ({1})'.format(self.user, self.number)
 
 
 class StudentApplicationSetup(models.Model):
@@ -45,7 +44,7 @@ class StudentApplicationSetup(models.Model):
     """
     name = models.CharField(max_length=25, null=True, blank=True)
     # Promo
-    promotion = models.ForeignKey(Promotion, null=False, blank=False, on_delete = models.PROTECT)
+    promotion = models.ForeignKey(Promotion, null=False, blank=False)
     # date
     candidature_date_start = models.DateTimeField(null=False, blank=False)
     candidature_date_end = models.DateTimeField(null=False, blank=False)
@@ -87,15 +86,15 @@ class StudentApplicationSetup(models.Model):
         super(StudentApplicationSetup, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return '{0} ({1})'.format(self.name, self.promotion.name)
+        return u'{0} ({1})'.format(self.name, self.promotion.name)
 
 
 class StudentApplication(models.Model):
     """
     Fresnoy's School application procedure
     """
-    artist = models.ForeignKey(Artist, related_name='student_application', on_delete = models.PROTECT)
-    campain = models.ForeignKey(StudentApplicationSetup, blank=True, null=True, related_name='applications', on_delete = models.PROTECT)
+    artist = models.ForeignKey(Artist, related_name='student_application')
+    campain = models.ForeignKey(StudentApplicationSetup, blank=True, null=True, related_name='applications')
 
     current_year_application_count = models.CharField(
         max_length=8,
@@ -155,8 +154,7 @@ class StudentApplication(models.Model):
         blank=True,
         null=True,
         related_name='student_application_cursus_justification',
-        help_text='Gallery of justificaitons',
-        on_delete=models.PROTECT
+        help_text='Gallery of justificaitons'
     )
     curriculum_vitae = models.FileField(
         upload_to=make_filepath,
@@ -298,4 +296,4 @@ class StudentApplication(models.Model):
         super(StudentApplication, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "{0} ({1})".format(self.current_year_application_count, self.artist)
+        return u"{0} ({1})".format(self.current_year_application_count, self.artist)

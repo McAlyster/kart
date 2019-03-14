@@ -56,12 +56,12 @@ class Command(BaseCommand):
         # set list of delete info
         list_delete = []
 
-        print(("Liste des informations qui vont être supprimées : ".encode('utf-8')))
-        print(("/!\\ Supression complète de {} profiles".format(sa_expired.count())))
-        print(("/!\\ Supression des informations de {} anciennes candidatures".format(sa_olds.count())))
-        print(("/!\\ Supression des informations critiques de {} candidatures".format(sa_all.count())))
+        print(u"Liste des informations qui vont être supprimées : ".encode('utf-8'))
+        print(u"/!\\ Supression complète de {} profiles".format(sa_expired.count()))
+        print(u"/!\\ Supression des informations de {} anciennes candidatures".format(sa_olds.count()))
+        print(u"/!\\ Supression des informations critiques de {} candidatures".format(sa_all.count()))
         # pause to read uplines
-        input('[Press any key to continue]')
+        raw_input('[Press any key to continue]')
         # ALL candidatures : delete critical infos
         for sa in sa_all:
             # set short list
@@ -91,15 +91,15 @@ class Command(BaseCommand):
         #
         for infos in list_delete:
                 model, field, value = infos
-                print((model, " : ", value))
+                print(model, " : ", value)
         #
         confirm = self.ask_user("Voulez-vous supprimer toutes ces informations ? (Y/n)")
         #
         if not confirm:
-            print("Aucun fichier n'a été supprimé")
+            print(u"Aucun fichier n'a été supprimé")
             return
         #
-        print("C'est parti ...")
+        print(u"C'est parti ...")
         #
         for infos in list_delete:
             model, field, value = infos
@@ -107,7 +107,7 @@ class Command(BaseCommand):
         print("Fin")
 
     def ask_user(self, str_question):
-        check = str(input(str_question)).lower().strip()
+        check = str(raw_input(str_question)).lower().strip()
         try:
             if check[0] in ('y', 'yes', 'o', 'oui',):
                 return True
@@ -170,7 +170,7 @@ class Command(BaseCommand):
 
     def del_info(self, model, field, value):
         # print(model, " - ", field, " : ", value)
-        print((field, " : ", value.__class__.__name__))
+        print(field, " : ", value.__class__.__name__)
         # print(value.__class__.__name__)
         if value.__class__.__name__ is 'ManyRelatedManager':
             # print("delete arrays")

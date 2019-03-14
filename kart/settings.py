@@ -8,8 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-from site_settings import * # NOQA
-from site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR
+from kart.site_settings import * # NOQA
+from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR
 import datetime
 import os
 
@@ -42,7 +42,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'sortedm2m',
     'django_countries',
-    'django_markdown',
     'django_cleanup',
     'django_unused_media',
     'kart',
@@ -66,14 +65,13 @@ INSTALLED_APPS = (
     'assets',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'corsheaders.middleware.CorsMiddleware',
 
 )
