@@ -176,6 +176,10 @@ wf2kart_mapping = {
 #         prod = Production.objects.get(pk=id)
 #         logger.info(prod.artwork.authors)
 
+
+# if true, csv data overide Kart's data
+OVERRIDE = True
+
 def run_import() :
     """ Main function to call to trigger the import process """
 
@@ -307,6 +311,7 @@ def clean_csv(csv_path, dest='./') :
             clean_df.loc[index,'user_found'] = True
             clean_df.loc[index,'user_id'] = user.id
         else :
+            logger.info(f"User not found, creating it...")
             # if no user match in Kart, create it
             clean_df.loc[index,'user_found'] = False
             clean_df.loc[index,'artist_found'] = False
@@ -363,12 +368,20 @@ def clean_csv(csv_path, dest='./') :
         #                 if dupli['id_user'] == dupli2['id_user'] :
         #                     logger.info(f" !! 1 user ({dupli['id_user']}) is 2 artists ({dupli2['id_artist']}) with same nickname ({nickname}) at the same time !!")
         ##########################################
-
+        # artist = Artist.objects.get(user__pk=user.id)
+        # print("artist : ", artist)
         # Check if artist object is associated with user
         try :
             # Get the artist with matching user id
             artist = Artist.objects.get(user__pk=user.id)
-
+            
+            # If override is true, csv data overide preexisting data in Kart
+            if OVERRIDE and not DRY_RUN :
+               print("updating artist",artist_dict)  
+               for attr, value in artist_dict.items():
+                   setattr(artist, attr, value)
+                   artist.save() 
+ 
             logger.info(f"Associated artist found {artist}")
 
             # Add artist to existing artists list
@@ -379,8 +392,10 @@ def clean_csv(csv_path, dest='./') :
 
             # Fill artist_id in df
             clean_df.loc[index,'artist_id'] = artist.id
-
-        except :  # If no associated artist found,
+        except MultipleObjectsReturned :
+            logger.info(f"Multiple Artists with user id {user.id}")
+        except ObjectDoesNotExist :  # If no associated artist found,
+            logger.info(f"Artist not found, creating it ...")
             # Provide user.id to artist dict
             artist_dict['user_id'] = user.id
 
@@ -523,9 +538,9 @@ def clean_csv(csv_path, dest='./') :
     json_export["dream_theme"] = dream_l
     json_export["partners"] = partners_l
     # Store the dream themes in an external json file
-    with open('./data.json', 'w') as fout:
+    with open('./data.json', 'w',  encoding='utf-8') as fout:
         json.dump(json_export, fout)
-
+    
 
 
     exit()
