@@ -106,7 +106,10 @@ class Artwork(Production):
     def __str__(self):
         authors = (", ".join([author.__str__() for author in self.authors.all()])
                    if self.authors.count() > 0 else "?")
-        return '{0} ({1}) de {2}'.format(self.title, self.production_date.year, authors)
+        if self.production_date :
+            return f"{self.title} ({self.production_date.year}) de {authors}"
+        else :
+            return f"{self.title} (?) de {authors}"
 
 
 class FilmGenre(models.Model):
