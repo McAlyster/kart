@@ -31,6 +31,9 @@ from django.db.models import CharField, Value
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
+import yaml
+
+from correction import Correction
 
 import unidecode
 
@@ -95,6 +98,15 @@ tz = pytz.timezone('Europe/Paris')
 
 # Clear terminal
 os.system('clear')
+
+# Load the Yaml config file
+with open("import.yaml", 'r') as stream:
+    try:
+        conf=yaml.safe_load(stream)
+        print(conf['exclude_columns'])
+    except yaml.YAMLError as exc:
+        print(exc)
+
 
 ##################################################
 # Mappings btw csv fields and Kart's fields #
@@ -175,24 +187,24 @@ def run_import() :
     clean_csv("./Kart-TEASER_VOD.csv")
 
 
-# Clean the csv
-logger.info("Cleaning the csv")
 
 def clean_csv(csv_path, dest='./') :
-    """ Clean the csv from undesired data and store a cleaned csv with validated data from Kart when artist already exists in Kart.
+    """ Clean the csv from undesired data and store a cleaned csv with validated data from Kart when data already exists in Kart.
 
-    Parameters :
-    - csv_path          :    (str) path to the csv file
-    - dest  (optional)  :    (str) path to the destination csv file
+    :param csv_path: str, path to the csv file
+    :param dest: str, path to the destination csv file, optional
 
 
     """
+
+    # Log the function call
+    logger.info(f"FUNCTION : clean_csv - START")
 
     # Load the csv to dataframe
     csv_df = pd.read_csv(csv_path, skiprows=2, encoding='utf8')
 
     # Get rid of empty cols
-    csv_df.drop(csv_df.columns[[2,]], axis=1,inplace=True)
+    csv_df.drop(csv_df.columns[conf['exclude_columns']], axis=1,inplace=True)
 
     # Convert cols names to Kart when possible, strip anyway
     csv_df.columns = [csv2kart(col.strip()) for col in csv_df.columns]
@@ -213,26 +225,27 @@ def clean_csv(csv_path, dest='./') :
         # Extract id artw
         pat = re.compile('\(id: (\d+)\)')
         match = re.search(pat, title)
-        #
+
         if match :
             id = match[1]
-            print("ID artw extracted", id)
+            # print("ID artw extracted", id)
             aw = Artwork.objects.get(pk=id)
-            print("aw ", aw)
+            # print("aw ", aw)
         # if id can't be extracted, use diffusion title
         else :
-            print('\n\n')
-            print("Can't extract id from ", title)
-            print('>>>',row['Titre diffusion'])
-            print('>>>',row['Remarques'])
+            logger.warning(f"Can't extract id from {title}")
+            # print('>>>',row['Titre diffusion'])
+            # print('>>>',row['Remarques'])
+
             # Try to get the artw by title
             bytitle = getArtworkByTitle(row['Titre diffusion'])
             if bytitle :
-                print("################# by title ",title, bytitle)
+                logger.warning(f"################# by title ,{title}, {bytitle}")
             print('\n\n')
+        continue
 
         # Get artist from KART
-        arts = getArtistByNames(firstname=row['first_name'], lastname=row['last_name'])
+        #arts = getArtistByNames(firstname=row['first_name'], lastname=row['last_name'])
 
         # Associated artworks in Kart
         # artws = Artwork.objects.filter(authors = arts)
@@ -599,6 +612,8 @@ def clean_csv(csv_path, dest='./') :
 
 
         # logger.info("\n\n")
+    # Log the function call
+    logger.info(f"FUNCTION : clean_csv - STOP")
 
 # Identify artists / artworks
 # Fill with data
@@ -954,13 +969,21 @@ def getUserByNames(firstname="", lastname="", pseudo="", listing=False, dist_min
         for user_kart in guessArtLN:
 
             # print(f"\tARTIST : {user_kart}")
+
             # Clear accents (store a version with accents for further accents issue detection)
             kart_lastname_accent = user_kart.last_name
             kart_lastname = unidecode.unidecode(kart_lastname_accent).lower()
+            print("kart_lastname_accent", kart_lastname_accent,"kart_lastname", kart_lastname)
             kart_firstname_accent = user_kart.first_name
             kart_firstname = unidecode.unidecode(kart_firstname_accent).lower()
+
             kart_fullname_accent = user_kart.search_name
-            # print(f"\t\tuser_kart.search_name {user_kart.search_name}")
+
+            # Stripping issues
+            kart_data = {   'cleaned' : {'lastname':kart_lastname, 'firstname':kart_firstname},
+                            'raw':{'lastname':kart_lastname_accent, 'firstname':kart_firstname_accent}
+                        }
+
             kart_fullname = f"{kart_firstname} {kart_lastname}".lower()
 
             dist_full = dist2(kart_fullname, fullname)
@@ -981,6 +1004,9 @@ def getUserByNames(firstname="", lastname="", pseudo="", listing=False, dist_min
                     candidate  first: >{firstname}< last: >{lastname}<
                                             """)
                     users_l.append({"user": user_kart, 'dist': dist_full*2})
+
+
+
                     # ### Control for accents TODO still necessary ?
                     #
                     # accent_diff = kart_lastname_accent != lastname_accent or \
@@ -989,19 +1015,40 @@ def getUserByNames(firstname="", lastname="", pseudo="", listing=False, dist_min
                     #                 Accent or space problem ?
                     #                 Kart: {kart_firstname_accent} {kart_lastname_accent}
                     #                 Candidate: {firstname_accent} {lastname_accent} """)
-                    continue
+
 
             # Control for blank spaces
 
-            if kart_lastname.find(" ") >= 0 or lastname.find(" ") >= 0:
+            if  kart_lastname.startswith(" ") or kart_lastname.endswith(" ") :
+                print(f"before : kart_lastname.strip() >{kart_lastname}<")
+                print(f"kart_lastname.strip() >{kart_lastname.strip()}<")
+                print(f"after : kart_lastname.strip() >{kart_lastname}<")
+
+            if  lastname.startswith(" ") or lastname.endswith(" ") :
+                print(f"before : lastname.strip() >{lastname}<")
+                print(f"lastname.strip() >{lastname.strip()}<")
+                print(f"after : lastname.strip() >{lastname}<")
+                # Check for leading/trailing whitespace in lastname
+                if kart_lastname.strip() == lastname.strip() :
+                    if kart_lastname.find(" ") >= 0 :
+                        cor = Correction(kart_lastname,kart_lastname.strip())
+                    bef = f"\"{kart_lastname}\" <> \"{lastname}\""
+                    logger.warning(f"Leading/trailing whitespace {bef}")
+
+
                 # Check distance btw lastnames without spaces
-                if dist2(kart_lastname.replace(" ", ""), lastname.replace(" ", "")) > .9:
+                elif dist2(kart_lastname.replace(" ", ""), lastname.replace(" ", "")) > .9:
                     bef = f"\"{kart_lastname}\" <> \"{lastname}\""
                     logger.warning(f"whitespace problem ? {bef}")
 
             if kart_firstname.find(" ") >= 0 or firstname.find(" ") >= 0:
+
+                if kart_firstname.strip() == firstname.strip() :
+                    bef = f"\"{kart_firstname}\" <> \"{firstname}\""
+                    logger.warning(f"Leading/trailing whitespace {bef}")
+
                 # Check distance btw firstnames without spaces
-                if dist2(kart_firstname.replace(" ", ""), firstname.replace(" ", "")) > .9:
+                elif dist2(kart_firstname.replace(" ", ""), firstname.replace(" ", "")) > .9:
                     bef = f"\"{kart_firstname}\" <> \"{firstname}\""
                     logger.warning(f"whitespace problem ? {bef}")
             ###
@@ -1676,6 +1723,13 @@ def create_or_update(obj_type=None, properties=None, save=False) :
         print("obj ", obj)
     except Exception as e :
         print("e" ,e)
+
+
+def shouldCorrect() :
+    """ Indicate when a correction is needed whether in kart data or csv data"""
+    pass
+
+
 
 if __name__ == "__main__" :
     run_import()
