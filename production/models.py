@@ -76,7 +76,7 @@ class Production(PolymorphicModel):
     description_en = models.TextField(blank=True, null=True)
 
     # Gallery dedicated to diffusion material - may require a password
-    diff_galleries = SortedManyToManyField(Gallery, blank=True, related_name='prod_diffusion')
+    diff_galleries = models.ManyToManyField(Gallery, blank=True, related_name='prod_diffusion')
 
     def __str__(self):
         return '{0}'.format(self.title)
