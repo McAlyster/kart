@@ -100,3 +100,6 @@ local_settings.py
 .env
 db.sqlite3
 
+
+# Utils
+utils/not_added.yaml 
