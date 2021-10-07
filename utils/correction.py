@@ -1,6 +1,7 @@
-""" Class representing a needed content correction """
+
 
 class Correction :
+    """ Class representing a needed content correction """
 
     # Raw data
     raw = ""
@@ -10,6 +11,7 @@ class Correction :
     model = ""
     # field
     field = ""
+    # 
 
     def __init__(self, raw, correct):
         self.raw = raw
@@ -33,6 +35,12 @@ class Correction :
 
         if store :
             self.save()
+
+    def prompt(self) :
+        """
+        Ask the human agent which version to keep, allow to type a new version.
+        """
+
 
     def save(self) :
         """ Save the correct version to database. """
