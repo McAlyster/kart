@@ -1,0 +1,187 @@
+2021-10-28 11:55:07,659 - INFO - 		 Less likely potential duplicate Alexandre Alberts, 1533 - USER IS A STUDENT
+2021-10-28 11:55:07,662 - INFO - 		 Less likely potential duplicate Alexandre Alberts, 2314 - USER IS A STUDENT
+2021-10-28 11:55:07,664 - INFO - 		 Less likely potential duplicate Alexandre Magnin, 2129 - USER IS A STUDENT
+2021-10-28 11:55:42,020 - INFO - Related artist : <QuerySet [<Artist: ALEXANDRE Alberts>]>
+2021-10-28 11:55:46,113 - INFO - 		potential duplicate Damien Deparis, 848 - USER IS A STUDENT
+2021-10-28 11:55:46,114 - INFO - 		potential duplicate Damien Deparis, 1001 - USER IS A STUDENT
+2021-10-28 11:55:47,644 - INFO - Related artist : <QuerySet [<Artist: Damien Deparis>]>
+2021-10-28 11:55:48,451 - INFO - 		 Less likely potential duplicate Francisco Rodriguez teare, 1849 - USER IS A STUDENT
+2021-10-28 11:55:48,452 - INFO - 		 Less likely potential duplicate Francisco Miguez, 2581 - USER IS A STUDENT
+2021-10-28 11:55:50,087 - INFO - Related artist : <QuerySet [<Artist: Francisco Rodriguez>, <Artist: Francisco Rodriguez>]>
+2021-10-28 11:55:50,341 - INFO - 		potential duplicate Dave Mckenna, 677 - USER IS A STUDENT
+2021-10-28 11:55:50,342 - INFO - 		potential duplicate Dave Mckenna, 970 - USER IS A STUDENT
+2021-10-28 11:55:51,615 - INFO - Related artist : <QuerySet [<Artist: Dave Mckenna>]>
+2021-10-28 11:55:52,162 - INFO - 		potential duplicate Alberto Delgado, 691 - USER IS A STUDENT
+2021-10-28 11:55:52,164 - INFO - 		potential duplicate Delgado Alberto, 1103 - USER IS A STUDENT
+2021-10-28 11:55:53,675 - INFO - Related artist : <QuerySet [<Artist: ALBERTO Delgado>]>
+2021-10-28 11:55:53,678 - INFO - Related artist : <QuerySet [<Artist: Delgado Alberto>]>
+2021-10-28 11:55:54,206 - INFO - 		 Less likely potential duplicate Roy Adiv, 1376 - USER IS A STUDENT
+2021-10-28 11:55:54,208 - INFO - 		 Less likely potential duplicate Roi Adiv, 1438 - USER IS A STUDENT
+2021-10-28 11:55:56,216 - INFO - Related artist : <QuerySet [<Artist: Roï Adiv>]>
+2021-10-28 11:55:56,220 - INFO - Related artist : <QuerySet [<Artist: roy Adiv>]>
+2021-10-28 11:55:56,571 - INFO - 		 Less likely potential duplicate Alexandre Risso, 2757 - USER IS A STUDENT
+2021-10-28 11:55:56,573 - INFO - 		 Less likely potential duplicate Alexandre Erre, 1470 - USER IS A STUDENT
+2021-10-28 11:55:59,408 - INFO - No similar content confirmed.
+2021-10-28 11:56:00,147 - INFO - 		potential duplicate Emily Barbelin, 808 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:00,150 - INFO - 		potential duplicate Emily Barbelin, 2674 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:02,032 - INFO - Related artist : <QuerySet [<Artist: BARBELIN EMILY>]>
+2021-10-28 11:56:02,296 - INFO - 		potential duplicate Maxime Le moing, 829 - USER IS A STUDENT
+2021-10-28 11:56:02,297 - INFO - 		potential duplicate Maxime Le moing, 1008 - USER IS A STUDENT
+2021-10-28 11:56:04,181 - INFO - Related artist : <QuerySet [<Artist: Maxime Le Moing>]>
+2021-10-28 11:56:04,184 - INFO - Related artist : <QuerySet [<Artist: Maxime Le Moing>]>
+2021-10-28 11:56:05,209 - INFO - 		potential duplicate Paul Desmazieres, 905 - USER IS A STUDENT
+2021-10-28 11:56:05,211 - INFO - 		potential duplicate Paul Desmazieres, 1693 - USER IS A STUDENT
+2021-10-28 11:56:07,140 - INFO - Related artist : <QuerySet [<Artist: Paul Desmazieres>]>
+2021-10-28 11:56:07,143 - INFO - Related artist : <QuerySet [<Artist: Paul Desmazieres>]>
+2021-10-28 11:56:07,305 - INFO - 		potential duplicate James Violi, 956 - USER IS A STUDENT
+2021-10-28 11:56:07,307 - INFO - 		potential duplicate James Violi, 955 - USER IS A STUDENT
+2021-10-28 11:56:09,164 - INFO - Related artist : <QuerySet [<Artist: James Violi>]>
+2021-10-28 11:56:09,316 - INFO - 		potential duplicate Khaled Alwarea, 918 - USER IS A STUDENT
+2021-10-28 11:56:09,318 - INFO - 		potential duplicate Khaled Alwarea, 1065 - USER IS A STUDENT
+2021-10-28 11:56:11,031 - INFO - Related artist : <QuerySet [<Artist: khaled Alwarea>]>
+2021-10-28 11:56:11,035 - INFO - Related artist : <QuerySet [<Artist: khaled Alwarea>]>
+2021-10-28 11:56:11,395 - INFO - 		potential duplicate Axel Lacan, 994 - USER IS A STUDENT
+2021-10-28 11:56:11,396 - INFO - 		potential duplicate Axel Lacan, 993 - USER IS A STUDENT
+2021-10-28 11:56:13,170 - INFO - Related artist : <QuerySet [<Artist: Axel Lacan>]>
+2021-10-28 11:56:13,403 - INFO - 		potential duplicate Louis Liu, 985 - USER IS A STUDENT
+2021-10-28 11:56:13,405 - INFO - 		potential duplicate Louis Liu, 1022 - USER IS A STUDENT
+2021-10-28 11:56:15,566 - INFO - Related artist : <QuerySet [<Artist: louis Liu>]>
+2021-10-28 11:56:15,570 - INFO - Related artist : <QuerySet [<Artist: Louis Liu>]>
+2021-10-28 11:56:16,288 - INFO - 		potential duplicate Solbi Kim, 1037 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:16,291 - INFO - 		potential duplicate Solbi Kim, 1126 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:20,818 - INFO - Related artist : <QuerySet [<Artist: Solbi Kim>]>
+2021-10-28 11:56:20,822 - INFO - Related artist : <QuerySet [<Artist: Solbi Kim>]>
+2021-10-28 11:56:20,985 - INFO - 		potential duplicate Ravisankar Kerala varma, 1059 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:20,987 - INFO - 		potential duplicate Ravisankar Kerala varma, 713 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:23,203 - INFO - Related artist : <QuerySet [<Artist: Ravisankar Kerala Varma>]>
+2021-10-28 11:56:23,207 - INFO - Related artist : <QuerySet [<Artist: Ravisankar Kerala Varma>]>
+2021-10-28 11:56:23,538 - INFO - 		potential duplicate Lucille Bonato, 1062 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:23,540 - INFO - 		potential duplicate Lucille Bonato, 1554 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:25,026 - INFO - Related artist : <QuerySet [<Artist: Lucille Bonato>]>
+2021-10-28 11:56:25,031 - INFO - Related artist : <QuerySet [<Artist: Lucille Bonato>]>
+2021-10-28 11:56:25,202 - INFO - 		potential duplicate Lola maria Muller, 1116 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:25,205 - INFO - 		potential duplicate Lola maria Muller, 1450 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:26,816 - INFO - Related artist : <QuerySet [<Artist: Lola Maria Muller>]>
+2021-10-28 11:56:26,820 - INFO - Related artist : <QuerySet [<Artist: Lola Maria Muller>]>
+2021-10-28 11:56:28,331 - INFO - 		potential duplicate Junior Nyembwe, 1237 - USER IS A STUDENT
+2021-10-28 11:56:28,332 - INFO - 		potential duplicate Junior Wa nyembwe, 1253 - USER IS A STUDENT
+2021-10-28 11:56:31,830 - INFO - 		potential duplicate Rony Efrat, 1222 - USER IS A STUDENT
+2021-10-28 11:56:31,833 - INFO - 		potential duplicate Rony Efrat, 2750 - USER IS A STUDENT
+2021-10-28 11:56:33,486 - INFO - Related artist : <QuerySet [<Artist: Rony EFRAT>]>
+2021-10-28 11:56:33,528 - INFO - 		potential duplicate Fredj Moussa, 1238 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:33,531 - INFO - 		potential duplicate Fredj Moussa, 1537 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:33,534 - INFO - 		potential duplicate Fredj Moussa, 2430 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:35,930 - INFO - Related artist : <QuerySet [<Artist: FREDJ Moussa>]>
+2021-10-28 11:56:35,934 - INFO - Related artist : <QuerySet [<Artist: Fredj Moussa>]>
+2021-10-28 11:56:35,937 - INFO - Related artist : <QuerySet [<Artist: Fredj Moussa>]>
+2021-10-28 11:56:36,021 - INFO - 		potential duplicate Lea Collet, 1214 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:36,024 - INFO - 		potential duplicate Lea Collet, 2104 - USER IS JUST A CANDIDATE
+2021-10-28 11:56:41,709 - INFO - Related artist : <QuerySet [<Artist: Lea Collet>]>
+2021-10-28 11:56:41,836 - INFO - Related artist : <QuerySet [<Artist: Lea Collet>]>
+2021-10-28 11:56:42,549 - INFO - 		potential duplicate Jean-mickaël Thomas, 1288 - USER IS A STUDENT
+2021-10-28 11:56:42,550 - INFO - 		potential duplicate Jean-mickaël Thomas, 1351 - USER IS A STUDENT
+2021-10-28 11:56:57,933 - INFO - Related artist : <QuerySet [<Artist: Jean-Mickaël Thomas>]>
+2021-10-28 11:56:58,938 - INFO - 		potential duplicate Seunghee Choe, 1370 - USER IS A STUDENT
+2021-10-28 11:56:58,939 - INFO - 		potential duplicate Seunghee Choe, 1369 - USER IS A STUDENT
+2021-10-28 11:57:00,634 - INFO - Related artist : <QuerySet [<Artist: seunghee Choe>]>
+2021-10-28 11:57:00,772 - INFO - 		potential duplicate Madanie Boussaid, 1347 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:00,775 - INFO - 		potential duplicate Madanie Boussaid, 1737 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:02,264 - INFO - Related artist : <QuerySet [<Artist: Madanie Boussaid>]>
+2021-10-28 11:57:02,277 - INFO - Related artist : <QuerySet [<Artist: madanie Boussaid>]>
+2021-10-28 11:57:02,847 - INFO - 		 Less likely potential duplicate Roï Adiv, 740 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:02,849 - INFO - 		 Less likely potential duplicate Roi Adiv, 1438 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:08,306 - INFO - Related artist : <QuerySet [<Artist: roy Adiv>]>
+2021-10-28 11:57:08,310 - INFO - Related artist : <QuerySet [<Artist: Roï Adiv>]>
+2021-10-28 11:57:08,814 - INFO - 		potential duplicate Dimitri Robert-rimsky, 1381 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:08,817 - INFO - 		potential duplicate Dimitri Robert-rimsky, 1932 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:11,771 - INFO - Related artist : <QuerySet [<Artist: Dimitri Robert-Rimsky>]>
+2021-10-28 11:57:11,789 - INFO - Related artist : <QuerySet [<Artist: Dimitri Robert-Rimsky>]>
+2021-10-28 11:57:11,908 - INFO - 		 Less likely potential duplicate Roï Adiv, 740 - USER IS A STUDENT
+2021-10-28 11:57:11,908 - INFO - 		 Less likely potential duplicate Roy Adiv, 1376 - USER IS A STUDENT
+2021-10-28 11:57:14,482 - INFO - Related artist : <QuerySet [<Artist: Roï Adiv>]>
+2021-10-28 11:57:14,486 - INFO - Related artist : <QuerySet [<Artist: roy Adiv>]>
+2021-10-28 11:57:14,670 - INFO - 		potential duplicate Jacques Dendievel, 1451 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:14,672 - INFO - 		potential duplicate Jacques Dendievel, 1656 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:16,327 - INFO - Related artist : <QuerySet [<Artist: Jacques Dendievel>]>
+2021-10-28 11:57:16,331 - INFO - Related artist : <QuerySet [<Artist: JACQUES Dendievel>]>
+2021-10-28 11:57:16,862 - INFO - 		 Less likely potential duplicate Alexandre Guerre, 550 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:16,866 - INFO - 		 Less likely potential duplicate Alexandre Ries, 760 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:16,869 - INFO - 		 Less likely potential duplicate Alexandre Suire, 1796 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:20,397 - INFO - No similar content confirmed.
+2021-10-28 11:57:20,564 - INFO - 		potential duplicate Yi Zhang, 1506 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:20,567 - INFO - 		potential duplicate Yi Zhang, 1923 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:20,569 - INFO - 		potential duplicate Yi Zhang, 1983 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:20,572 - INFO - 		potential duplicate Yi Zhang, 2451 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:25,473 - INFO - Related artist : <QuerySet [<Artist: Yi Zhang>]>
+2021-10-28 11:57:25,477 - INFO - Related artist : <QuerySet [<Artist: yi Zhang>]>
+2021-10-28 11:57:25,507 - INFO - Related artist : <QuerySet [<Artist: Yi Zhang>]>
+2021-10-28 11:57:25,512 - INFO - Related artist : <QuerySet [<Artist: Mùden Water>]>
+2021-10-28 11:57:26,031 - INFO - 		potential duplicate Alexandre Alberts, 1533 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:26,034 - INFO - 		potential duplicate Alexandre Alberts, 2314 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:30,356 - INFO - Related artist : <QuerySet [<Artist: ALEXANDRE Alberts>]>
+2021-10-28 11:57:30,654 - INFO - 		potential duplicate Sofia Ungar, 1549 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:30,657 - INFO - 		potential duplicate Sofia Ungar, 2552 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:36,116 - INFO - Related artist : <QuerySet [<Artist: Sofia Ungar>]>
+2021-10-28 11:57:36,120 - INFO - Related artist : <QuerySet [<Artist: Sofia Ungar>]>
+2021-10-28 11:57:36,907 - INFO - 		potential duplicate Amanou Yelebo, 1603 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:36,910 - INFO - 		potential duplicate Amanou Yelebo, 1741 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:38,838 - INFO - Related artist : <QuerySet [<Artist: Amanou Yelebo>]>
+2021-10-28 11:57:38,847 - INFO - Related artist : <QuerySet [<Artist: amanou Yelebo>]>
+2021-10-28 11:57:39,175 - INFO - 		potential duplicate Martin Bonjean, 1624 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:39,178 - INFO - 		potential duplicate Martin Bonjean, 2042 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:42,090 - INFO - Related artist : <QuerySet [<Artist: Martin Bonjean>]>
+2021-10-28 11:57:42,108 - INFO - Related artist : <QuerySet [<Artist: Martin BONJEAN>]>
+2021-10-28 11:57:42,620 - INFO - 		potential duplicate Maxence Hamard, 1686 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:42,623 - INFO - 		potential duplicate Maxence Hamard, 2102 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:44,317 - INFO - Related artist : <QuerySet [<Artist: maxence Hamard>]>
+2021-10-28 11:57:44,321 - INFO - Related artist : <QuerySet [<Artist: Maxence Hamard>]>
+2021-10-28 11:57:44,684 - INFO - 		potential duplicate Sandy Kalaydjian, 1658 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:44,687 - INFO - 		potential duplicate Sandy Kalaydjian, 2565 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:46,410 - INFO - Related artist : <QuerySet [<Artist: Sandy Kalaydjian>]>
+2021-10-28 11:57:46,414 - INFO - Related artist : <QuerySet [<Artist: Sandy Kalaydjian>]>
+2021-10-28 11:57:51,160 - INFO - 		potential duplicate Victor Villafagne, 1991 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:51,162 - INFO - 		potential duplicate Victor Villafagne, 2669 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:53,239 - INFO - Related artist : <QuerySet [<Artist: victor villafagne>]>
+2021-10-28 11:57:53,253 - INFO - Related artist : <QuerySet [<Artist: Victor Villafagne>]>
+2021-10-28 11:57:54,892 - INFO - 		potential duplicate Thomas Boucher, 2646 - USER IS A STUDENT
+2021-10-28 11:57:54,893 - INFO - 		potential duplicate Thomas Boucher, 2648 - USER IS A STUDENT
+2021-10-28 11:57:56,638 - INFO - Related artist : <QuerySet [<Artist: Thomas Boucher>]>
+2021-10-28 11:57:56,977 - INFO - 		potential duplicate Seo hye Lee, 2125 - USER IS A STUDENT
+2021-10-28 11:57:56,978 - INFO - 		potential duplicate Seo hye Lee, 2254 - USER IS A STUDENT
+2021-10-28 11:57:58,339 - INFO - Related artist : <QuerySet [<Artist: Seo Hye Lee>]>
+2021-10-28 11:57:59,335 - INFO - 		potential duplicate Julie Coulon, 2206 - USER IS JUST A CANDIDATE
+2021-10-28 11:57:59,338 - INFO - 		potential duplicate Julie Coulon, 2545 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:01,013 - INFO - Related artist : <QuerySet [<Artist: Julie Coulon>]>
+2021-10-28 11:58:01,052 - INFO - Related artist : <QuerySet [<Artist: Julie Coulon>]>
+2021-10-28 11:58:02,892 - INFO - 		potential duplicate Valentin Gelin, 2331 - USER IS A STUDENT
+2021-10-28 11:58:02,893 - INFO - 		potential duplicate Valentine Gelin, 2760 - USER IS A STUDENT
+2021-10-28 11:58:08,689 - INFO - 		 Less likely potential duplicate Lucie Liénard, 818 - USER IS A STUDENT
+2021-10-28 11:58:08,690 - INFO - 		 Less likely potential duplicate Lucie Ménia, 2030 - USER IS A STUDENT
+2021-10-28 11:58:17,424 - INFO - No similar content confirmed.
+2021-10-28 11:58:17,481 - INFO - 		potential duplicate Romain Lefranc, 2429 - USER IS A STUDENT
+2021-10-28 11:58:17,482 - INFO - 		potential duplicate Romain Lefranc, 3 - USER IS A STUDENT
+2021-10-28 11:58:19,193 - INFO - Related artist : <QuerySet [<Artist: Rojo>]>
+2021-10-28 11:58:19,416 - INFO - 		potential duplicate Chuhui Luo, 2453 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:19,494 - INFO - 		potential duplicate Chuhui Luo, 2587 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:21,285 - INFO - Related artist : <QuerySet [<Artist: chuhui luo>]>
+2021-10-28 11:58:22,568 - INFO - 		 Less likely potential duplicate Yi Zhang, 1506 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:22,571 - INFO - 		 Less likely potential duplicate Yi Zhang, 1923 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:22,574 - INFO - 		 Less likely potential duplicate Yi Zhang, 1983 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:22,577 - INFO - 		 Less likely potential duplicate Yi Zhang, 2451 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:29,273 - INFO - Related artist : <QuerySet [<Artist: Yi Zhang>]>
+2021-10-28 11:58:29,277 - INFO - Related artist : <QuerySet [<Artist: yi Zhang>]>
+2021-10-28 11:58:29,280 - INFO - Related artist : <QuerySet [<Artist: Yi Zhang>]>
+2021-10-28 11:58:29,283 - INFO - Related artist : <QuerySet [<Artist: Mùden Water>]>
+2021-10-28 11:58:30,438 - INFO - 		potential duplicate Quentin L'helgoualc'h, 2605 - USER IS A STUDENT
+2021-10-28 11:58:30,439 - INFO - 		potential duplicate Quentin L'helgoualc'h, 2606 - USER IS A STUDENT
+2021-10-28 11:58:34,246 - INFO - Related artist : <QuerySet [<Artist: Quentin L'helgoualc'h>]>
+2021-10-28 11:58:35,639 - INFO - 		potential duplicate Joana Luz, 2686 - USER IS A STUDENT
+2021-10-28 11:58:35,641 - INFO - 		potential duplicate Joana Luz, 2699 - USER IS A STUDENT
+2021-10-28 11:58:37,347 - INFO - Related artist : <QuerySet [<Artist: Joana Luz>]>
+2021-10-28 11:58:37,350 - INFO - Related artist : <QuerySet [<Artist: Joana Luz>]>
+2021-10-28 11:58:37,528 - INFO - 		potential duplicate Manuel Sajn, 1990 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:37,530 - INFO - 		potential duplicate Manuel Sajn, 2696 - USER IS JUST A CANDIDATE
+2021-10-28 11:58:39,251 - INFO - Related artist : <QuerySet [<Artist: Manuel Sajn>]>
+2021-10-28 11:58:40,760 - INFO - 		potential duplicate Kendra Mclaughlin, 1473 - USER IS A STUDENT
+2021-10-28 11:58:40,762 - INFO - 		potential duplicate Kendra Mclaughlin, 2782 - USER IS A STUDENT
+2021-10-28 11:58:42,478 - INFO - Related artist : <QuerySet [<Artist: Kendra McLaughlin>]>
