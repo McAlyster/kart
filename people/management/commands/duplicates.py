@@ -5,7 +5,8 @@ from django.utils.crypto import get_random_string
 
 ######## IMPORTS
 import os
-import pathlib
+import time
+from pathlib import Path
 import logging
 
 from django.contrib.postgres.search import TrigramSimilarity
@@ -16,13 +17,14 @@ from django.db.models import CharField, Value, Q
 import django
 import sys
 from django.conf import settings
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent.absolute()))
+sys.path.append(str(Path(__file__).parent.parent.parent.parent.absolute()))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
 django.setup()
 
 
 from django.contrib.auth.models import User
 from people.models import FresnoyProfile, Staff, Artist
+from school.models import Student, StudentApplication
 from production.models import Artwork
 
 from utils.csv_utils import getUserByNames
@@ -34,18 +36,26 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
+import urllib
+from urllib.parse import urlparse
+
 import matplotlib.image as mpimg
 from io import BytesIO
+
+import sqlite3
 
 ##################
 
 # Set file location as current working directory
 OLD_CWD = os.getcwd()
-curr_dir = pathlib.Path(__file__).absolute().parent
+curr_dir = Path(__file__).absolute().parent
+# Tmp directory
+TMP_DIR = curr_dir/"tmp"
+Path.mkdir(TMP_DIR,exist_ok=True)
 
 # Logging
 # clear the logs
-log_path = pathlib.Path(curr_dir/'duplicates.log').absolute()
+log_path = Path(curr_dir/'duplicates.log').absolute()
 open(log_path, 'w').close()
 
 logger = logging.getLogger('duplicated_content')
@@ -69,22 +79,39 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 # Global logger level
-logger.setLevel(logging.CRITICAL)
+logger.setLevel(logging.INFO)
 
 
-def prompt_list(items=[], other=True, cancel=True, list_name="items_list", all_items=True) :
+
+#####################
+# Init of local database to store duplicates during process
+DB_PATH = curr_dir/'duplicates.db'
+con = sqlite3.connect(Path(DB_PATH).absolute())
+cur = con.cursor()
+
+# Table for similar ids
+simi_table = "similar_id"
+
+def init_local_db() :
+    # Create table
+    cur.execute(f'''CREATE TABLE IF NOT EXISTS {simi_table} (id int, id_simi int, type str, validated bool,  UNIQUE(id,id_simi)) ''')
+
+
+
+def prompt_list(items=[], other=True, skip=True, quit=True, list_name="items_list", all_items=True, message="") :
     """
     Ask the agent to choose an item in a list or to type a new item.
 
     Args :
         items (list)    : List of tuples or str to propose
         other (bool)    : Whether the 'other' option is available or not. Will ask the agent to type a new item (optional, default True)
-        cancel (bool)   : Whether the 'cancel' option is available or not. (optional, default True)
+        skip (bool)   : Whether the 'skip' option is available or not. (optional, default True)
+        quit (bool)     : Whether the 'quit' option is available or not. (optional, default True)
         list_name (str) : Name of the list (optional)
         all_items (bool)      : Allow the user to select all items (except 'Skip' and 'other')
 
     Returns :
-        The list of selected or typed item (tuple) or false (bool) if the 'cancel' option was choosen
+        The list of selected or typed item (tuple) or false (bool) if the 'skip' option was choosen
 
     TODO :
         import inquirer
@@ -101,22 +128,33 @@ def prompt_list(items=[], other=True, cancel=True, list_name="items_list", all_i
     if not all([type(item)==tuple for item in items]) and not all([type(item)==str for item in items]) :
         raise TypeError(f"Items must be tuples or strings.\n{items}")
 
+    # Init additonal items labels
+    other_label = 'Other'
+    all_label = 'All'
+    skip_label = 'Skip / None (default)'
+    quit_label = 'Quit'
+    additional_items = [other_label, all_label, skip_label, quit_label]
+
     # Add other to the list
     if other :
-        items += ['Other']
+        items += [other_label]
 
-    # Add cancel to the list
+    # Add all to the list
     if all_items :
-        items = ['All'] + items
+        items = [all_label] + items
 
-    # Add cancel to the list
-    if cancel :
-        items += ['Skip']
+    # Add skip to the list
+    if skip :
+        items = [skip_label] + items
+
+    # Add quit
+    if quit :
+        items += [quit_label]
 
     questions = [
 
       inquirer.Checkbox(list_name,
-                        message="Which items represent the same content ? (press enter without selecting any item to skip)",
+                        message=message,
                         choices=items,
                         ),
     ]
@@ -129,15 +167,18 @@ def prompt_list(items=[], other=True, cancel=True, list_name="items_list", all_i
 
     # The "All" selection overrides any other selected items
     if "All" in answers :
-        answers = [item[1] for item in items if item not in ['other','Skip','All']]
+        answers = [item[1] for item in items if item not in additional_items]
         print("all selected : ", answers)
         return answers
-
 
 
     # The "other" selection overrides any other selected items
     if "other" in answers :
         answers = ['other']
+
+    # The "other" selection overrides any other selected items
+    if "Quit" in answers :
+        answers = ['quit']
 
     # The "cancel" selection returns False
     if not answers or "Skip" in answers  :
@@ -145,13 +186,14 @@ def prompt_list(items=[], other=True, cancel=True, list_name="items_list", all_i
 
     return answers
 
-def show_user_picture(user_id, media_url="http://preprod.api.lefresnoy.net/media") :
+def show_user_picture(user_id, media_url="http://preprod.api.lefresnoy.net/media", pic_name=None) :
     """
     Display (in current OS) the profile picture of the user with id `user_id`
 
     args:
         user_id (int)   : a Django user id
         media_url (str) : url of the media dir (optional)
+        pic_name (str)  : the name under which the file is temporarily saved
 
     side effect :
         trigger the display of an image
@@ -161,14 +203,31 @@ def show_user_picture(user_id, media_url="http://preprod.api.lefresnoy.net/media
     try :
         fp = FresnoyProfile.objects.get(user=user_id)
     except FresnoyProfile.DoesNotExist :
-        logger.debug('User {us}')
+        logger.debug(f'User with id {user_id} does not exist.')
         return
 
     if fp and fp.photo :
+        # Url of the picture
         photo_url = f"{media_url}/{fp.photo}"
+        # Get the picture
         response = requests.get(photo_url)
+        # Load image
         img = Image.open(BytesIO(response.content))
-        img.show()
+
+        # get the extension
+        path = urlparse(photo_url).path
+        ext = os.path.splitext(path)[1]
+        # Concat filename
+        pic_name = pic_name+ext
+        # Store locally (tmp)
+        tmp_file = Path(TMP_DIR/pic_name)
+        img.save(tmp_file)
+
+        # Display image
+        if "posix" == os.name :
+            os.system(f'open {tmp_file}')
+        else :
+            os.system(f'start {tmp_file}')
 
 
 class Command(BaseCommand):
@@ -193,15 +252,42 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--dry',  action='store_true', help='Dry run. No modification is applied to the database.')
+        parser.add_argument('-td','--track-duplicates',  action='store_true', default=False, help='Track similar content and propose to merge them.')
+
         # parser.add_argument('--debug',  action='store_true', help='Debug mode. Detailed logs')
         parser.add_argument('--pictures',  action='store_true', default=False, dest='display_pictures', help='If True, display pictures of potential similar people.')
         parser.add_argument('--no-prompt',  action='store_true', default=False, help='Disable user prompts (for debug purposes in Atom)')
+        parser.add_argument('-l','--list-stored',  action='store_true', default=False, help='If True, display the stored similarities')
+        parser.add_argument('-fc','--flush-cache',  action='store_true', default=False, help='Remove local db of similar ids')
+        parser.add_argument('-dm','--debug-mode',  action='store_true', default=False, help='Switch to debug mode.')
 
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) :
+
+        init_local_db()
 
         logger.debug(f"Duplicates called. \n*args : {args}, \n**args:{options}")
         logger.debug("-----------------")
+
+        # If list mode
+        if options['list_stored'] :
+            print("LIST ONLY")
+            # Call dedicated function for similarities listing
+            return get_stored_simi()
+
+        # If flush mode
+        if options['flush_cache'] :
+            return drop_local_db(ask=True)
+
+        # Debug mode
+        if options['debug_mode'] :
+            return debug()
+
+        # If track duplicates mode
+        if options['track_duplicates'] :
+            pass
+        else :
+            raise TypeError('At least one argument is required.')
 
         # Get all users first and last names
         all_users = User.objects.annotate(
@@ -217,14 +303,18 @@ class Command(BaseCommand):
         # store the similar (potentialy duplicated content)
         simi_content = []
 
+        validated_stored_simi = []
+
         # For each user, look for similar occurence in db
         for user in all_users :
 
             # Init the list of potentially similar users
+            # simi_users = []
             simi_users = [user]
 
-            # Avoid double check if a user was already checked
-            if user.id in processed_ids :
+
+            # If user.id already processed, we continue
+            if not is_ambigous(user.id) :
                 continue
 
             # Get the user fullname
@@ -247,15 +337,33 @@ class Command(BaseCommand):
 
             # If similar users found..
             if len(guessArtLN)>1 :
+                print("\n\n")
                 # .. add and log them
                 for user_simi in guessArtLN :
-                    logger.info(f"\tpotential duplicate {user_simi}, {user_simi.id}")
-                    # print(f"\tpotential duplicate {user_simi}, {user_simi.id}")
+
+                    # Do not process already stored similar id
+                    # print(" user_simi.id in validated_stored_simi ", user_simi.id, validated_stored_simi,user_simi.id in validated_stored_simi )
+                    if not is_ambigous(user_simi.id) :
+                        continue
+
+
+                    # Log potential duplicates
+                    to_log = f"\t\tpotential duplicate {user_simi}, {user_simi.id}"
+
+                    # Add the status of the user (JUST CANDIDATE, STUDENT or NONE of them)
+                    if is_candidate(user=user) and not is_student(user=user) :
+                        to_log += " - USER IS JUST A CANDIDATE"
+                    else :
+                        to_log += " - USER IS A STUDENT"
+                    logger.info(to_log)
+
+                    # Add the user id in the processed list
                     processed_ids += [user_simi.id]
+
                     # Add the similar user to the list of similar users for further treatment
+                    # if not already stored
                     if user_simi not in simi_users :
                         simi_users += [user_simi]
-
 
 
             ###
@@ -276,8 +384,22 @@ class Command(BaseCommand):
             # If results
             if len(guessArtLN2)>1 :
                 for user_simi2 in guessArtLN2 :
-                    logger.info(f"\tLess likely potential duplicate {user_simi2}, {user_simi2.id}")
-                    # print(f"\tLess likely potential duplicate {user_simi2}, {user_simi2.id}")
+
+                    # Do not process already stored similar id
+                    # print(" user_simi2.id in validated_stored_simi ", user_simi2.id, validated_stored_simi,user_simi2.id in validated_stored_simi )
+                    if not is_ambigous(user_simi2.id) :
+                        continue
+
+                    # Log potential duplicates
+                    to_log = f"\t\t Less likely potential duplicate {user_simi2}, {user_simi2.id}"
+
+                    # Add the status of the user (JUST CANDIDATE, STUDENT or NONE of them)
+                    if is_candidate(user=user) and not is_student(user=user) :
+                        to_log += " - USER IS JUST A CANDIDATE"
+                    else :
+                        to_log += " - USER IS A STUDENT"
+                    logger.info(to_log)
+
                     # Add the similar user to the list of similar users
                     simi_users += [user_simi2]
 
@@ -288,41 +410,70 @@ class Command(BaseCommand):
                 # Ask human agent to regroup similar content
                 if options['display_pictures'] :
                     for us in simi_users :
-                        show_user_picture(us.id)
+                        show_user_picture(us.id, pic_name=urllib.parse.quote_plus(us.get_full_name()))
 
                 # Prompt a list of tuples for user to validated similar content from algo cues
-                identic_entities = prompt_list([(f"{user.first_name} {user.last_name} ({user.id})",user.id) for user in (simi_users)], other=False)
+                print(f"**************************\n{user} ({user.id})\n**************************")
+                print(f"Which items represent the same content than {user}? (press enter without selecting any item to skip)\n")
+                message = f"{user} "
+                prompt_l = [(f"{user.first_name} {user.last_name} ({user.id})",user.id) for user in (simi_users[1:])]
+                identic_entities = prompt_list(prompt_l, other=False, message=message)
 
-                if not identic_entities :
+
+                # if quit, quit the script
+                if identic_entities and "quit" in identic_entities :
+                    # break the loop anq quit the script
+                    break
+
+                # If no or one item is selected, continue
+                elif not identic_entities :
                     logger.info('No similar content confirmed.')
                     continue
+
+                # If several items are selected, store them as similar
                 else :
-                    # print(f"identical : {identic_entities}")
                     # Keep only ids (int)
-                    identic_entities = [id for id in identic_entities if isinstance(id, int)]
-                    # print("only ids ",identic_entities)
+                    identic_entities = [user.id] + [id for id in identic_entities if isinstance(id, int)]
+
 
                 # Related artworks
                 rel_aws = []
+                rel_artists = []
                 for user_id in identic_entities :
                     # Get all related artworks
-                    artist = Artist.objects.filter(user=user_id)
-                    # print("Artist", artist)
-                    if artist :
-                        logger.info(f'Related artist : {artist}')
-                        # Get the artworks bu this artist
-                        aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
-                        if aws :
-                            for aw in aws :
-                                rel_aws += [aw]
+                    artists = Artist.objects.filter(user=user_id)
+                    if artists :
+                        for artist in artists :
+                            rel_artists += [artist]
+                            # logger.info(f'Related artist : {artist}')
+                            # Get the artworks bu this artist
+                            aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
+                            if aws :
+                                for aw in aws :
+                                    rel_aws += [aw]
+                            else :
+                                # print("No artwork")
+                                pass
+                print(f"Found {len(rel_artists)} distinct artist(s) for the similar user(s) {identic_entities}")
 
-                        else :
-                            # print("No artwork")
-                            pass
                 if rel_aws :
-                    print("Related artworks : ")
+                    print(f"and {len(rel_aws)} related artworks : ")
                     for aw in rel_aws :
                         print(aw)
+
+                # Save identical ids in db
+                # Insert a row of data
+                for id_simi in identic_entities[1:] :
+                    req = f"INSERT INTO {simi_table} VALUES ('{identic_entities[0]}','{id_simi}','user',{True})"
+                    try :
+                        cur.execute(req)
+                    except sqlite3.IntegrityError :
+                        print("Similarity already spotted !")
+
+
+
+                # Save (commit) the changes
+                con.commit()
             ##########
 
         # Simi content holds all potentialy duplicated content in a list of lists [[user_1,user48..], [user34,user983],...]
@@ -331,14 +482,175 @@ class Command(BaseCommand):
         # First : define and group the contents that are related to the same entity
         validated_duplicated_users = []
 
-        # Second : define which is the correct value for each of the similar fields
-        print("simi_content",simi_content)
+        # # Second : define which is the correct value for each of the similar fields
+        # print("simi_content",simi_content)
 
+        # We can also close the connection if we are done with it.
+        # Just be sure any changes have been committed or they will be lost.
+        con.close()
+
+
+def is_student(user=None, artist=None) :
+    """
+            Return True if the user is a student (and not just a candidate that DID NOT pass the selection).
+
+            Args :
+                - artist (Artist)  : An Artist object
+                - user (User)      : A User Object
+            Return :
+                - bool  : True if user or artist is/was a student, False otherwise
+    """
+    # Init
+    stud = False
+
+    # Check args
+    if not (user or artist) :
+        raise TypeError("Missing 1 required positional argument: 'artist' or 'user'")
+    if user and artist :
+        raise TypeError("one positional argument only : 'artist' or 'user'")
+
+
+    # Check for TypeError
+    if artist and type(artist) is not Artist :
+        raise TypeError("The argument `artist` is not an Artist object")
+
+    if user and type(user) is not User :
+        raise TypeError("The argument `user` is not a User object")
+
+
+    # Look for a Student through `artist`
+    if artist :
+        return bool(Student.objects.filter(artist=artist))
+
+    # Look for a Student through `user`
+    if user :
+        return bool(Student.objects.filter(user=user))
+
+
+
+def is_candidate(user=None, artist=None) :
+    """
+        Return True if the user is a candidate (not necessarly a student).
+
+        Args :
+            - artist (Artist)  : An Artist object
+            - user (User)      : A User Object
+        Return :
+            - bool  : True if user or artist is/was candidate, False otherwise
+    """
+
+    # Init
+    stapp = False
+
+    # Check args
+    if not (user or artist) :
+        raise TypeError("Missing 1 required positional argument: 'artist' or 'user'")
+    if user and artist :
+        raise TypeError("one positional argument only : 'artist' or 'user'")
+
+
+    # Check for TypeError
+    if artist and type(artist) is not Artist :
+        raise TypeError("The argument `artist` is not an Artist object")
+
+    if user and type(user) is not User :
+        raise TypeError("The argument `user` is not a User object")
+
+    if artist :
+        # Look for a StudentApplication for `artist`
+        stapp = StudentApplication.objects.filter(artist=artist)
+    if user :
+        try :
+            # Get the artist from user and call os_candidate again
+            return is_candidate(artist=Artist.objects.get(user=user))
+        except Exception as ex :
+            return False
+
+    if stapp :
+        return True
+    else :
+        return False
+
+
+def is_ambigous(id) :
+    """
+    Return True if id is not yet checked by human (not yet listed in local db).
+    """
+
+    # Check if user.id is already processed in local db
+    req = f"SELECT * FROM {simi_table} WHERE id=? OR id_simi=?"
+    res = cur.execute(req,(id,id))
+    # Fetch results
+    stored_simi = cur.fetchall()
+
+    if stored_simi :
+        return False
+    else :
+        return True
+
+        # convert simi tuples to a list of ids of similar content
+        # # print("stored_simi before",stored_simi) # stored_simi [(1376,), (1438,)]
+        # validated_stored_simi = list(set([i for simituple in stored_simi for i in simituple]))
+        # # print("stored_simi after",validated_stored_simi) # stored_simi [1376,1438]
+        # continue
+
+
+def get_stored_simi() :
+    """
+    Return the similarities already validated and stored in a local database.
+    """
+    # Get ids already processed in local db
+    req = f"SELECT * FROM {simi_table} GROUP BY id"
+    res = cur.execute(req)
+    rows = cur.fetchall()
+    for row in rows :
+        artist = row[0]
+        simi = row[1]
+        type = row[2]
+        print(f"({type}) : {artist} and {simi} are similar.")
+        # print("entry : ", row)
+
+
+def drop_local_db(ask=True) :
+    """
+    Clear the local similarities database.
+
+    args :
+        - ask (bool)    : if True (default), ask confirmation before flushing the db. Flush without warning otherwise.
+
+    """
+    if ask :
+        # Get user confirmation before erasing
+        fl = input('Do you confirm you want to erase local database of similarities (y/N) ? ')
+        if fl != 'y' :
+            print('The local similarities database was NOT flushed.')
+            return
+
+    # timestamp
+    current_time = time.time()
+    os.rename(DB_PATH, Path(DB_PATH.parent()/f"local_db_{current_time}"))
+    # removing without asking
+    # os.remove(DB_PATH)
+    print("Database has been deleted.")
+    return
+
+def debug() :
+    """
+    Execute debug code
+    """
+    print("DEBUG ::::::::::::")
+    user_id = 627
+    artist = Artist.objects.filter(user=user_id)
+    aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
+    if aws :
+        for aw in aws :
+            print("aw",aw)
 
 
 if __name__ == "__main__" :
-    os.system("pwd")
-    os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --no-prompt")
+    # os.system("pwd")
+    # os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --no-prompt")
+    os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --debug-mode")
     # items = prompt_list()
     # print("ITEMS :", items)
     pass
