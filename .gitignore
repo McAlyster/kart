@@ -100,3 +100,12 @@ local_settings.py
 .env
 db.sqlite3
 
+
+# Utils
+utils/not_added.yaml
+
+# Local databases (sqlite)
+local_db*.db
+
+# OVH Database dumps
+sm22580-002.kart*
