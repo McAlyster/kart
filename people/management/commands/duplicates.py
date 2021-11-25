@@ -57,7 +57,7 @@ Path.mkdir(TMP_DIR,exist_ok=True)
 # clear the logs
 log_path = Path(curr_dir/'duplicates.log').absolute()
 open(log_path, 'w').close()
-
+# Create the logger
 logger = logging.getLogger('duplicated_content')
 
 # create file handler which logs even debug messages
@@ -67,25 +67,24 @@ formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter1)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+ch.setLevel(logging.DEBUG)
 formatter2 = logging.Formatter('%(message)s')
 ch.setFormatter(formatter2)
 # create formatter and add it to the handlers
 # formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 # fh.setFormatter(formatter1)
-fh.setLevel(logging.DEBUG)
+fh.setLevel(logging.INFO)
 # add the handlers to the logger
 logger.addHandler(fh)
 logger.addHandler(ch)
 
 # Global logger level
-logger.setLevel(logging.INFO)
-
+# logger.setLevel(logging.INFO)
 
 
 #####################
 # Init of local database to store duplicates during process
-DB_PATH = curr_dir/'duplicates.db'
+DB_PATH = curr_dir/'local_db.db'
 con = sqlite3.connect(Path(DB_PATH).absolute())
 cur = con.cursor()
 
@@ -203,7 +202,7 @@ def show_user_picture(user_id, media_url="http://preprod.api.lefresnoy.net/media
     try :
         fp = FresnoyProfile.objects.get(user=user_id)
     except FresnoyProfile.DoesNotExist :
-        logger.debug(f'User with id {user_id} does not exist.')
+        logger.debug(f'User with id {user_id} does not have any profile.')
         return
 
     if fp and fp.photo :
@@ -305,8 +304,17 @@ class Command(BaseCommand):
 
         validated_stored_simi = []
 
+        total_users = len(all_users)
+        cpt_users = 0
+
         # For each user, look for similar occurence in db
         for user in all_users :
+            #
+            cpt_users += 1
+            # Clear the terminal window
+            clearTerm()
+            print(f"Tracking duplicates ... ({round(100*cpt_users/total_users)}%)")
+            print("User : ",user)
 
             # Init the list of potentially similar users
             # simi_users = []
@@ -412,11 +420,15 @@ class Command(BaseCommand):
                     for us in simi_users :
                         show_user_picture(us.id, pic_name=urllib.parse.quote_plus(us.get_full_name()))
 
+                # Clear term window
+                clearTerm()
+
                 # Prompt a list of tuples for user to validated similar content from algo cues
-                print(f"**************************\n{user} ({user.id})\n**************************")
+                print(f"**************************\n{user}\n**************************")
+
                 print(f"Which items represent the same content than {user}? (press enter without selecting any item to skip)\n")
-                message = f"{user} "
-                prompt_l = [(f"{user.first_name} {user.last_name} ({user.id})",user.id) for user in (simi_users[1:])]
+                message = f"{user} ({user.id} - {get_user_associated_models(user)}) "
+                prompt_l = [(f"{user.first_name} {user.last_name} ({user.id} - {get_user_associated_models(user)})",user.id) for user in (simi_users[1:])]
                 identic_entities = prompt_list(prompt_l, other=False, message=message)
 
 
@@ -443,17 +455,22 @@ class Command(BaseCommand):
                     # Get all related artworks
                     artists = Artist.objects.filter(user=user_id)
                     if artists :
-                        for artist in artists :
-                            rel_artists += [artist]
-                            # logger.info(f'Related artist : {artist}')
-                            # Get the artworks bu this artist
-                            aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
-                            if aws :
-                                for aw in aws :
-                                    rel_aws += [aw]
-                            else :
-                                # print("No artwork")
-                                pass
+                        rel_artists += artists
+                        # Get the artworks bu this artist
+                        try :
+                            aws = False
+                            aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artists)
+                        except TypeError as te :
+                            print('TYPE ERROR',te)
+
+                        if aws :
+                            for aw in aws :
+                                rel_aws += [aw]
+                        else :
+                            print(f"no artwork associated with {artists}")
+                            pass
+
+
                 print(f"Found {len(rel_artists)} distinct artist(s) for the similar user(s) {identic_entities}")
 
                 if rel_aws :
@@ -471,7 +488,7 @@ class Command(BaseCommand):
                         print("Similarity already spotted !")
 
 
-
+                time.sleep(5)
                 # Save (commit) the changes
                 con.commit()
             ##########
@@ -527,6 +544,9 @@ def is_student(user=None, artist=None) :
         return bool(Student.objects.filter(user=user))
 
 
+# TODO is_artist
+
+
 
 def is_candidate(user=None, artist=None) :
     """
@@ -570,6 +590,50 @@ def is_candidate(user=None, artist=None) :
         return True
     else :
         return False
+
+def is_candidate_only(user=None, artist=None) :
+    """
+        Return True if the user is ONLY a candidate (not selected as a student).
+
+        Args :
+            - artist (Artist)  : An Artist object
+            - user (User)      : A User Object
+        Return :
+            - bool  : True if user or artist is/was candidate only, False otherwise
+    """
+
+    if user : return is_candidate(user=user) and not is_student(user=user)
+    if artist : return is_candidate(artist=user) and not is_student(artist=user)
+
+
+
+
+def is_staff(user=None) :
+    """
+            Return True if the user is associated to a staff object.
+
+            Args :
+                - user (User)      : A User Object
+            Return :
+                - bool  : True if user or artist is/was a student, False otherwise
+    """
+    # Init
+    staff = False
+
+    # Check args
+    if not user :
+        raise TypeError("Missing 1 required positional argument: 'user'")
+
+
+    # Check for TypeError
+    if user and type(user) is not User :
+        raise TypeError("The argument `user` is not a User object")
+
+
+    # Look for a Student through `user`
+    if user :
+        return bool(Staff.objects.filter(user=user))
+
 
 
 def is_ambigous(id) :
@@ -628,23 +692,82 @@ def drop_local_db(ask=True) :
 
     # timestamp
     current_time = time.time()
-    os.rename(DB_PATH, Path(DB_PATH.parent()/f"local_db_{current_time}"))
+    os.rename(DB_PATH, Path(DB_PATH.parent/f"local_db_{current_time}.db"))
     # removing without asking
     # os.remove(DB_PATH)
     print("Database has been deleted.")
     return
+
+
+def get_user_associated_models(user=None, sep="|"):
+    """
+    Return the models associated with `user` : Student, Staff, Candidate
+
+    args :
+        - user : a User object
+
+    return :
+        - str   : A concated string of models associated to the user
+
+    """
+
+    ass_mod  = []
+
+    if is_candidate_only(user) : ass_mod += ["Candidate only"]
+    if is_student(user) : ass_mod += ["Student"]
+    if is_staff(user) : ass_mod += ["Staff"]
+
+    if not ass_mod :
+        ass_mod += ["No associated model"]
+
+    return f"{sep}".join(ass_mod)
+
 
 def debug() :
     """
     Execute debug code
     """
     print("DEBUG ::::::::::::")
-    user_id = 627
-    artist = Artist.objects.filter(user=user_id)
-    aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
-    if aws :
-        for aw in aws :
-            print("aw",aw)
+
+    # Get all users
+    all_users = User.objects.annotate(
+        # Concat the full name "first last" to detect misclassifications like: "Hee Won -- Lee" where Hee Won is first
+        # name but can be stored as "Hee  -- Won Lee"
+        search_name=Concat('first_name__unaccent__lower',
+                           Value(' '), 'last_name__unaccent__lower'),
+    ).order_by('-id')
+
+    print(f"{len(all_users)} users.")
+
+    for user in all_users :
+        # print(f"user : {user} ()")
+        print(f"user : {user} ({get_user_associated_models(user)})")
+
+
+
+
+    ############## AWS
+    # user_id = 1059
+    # artist = Artist.objects.filter(user=user_id)
+    # print("artist",artist)
+    # aws = Artwork.objects.prefetch_related('authors__user').filter(authors__in=artist)
+    # if aws :
+    #     for aw in aws :
+    #         print("aw",aw)
+    # else :
+    #     print(f"no artwork associated to {artist}")
+
+
+def clearTerm() :
+    """
+    Clear terminal window
+    """
+    os.system('cls' if os.name=='nt' else 'clear')
+
+
+def
+
+
 
 
 if __name__ == "__main__" :
