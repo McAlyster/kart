@@ -765,9 +765,6 @@ def clearTerm() :
     os.system('cls' if os.name=='nt' else 'clear')
 
 
-def
-
-
 
 
 if __name__ == "__main__" :
