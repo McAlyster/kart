@@ -6,6 +6,7 @@ from django_countries.fields import CountryField
 from languages.fields import LanguageField
 
 from common.utils import make_filepath
+from common.utils import deprecated
 
 from common.models import Website
 
@@ -56,8 +57,12 @@ class FresnoyProfile(models.Model):
     def is_artist(self):
         return self.user.artist_set.count() > 0
 
+    @deprecated("Deprecated - Use is_fresnoy_staff() instead.")
     def is_staff(self):
-        return self.user.staff_set.count() > 0
+        return self.is_fresnoy_staff(self)
+
+    def is_fresnoy_staff(self) :
+        return self.user.fresnoystaff_set.count() > 0
 
     def is_student(self):
         return hasattr(self.user, 'student')
@@ -85,7 +90,8 @@ class Artist(models.Model):
                                                                                self.user.last_name)
 
 
-class Staff(models.Model):
+# class Staff(models.Model):
+class FresnoyStaff(models.Model):
     """
     Someone working at Le Fresnoy (insider) or for a production
     """

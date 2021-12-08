@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from django_countries.serializer_fields import CountryField
 
-from .models import Artist, Staff, Organization, FresnoyProfile
+from .models import Artist, FresnoyStaff, Organization, FresnoyProfile
 
 
 class FresnoyProfileSerializer(serializers.ModelSerializer):
@@ -35,6 +35,7 @@ class FresnoyProfileSerializer(serializers.ModelSerializer):
             "family_status",
             "is_artist",
             "is_staff",
+            "is_fresnoy_staff",
             "is_student",
         )
 
@@ -109,9 +110,9 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class StaffSerializer(serializers.HyperlinkedModelSerializer):
+class FresnoyStaffSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Staff
+        model = FresnoyStaff
         fields = ('user',)
 
     user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)

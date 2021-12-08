@@ -4,7 +4,7 @@ from django.template.defaultfilters import slugify
 from django.utils.crypto import get_random_string
 
 from django.contrib.auth.models import User
-from people.models import FresnoyProfile, Staff
+from people.models import FresnoyProfile, FresnoyStaff
 
 
 def arg_to_unicode(bytestring):
@@ -13,7 +13,7 @@ def arg_to_unicode(bytestring):
 
 
 class Command(BaseCommand):
-    help = 'Create staff user like "Andy" "Wharhol" '
+    help = 'Create fresnoy-staff user like "Andy" "Wharhol" '
 
     def add_arguments(self, parser):
         parser.add_argument('firstname', type=arg_to_unicode, help='Set fist name user')

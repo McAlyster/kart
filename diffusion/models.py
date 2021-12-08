@@ -91,8 +91,8 @@ class MetaAward(models.Model):
             return f'{self.label} ({event})'
 
 
-def staff_and_artist_user_limit():
-    return {'pk__in': User.objects.filter(Q(artist__isnull=False) | Q(staff__isnull=False))
+def fresnoystaff_and_artist_user_limit():
+    return {'pk__in': User.objects.filter(Q(artist__isnull=False) | Q(fresnoystaff__isnull=False))
                                   .values_list('id', flat=True)}
 
 
@@ -104,12 +104,12 @@ class Award(models.Model):
         MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT)
     artwork = models.ManyToManyField(
         'production.Artwork', blank=True, related_name='award')
-    # artist is Artist or Staff
+    # artist is Artist or FresnoyStaff
     artist = models.ManyToManyField(User,
                                     blank=True,
-                                    limit_choices_to=staff_and_artist_user_limit,
+                                    limit_choices_to=fresnoystaff_and_artist_user_limit,
                                     related_name='award',
-                                    help_text="Staff or Artist")
+                                    help_text="FresnoyStaff or Artist")
     event = models.ForeignKey('production.Event',
                               null=True,
                               blank=False,

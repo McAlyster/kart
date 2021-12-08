@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 from people.forms import UserCreateForm
-from people.models import Artist, FresnoyProfile, Staff, Organization
+from people.models import Artist, FresnoyProfile, FresnoyStaff, Organization
 
 from guardian.admin import GuardedModelAdmin
 
@@ -33,19 +33,19 @@ class FresnoyProfileInline(admin.StackedInline):
     """StackedInline admin for FresnoyProfile.
     """
     model = FresnoyProfile
-    readonly_fields = ('is_artist', 'is_student', 'is_staff',)
+    readonly_fields = ('is_artist', 'is_student', 'is_fresnoy_staff',)
 
 
 class FresnoyProfileAdmin(UserAdmin):
     """ Admin for Use and additionnal profile fields.
     """
     inlines = (FresnoyProfileInline,)
-    list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff')
+    list_display = ('username', 'first_name', 'last_name', 'email')
     add_form = UserCreateForm
     add_fieldsets = ((None, {'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email'), }), )
 
 
-class StaffAdmin(GuardedModelAdmin):
+class FresnoyStaffAdmin(GuardedModelAdmin):
     search_fields = ['user__username', 'user__last_name', 'user__first_name']
     list_display = ("user", "artist")
 
@@ -68,5 +68,5 @@ User.__str__ = user_unicode
 admin.site.unregister(User)
 admin.site.register(User, FresnoyProfileAdmin)
 admin.site.register(Artist, ArtistAdmin)
-admin.site.register(Staff, StaffAdmin)
+admin.site.register(FresnoyStaff, FresnoyStaffAdmin)
 admin.site.register(Organization, OrganizationAdmin)
