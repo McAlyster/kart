@@ -19,11 +19,11 @@ from guardian.shortcuts import assign_perm
 from school.models import StudentApplicationSetup
 
 from .models import (
-    Artist, User, FresnoyProfile, Staff, Organization
+    Artist, User, FresnoyProfile, FresnoyStaff, Organization
 )
 from .serializers import (
     ArtistSerializer, UserSerializer, PublicUserSerializer, UserRegisterSerializer,
-    FresnoyProfileSerializer, StaffSerializer,
+    FresnoyProfileSerializer, FresnoyStaffSerializer,
     OrganizationSerializer
 )
 from .utils import send_activation_email, send_account_information_email
@@ -45,7 +45,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self, *args, **kwargs):
         if (
-            self.request.user.is_staff or
+            self.request.user.is_fresnoy_staff or
             self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
            ):
             return UserSerializer
@@ -162,7 +162,7 @@ def send_custom_emails(request, format=None):
             from, to, bcc, subject, message
     """
     user = request.user
-    if(user.is_staff):
+    if(user.is_fresnoy_staff):
         items_need_list = ('from', 'to', 'bcc', 'subject', 'message',)
         verify_email = ('from', 'to', 'bcc',)
         email = {}
@@ -222,9 +222,9 @@ class ArtistViewSet(viewsets.ModelViewSet):
     search_fields = ('=user__username',)
 
 
-class StaffViewSet(viewsets.ModelViewSet):
-    queryset = Staff.objects.all()
-    serializer_class = StaffSerializer
+class FresnoyStaffViewSet(viewsets.ModelViewSet):
+    queryset = FresnoyStaff.objects.all()
+    serializer_class = FresnoyStaffSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=user__username',)

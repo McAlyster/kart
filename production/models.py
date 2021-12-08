@@ -13,7 +13,7 @@ from assets.models import Gallery
 from common.models import Website, BTBeacon
 from common.utils import make_filepath
 from diffusion.models import Place
-from people.models import Artist, Staff, Organization
+from people.models import Artist, FresnoyStaff, Organization
 
 
 class Task(models.Model):
@@ -36,7 +36,7 @@ class OrganizationTask(Task):
 
 
 class ProductionStaffTask(models.Model):
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    staff = models.ForeignKey(FresnoyStaff, on_delete=models.CASCADE)
     production = models.ForeignKey('Production', related_name="staff_tasks", on_delete=models.CASCADE)
     task = models.ForeignKey(StaffTask, on_delete=models.PROTECT)
 
@@ -65,7 +65,7 @@ class Production(PolymorphicModel):
     picture = models.ImageField(upload_to=make_filepath, blank=True)
     websites = models.ManyToManyField(Website, blank=True)
 
-    collaborators = models.ManyToManyField(Staff, through=ProductionStaffTask, blank=True, related_name="%(class)s")
+    collaborators = models.ManyToManyField(FresnoyStaff, through=ProductionStaffTask, blank=True, related_name="%(class)s")
     partners = models.ManyToManyField(Organization,
                                       through=ProductionOrganizationTask, blank=True,
                                       related_name="%(class)s")

@@ -31,3 +31,29 @@ def make_filepath(instance, filename, prefix_folder=None):
         )
         carry_on = os.path.isfile(os.path.join(settings.MEDIA_ROOT, path))
     return path
+
+
+
+"""
+Decorator for deprecated functions
+
+Usage :
+    from .utils import deprecated
+
+    @deprecated("Use method yyy instead")
+    def some_method()"
+     pass
+"""
+
+import warnings
+
+def deprecated(message):
+  def deprecated_decorator(func):
+      def deprecated_func(*args, **kwargs):
+          warnings.warn("{} is a deprecated function. {}".format(func.__name__, message),
+                        category=DeprecationWarning,
+                        stacklevel=2)
+          warnings.simplefilter('default', DeprecationWarning)
+          return func(*args, **kwargs)
+      return deprecated_func
+  return deprecated_decorator
