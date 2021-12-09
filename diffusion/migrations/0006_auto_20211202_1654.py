@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='award',
             name='artist',
-            field=models.ManyToManyField(blank=True, help_text='FresnoyStaff or Artist', limit_choices_to=diffusion.models.staff_and_artist_user_limit, related_name='award', to=settings.AUTH_USER_MODEL),
+            # migration was modified : diffusion.models.staff_and_artist_user_limit replaced by diffusion.models.fresnoystaff_and_artist_user_limit
+            field=models.ManyToManyField(blank=True, help_text='FresnoyStaff or Artist', limit_choices_to=diffusion.models.fresnoystaff_and_artist_user_limit, related_name='award', to=settings.AUTH_USER_MODEL),
         ),
     ]
