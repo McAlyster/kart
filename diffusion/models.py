@@ -93,7 +93,7 @@ class MetaAward(models.Model):
 
 def staff_and_artist_user_limit():
     return fresnoystaff_and_artist_user_limit()
-    
+
 def fresnoystaff_and_artist_user_limit():
     return {'pk__in': User.objects.filter(Q(artist__isnull=False) | Q(fresnoystaff__isnull=False))
                                   .values_list('id', flat=True)}
