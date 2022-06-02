@@ -11,13 +11,8 @@ from .models import (
     Artist, User, FresnoyProfile, FresnoyStaff, Organization
 )
 from .serializers import (
-<<<<<<< HEAD
-    ArtistSerializer, UserSerializer, PublicUserSerializer,
-    FresnoyProfileSerializer, StaffSerializer,
-=======
     ArtistSerializer, UserSerializer, PublicUserSerializer, UserRegisterSerializer,
     FresnoyProfileSerializer, FresnoyStaffSerializer,
->>>>>>> 39e2531 (WIP)
     OrganizationSerializer
 )
 
