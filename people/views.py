@@ -26,19 +26,32 @@ except AttributeError:
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.exclude(username=ANONYMOUS_USER_NAME)
+
     # serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=username', '=email')
 
     def get_serializer_class(self, *args, **kwargs):
+        ####### BACKUP
+        # if (
+        #     self.request.user.is_fresnoy_staff or
+        #     self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
+        #    ):
+        #     return UserSerializer
+        # return PublicUserSerializer
+
+        ######## ALTERNATIVE
+        try :
+            self.request.user.is_fresnoy_staff
+            return UserSerializer
+        except :
+            pass
         if (
-            self.request.user.is_fresnoy_staff or
             self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
            ):
             return UserSerializer
         return PublicUserSerializer
-
 
 def verif_user_by_property(array, property):
     for item in array:
