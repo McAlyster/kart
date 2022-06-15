@@ -51,7 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
             self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
            ):
             return UserSerializer
-        return PublicUserSerializer
+        return UserSerializer
 
 def verif_user_by_property(array, property):
     for item in array:

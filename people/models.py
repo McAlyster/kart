@@ -59,7 +59,7 @@ class FresnoyProfile(models.Model):
 
     @deprecated("Deprecated - Use is_fresnoy_staff() instead.")
     def is_staff(self):
-        return self.is_fresnoy_staff(self)
+        return self.is_fresnoy_staff()
 
     def is_fresnoy_staff(self) :
         return self.user.fresnoystaff_set.count() > 0
