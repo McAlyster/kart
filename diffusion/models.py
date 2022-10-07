@@ -32,14 +32,18 @@ class Place(models.Model):
         Organization, blank=True, null=True, related_name='places', on_delete=models.CASCADE)
 
     def __str__(self):
+        # Concat extra info about the place
         extra_info = self.organization if self.organization else self.country
-        address = self.address[0:20] + \
-            "..." if len(self.address) > 30 else " - " + self.address
-        address += ", " + self.city
-        if not address.lower().find(self.name.lower()):
-            return f'{self.name} {self.city} ({extra_info})'
+        # Prepare string repr
+        if self.address :
+            address = self.address[0:20] + "..." if len(self.address) > 30 else " - " + self.address
+            address += ", " + self.city
+        
+            if address.lower().find(self.name.lower()):
+                return f'{self.name} {address} ({extra_info})'
         else:
-            return f'{self.name} {address} ({extra_info})'
+            return f'{self.name} {self.city} ({extra_info})'
+            
 
 
 def main_event_true():
