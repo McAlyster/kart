@@ -20,13 +20,19 @@ import re
 import unidecode
 
 # # Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
-# import django
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
-# django.setup()
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
+django.setup()
 
+# Load user model
+from django.contrib.auth.models import User
+
+# Import our models
 from production.models import Artwork, Event
 from people.models import Artist
 from diffusion.models import Award, MetaAward, Place
+from school.models import Student
+
 
 # Full width print of dataframe
 pd.set_option('display.expand_frame_repr', False)
@@ -1109,3 +1115,29 @@ def createAwards():
 # art = getArtistByNames(firstname="Daphné", lastname="Hérétakis", pseudo=None, listing=False)
 # print('\n')
 # print(art['artist'].id)
+
+
+def summary():
+    """ Return general description and statistics about the current database"""
+
+    # all_users = User.objects.values()
+    nb_users = len(User.objects.all())
+    # Artists 
+    nb_artists = len(Artist.objects.all())
+    # Students 
+    nb_students = len(Student.objects.all())
+    
+    # Events 
+    nb_events = len(Event.objects.all())
+    # Awards 
+    nb_awards = len(Award.objects.all())
+    
+    logger.info(f"Django : {django.VERSION}")
+    logger.info(f"USERS : {nb_users}")
+    logger.info(f"STUDENTS : {nb_students}")
+    logger.info(f"ARTISTS : {nb_artists}")
+    logger.info(f"EVENTS : {nb_events}")
+    logger.info(f"AWARDS : {nb_awards}")
+
+
+# summary()

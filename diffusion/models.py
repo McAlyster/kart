@@ -41,8 +41,7 @@ class Place(models.Model):
         
             if address.lower().find(self.name.lower()):
                 return f'{self.name} {address} ({extra_info})'
-        else:
-            return f'{self.name} {self.city} ({extra_info})'
+        return f'{self.name} {self.city} ({extra_info})'
             
 
 
