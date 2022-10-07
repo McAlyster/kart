@@ -112,3 +112,7 @@ local_db*.db
 
 # OVH Database dumps
 sm22580-002.kart*
+
+
+# temp directories
+tmp/
