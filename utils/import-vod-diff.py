@@ -639,7 +639,21 @@ def clean_csv(csv_path, dest='./') :
 ################################################################
 
 def usernamize(fn="", ln="", check_duplicate=False) :
-    """ Return a username from first and lastname """
+    """ Return a username from first and lastname.
+
+
+
+    params:
+    fn              : (str) Firstname
+    ln              : (str) Lastname
+    check_duplicate : (boo) If true, verify if username do not already exist in db, increment suffix if needed (default=False).
+
+    e.g. :
+    fn = "Andy"
+    ln = "Wharol"
+    computed username : "awarhol"
+    if awarhol already taken, compute "awarhol2", if "awarhol2" exists, compute "awarhol3" and so on ...
+    """
 
     # Check if multipart firstname
     fn_l = re.split('\W+',fn)
