@@ -770,6 +770,7 @@ def clearTerm() :
 if __name__ == "__main__" :
     # os.system("pwd")
     # os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --no-prompt")
+
     os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --debug-mode")
     # items = prompt_list()
     # print("ITEMS :", items)
