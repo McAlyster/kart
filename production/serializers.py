@@ -11,7 +11,7 @@ from .models import (
     ProductionStaffTask, ProductionOrganizationTask,
     Artwork
 )
-from people.serializers import StaffSerializer
+from people.serializers import FresnoyStaffSerializer
 
 
 class OrganizationTaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,7 +31,7 @@ class ProductionStaffTaskSerializer(serializers.HyperlinkedModelSerializer):
         model = ProductionStaffTask
         fields = ('url', 'staff', 'task')
 
-    staff = StaffSerializer()
+    staff = FresnoyStaffSerializer()
     task = StaffTaskSerializer()
 
 

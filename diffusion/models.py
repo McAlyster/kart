@@ -32,14 +32,17 @@ class Place(models.Model):
         Organization, blank=True, null=True, related_name='places', on_delete=models.CASCADE)
 
     def __str__(self):
+        # Concat extra info about the place
         extra_info = self.organization if self.organization else self.country
-        address = self.address[0:20] + \
-            "..." if len(self.address) > 30 else " - " + self.address
-        address += ", " + self.city
-        if not address.lower().find(self.name.lower()):
-            return f'{self.name} {self.city} ({extra_info})'
-        else:
-            return f'{self.name} {address} ({extra_info})'
+        # Prepare string repr
+        if self.address :
+            address = self.address[0:20] + "..." if len(self.address) > 30 else " - " + self.address
+            address += ", " + self.city
+        
+            if address.lower().find(self.name.lower()):
+                return f'{self.name} {address} ({extra_info})'
+        return f'{self.name} {self.city} ({extra_info})'
+            
 
 
 def main_event_true():
@@ -94,7 +97,10 @@ class MetaAward(models.Model):
 
 
 def staff_and_artist_user_limit():
-    return {'pk__in': User.objects.filter(Q(artist__isnull=False) | Q(staff__isnull=False))
+    return fresnoystaff_and_artist_user_limit()
+
+def fresnoystaff_and_artist_user_limit():
+    return {'pk__in': User.objects.filter(Q(artist__isnull=False) | Q(fresnoystaff__isnull=False))
                                   .values_list('id', flat=True)}
 
 
@@ -106,12 +112,12 @@ class Award(models.Model):
         MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT)
     artwork = models.ManyToManyField(
         'production.Artwork', blank=True, related_name='award')
-    # artist is Artist or Staff
+    # artist is Artist or FresnoyStaff
     artist = models.ManyToManyField(User,
                                     blank=True,
-                                    limit_choices_to=staff_and_artist_user_limit,
+                                    limit_choices_to=fresnoystaff_and_artist_user_limit,
                                     related_name='award',
-                                    help_text="Staff or Artist")
+                                    help_text="FresnoyStaff or Artist")
     event = models.ForeignKey('production.Event',
                               null=True,
                               blank=False,

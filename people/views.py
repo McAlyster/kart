@@ -8,11 +8,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from .models import (
-    Artist, User, FresnoyProfile, Staff, Organization
+    Artist, User, FresnoyProfile, FresnoyStaff, Organization
 )
 from .serializers import (
-    ArtistSerializer, UserSerializer, PublicUserSerializer,
-    FresnoyProfileSerializer, StaffSerializer,
+    ArtistSerializer, UserSerializer, PublicUserSerializer, UserRegisterSerializer,
+    FresnoyProfileSerializer, FresnoyStaffSerializer,
     OrganizationSerializer
 )
 
@@ -26,19 +26,32 @@ except AttributeError:
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.exclude(username=ANONYMOUS_USER_NAME)
+
     # serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=username', '=email')
 
     def get_serializer_class(self, *args, **kwargs):
+        ####### BACKUP
+        # if (
+        #     self.request.user.is_fresnoy_staff or
+        #     self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
+        #    ):
+        #     return UserSerializer
+        # return PublicUserSerializer
+
+        ######## ALTERNATIVE
+        try :
+            self.request.user.is_fresnoy_staff
+            return UserSerializer
+        except :
+            pass
         if (
-            self.request.user.is_staff or
             self.kwargs and self.request.user.pk == int(self.kwargs['pk'])
            ):
             return UserSerializer
-        return PublicUserSerializer
-
+        return UserSerializer
 
 def verif_user_by_property(array, property):
     for item in array:
@@ -55,7 +68,7 @@ def send_custom_emails(request, format=None):
             from, to, bcc, subject, message
     """
     user = request.user
-    if(user.is_staff):
+    if(user.is_fresnoy_staff):
         items_need_list = ('from', 'to', 'bcc', 'subject', 'message',)
         verify_email = ('from', 'to', 'bcc',)
         email = {}
@@ -115,9 +128,9 @@ class ArtistViewSet(viewsets.ModelViewSet):
     search_fields = ('=user__username',)
 
 
-class StaffViewSet(viewsets.ModelViewSet):
-    queryset = Staff.objects.all()
-    serializer_class = StaffSerializer
+class FresnoyStaffViewSet(viewsets.ModelViewSet):
+    queryset = FresnoyStaff.objects.all()
+    serializer_class = FresnoyStaffSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=user__username',)

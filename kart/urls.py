@@ -10,7 +10,7 @@ from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 from rest_auth.views import PasswordResetConfirmView
 
-from people.api import ArtistResource, StaffResource, OrganizationResource, UserResource
+from people.api import ArtistResource, FresnoyStaffResource, OrganizationResource, UserResource
 from production.api import (
     InstallationResource, FilmResource,
     PerformanceResource, EventResource, ExhibitionResource,
@@ -21,7 +21,7 @@ from school.api import PromotionResource, StudentResource, StudentApplicationRes
 
 from people.views import (
     ArtistViewSet, UserViewSet, FresnoyProfileViewSet,
-    StaffViewSet, OrganizationViewSet,
+    FresnoyStaffViewSet, OrganizationViewSet,
 )
 from people import views as people_views
 from school.views import (
@@ -56,7 +56,8 @@ v1_api.register(PromotionResource())
 v1_api.register(StudentResource())
 v1_api.register(StudentApplicationResource())
 v1_api.register(ArtistResource())
-v1_api.register(StaffResource())
+# v1_api.register(StaffResource())
+v1_api.register(FresnoyStaffResource())
 v1_api.register(UserResource())
 v1_api.register(PlaceResource())
 v1_api.register(AwardResource())
@@ -69,7 +70,8 @@ v2_api = routers.DefaultRouter(trailing_slash=False)
 v2_api.register(r'people/user', UserViewSet)
 v2_api.register(r'people/userprofile', FresnoyProfileViewSet)
 v2_api.register(r'people/artist', ArtistViewSet)
-v2_api.register(r'people/staff', StaffViewSet)
+v2_api.register(r'people/fresnoy-staff', FresnoyStaffViewSet)
+v2_api.register(r'people/staff', FresnoyStaffViewSet)       # Staff is Deprecated
 v2_api.register(r'people/organization', OrganizationViewSet)
 v2_api.register(r'people/organization-staff', OrganizationTaskViewSet)
 v2_api.register(r'school/promotion', PromotionViewSet)

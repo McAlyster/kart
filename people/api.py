@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from common.api import WebsiteResource
-from .models import Artist, Staff, Organization
+from .models import Artist, FresnoyStaff, Organization
 
 
 # django-guardian anonymous user
@@ -58,9 +58,19 @@ class ArtistResource(ModelResource):
                                   full=False, null=True, use_in=['detail'])
 
 
+class FresnoyStaffResource(ModelResource):
+    class Meta:
+        queryset = FresnoyStaff.objects.all()
+        resource_name = 'people/fresnoy-staff'
+        fields = ('user',)
+
+    user = fields.ForeignKey(UserResource, 'user', full=True)
+
+
+# Deprecated
 class StaffResource(ModelResource):
     class Meta:
-        queryset = Staff.objects.all()
+        queryset = FresnoyStaff.objects.all()
         resource_name = 'people/staff'
         fields = ('user',)
 
