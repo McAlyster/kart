@@ -7,10 +7,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         summary()
-        createEvents()
-        createPlaces()
-        associateEventsPlaces()
-        createAwards()
+        # createEvents()
+        # createPlaces()
+        # associateEventsPlaces()
+        # createAwards()
         summary()
 
         self.stdout.write(self.style.SUCCESS('Successfully imported the awards !'))

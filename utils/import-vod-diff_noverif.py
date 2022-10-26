@@ -129,7 +129,7 @@ def run_import(csv_path) :
 
     # Try to read the csv file to validate the path (FileNotFoundError otherwise)
     cf = open(csv_path, 'r')
-    
+
     # Clean the csv from udesired data
     clean_csv(csv_path)
 
