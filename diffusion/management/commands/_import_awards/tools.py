@@ -788,7 +788,7 @@ def createPlaces():
 
         # If no code found, check if the country associated with the city found in Kart
         # is close from the country in csv file to use its code instead
-        elif guessCity:
+        elif guessCity and guessCity[0].country:
             codeCountryKart = guessCity[0].country
             countryNameKart = dict(countries)[codeCountryKart]
 
@@ -1090,7 +1090,7 @@ def createAwards():
                     new_aw.save()
                     print(f"{new_aw}  created")
             except ValueError:
-                # logger.warning(f"Artist_id: {artist} caused an IntegrityError")
+                logger.warning(f"Artist_id: {artist} caused an IntegrityError")
                 pass
         # print("CPT", cpt)
 
@@ -1122,16 +1122,16 @@ def summary():
 
     # all_users = User.objects.values()
     nb_users = len(User.objects.all())
-    # Artists 
+    # Artists
     nb_artists = len(Artist.objects.all())
-    # Students 
+    # Students
     nb_students = len(Student.objects.all())
-    
-    # Events 
+
+    # Events
     nb_events = len(Event.objects.all())
-    # Awards 
+    # Awards
     nb_awards = len(Award.objects.all())
-    
+
     logger.info(f"Django : {django.VERSION}")
     logger.info(f"USERS : {nb_users}")
     logger.info(f"STUDENTS : {nb_students}")

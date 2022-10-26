@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ._import_awards.tools import createEvents, createPlaces, associateEventsPlaces, createAwards
+from ._import_awards.tools import summary, createEvents, createPlaces, associateEventsPlaces, createAwards
 
 
 class Command(BaseCommand):
