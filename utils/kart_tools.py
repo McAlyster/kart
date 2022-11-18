@@ -13,7 +13,7 @@ import re
 import unidecode
 import pathlib
 
-
+from difflib import SequenceMatcher
 
 # Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
 import django
@@ -28,6 +28,37 @@ django.setup()
 ################## end shell plus
 
 from django.contrib.auth.models import User
+
+# Import our models
+from production.models import Artwork, Event
+from people.models import Artist
+from diffusion.models import Award, MetaAward, Place
+
+from utils.promo_utils import getPromoByName
+
+import logging
+# Logging
+logger = logging.getLogger('diffusion')
+logger.setLevel(logging.DEBUG)
+# clear the logs
+open('awards.log', 'w').close()
+# create file handler which logs even debug messages
+fh = logging.FileHandler('awards.log')
+fh.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+# create formatter and add it to the handlers
+formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter1)
+formatter2 = logging.Formatter('%(message)s')
+ch.setFormatter(formatter2)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+#####
+
+
 
 
 def usernamize(fn="", ln="", check_duplicate=False) :
@@ -73,19 +104,19 @@ def usernamize(fn="", ln="", check_duplicate=False) :
 
     return username
 
-
-def getPromoByName(promo_name="") :
-    """ Return a promotion object from a promo name"""
-    # First filter by lastname similarity
-    guessPromo = Promotion.objects.annotate(
-                                        similarity=TrigramSimilarity('name', promo_name)
-                                   ).filter(
-                                        similarity__gt=0.8
-                                    ).order_by('-similarity')
-    if guessPromo :
-        return guessPromo[0]
-    print("Promo non trouvée", promo_name)
-    return None
+#
+# def getPromoByName(promo_name="") :
+#     """ Return a promotion object from a promo name"""
+#     # First filter by lastname similarity
+#     guessPromo = Promotion.objects.annotate(
+#                                         similarity=TrigramSimilarity('name', promo_name)
+#                                    ).filter(
+#                                         similarity__gt=0.8
+#                                     ).order_by('-similarity')
+#     if guessPromo :
+#         return guessPromo[0]
+#     print("Promo non trouvée", promo_name)
+#     return None
 
 
 
@@ -174,6 +205,31 @@ def safeGet(obj_class=None, default_index=None, force=False, **args):
 
 
 
+def dist2(item1, item2):
+    """Return the distance between the 2 strings"""
+    if not type(item1) == type(item2) == str:
+        raise TypeError("Parameters should be str.")
+    return round(SequenceMatcher(None, item1.lower(), item2.lower()).ratio(), 2)
+
+
+def kart2csv(field="",model=""):
+    """ Return the corresponding csv field name from Kart field name"""
+    try :
+        return csvkart_mapping[model][field]
+    except :
+        return field
+
+
+def csv2kart(field="", model=""):
+    """ Return the corresponding Kart field name from current csv field name"""
+    if "" == model :
+        for model in csvkart_mapping.keys() :
+            for k, v in csvkart_mapping[model].items():
+                if v == field : return k
+    else :
+        for k, v in csvkart_mapping[model].items():
+            if v == field : return k
+    return field
 
 
 
@@ -183,5 +239,5 @@ if __name__=='__main__' :
     # Debug usernamize
     un = usernamize(fn='olivier',ln='capra', check_duplicate=True)
     print('un',un)
-
-    # 
+    print(getPromoByName("Chris Marker"))
+    #

@@ -1,7 +1,51 @@
-def createPlaces():
+import pandas as pd
+import logging
+
+from diffusion.models import Place
+from django.contrib.postgres.search import TrigramSimilarity
+from django_countries import countries
+from difflib import SequenceMatcher
+import re
+import unidecode
+
+
+
+
+# Logging
+logger = logging.getLogger('create_places')
+
+# Minimum level of message to trigger logging
+logger.setLevel(logging.DEBUG)
+
+# clear the logs
+open('import_csv.log', 'w').close()
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('create_places.log')
+# Minimum level of message to trigger logging in filehandler
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+# Minimum level of message to trigger logging in console
+ch.setLevel(logging.DEBUG)
+
+# create formatter and add it to the handlers
+formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter1)
+formatter2 = logging.Formatter('%(message)s')
+ch.setFormatter(formatter2)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+#####
+
+def createPlaces(DRY_RUN = True, DEBUG = True):
     """Create the places listed in the awards csv files
 
     """
+
+    global CREATED_CONTENT
 
     # Get the data from awards csv extended with title cleaning and events (merge.csv)
     merge = pd.read_csv('./tmp/events.csv')
@@ -95,6 +139,9 @@ def createPlaces():
             )
             if not DRY_RUN:
                 place_obj.save()
+                # Log creation in global list
+                CREATED_CONTENT.append(place_obj)
+
             created = True
         if place.place_city == '':
             logger.info(f'Empty City ============== {place_obj}')
@@ -121,3 +168,61 @@ def createPlaces():
     # Restore the missing data after the merge
     merge_df.loc[merge_df['place_city'] == "**NULL**", 'place_city'] = ''
     merge_df.to_csv('./tmp/merge_events_places.csv', index=False)
+
+
+def getISOname(countryName=None, simili=False, DRY_RUN=True, DEBUG=True):
+    """Return the ISO3166 international value of `countryName`
+
+    Parameters:
+    - countryName  : (str) The name of a country
+    - simili         : (bool) If True (default:False), use similarity to compare the names
+    """
+    # Process the US case (happens often!)
+    if re.search('[EeéÉ]tats[ ]?-?[ ]?[Uu]nis', countryName):
+        return "US"
+    # Kosovo is not liste in django countries (2020)
+    if re.search('kosovo', countryName, re.IGNORECASE):
+        return 'XK'
+
+    # General case
+    if not simili:
+        for code, name in list(countries):
+            if name == countryName:
+                return code
+        return False
+    else:
+        # The dic holding the matches
+        matchCodes = []
+        for code, name in list(countries):
+            dist = SequenceMatcher(None, str(countryName).lower(), name.lower()).ratio()
+            # logger.info(f"DIST between {countryName} (unknown) and {name}: {dist}")
+            if dist >= .95:
+                matchCodes.append({'dist': dist, 'code': code})  # 1 ponctuation diff leads to .88
+            if dist >= .85:
+                cn1 = unidecode.unidecode(str(countryName))
+                cn2 = unidecode.unidecode(name)
+                dist2 = SequenceMatcher(None, cn1.lower(), cn2.lower()).ratio()
+                if dist2 > dist:
+                    logger.info(
+                        f"""------------------- ACCENTUATION DIFF {countryName} vs {name}\n
+                        Accents removed: {cn1} vs {cn2}: {dist2}""")
+                    # 1 ponctuation diff leads to .88
+                    matchCodes.append({'dist': dist2, 'code': code})
+                else:
+                    if DEBUG:
+                        return code
+                    cont = input(f"""
+                                 NOT FOUND but {countryName} has a close match with {name}
+                                 Should I keep it ? (Y/n):   """)
+                    if re.search("NO?", cont, re.IGNORECASE):
+                        continue
+                    else:
+                        return code
+
+    # Sort the matches by similarity
+    sorted(matchCodes, key=lambda i: i['dist'])
+    try:
+        # Return the code with the highest score
+        return matchCodes[0]['code']
+    except IndexError:
+        return False

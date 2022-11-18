@@ -23,7 +23,7 @@ django.setup()
 
 
 from django.contrib.auth.models import User
-from people.models import FresnoyProfile, Staff, Artist
+from people.models import FresnoyProfile, FresnoyStaff, Artist
 from school.models import Student, StudentApplication
 from production.models import Artwork
 
@@ -632,7 +632,7 @@ def is_staff(user=None) :
 
     # Look for a Student through `user`
     if user :
-        return bool(Staff.objects.filter(user=user))
+        return bool(FresnoyStaff.objects.filter(user=user))
 
 
 

@@ -1,3 +1,5 @@
+
+
 def getUserByNames(firstname="", lastname="", pseudo="", listing=False, dist_min=False): # TODO remove pseudo from params
     """Retrieve the closest user from the first and last names given
 
