@@ -46,7 +46,7 @@ from utils.kart_tools import *
 pd.set_option('display.expand_frame_repr', False)
 
 # TODO: Harmonise created and read files (merge.csv, ...)
-DRY_RUN = True  # No save() if True
+dry_run = True  # No save() if True
 DEBUG = True
 
 # Set file location as current working directory
@@ -155,7 +155,7 @@ def infoCSVeventTitles():
                 f"Event already exist with very approaching name (but not same case) for {evt_title}:\n{contains}\n")
 
 
-def createEvents(DRY_RUN=True, DEBUG=True):
+def createEvents(dry_run=False, DEBUG=True):
     """ Create (in Kart) the events listed in awards csv file
 
     1) Retrieve the data about the events listed in awards csv file
@@ -165,7 +165,7 @@ def createEvents(DRY_RUN=True, DEBUG=True):
 
 
     # DRY RUN mention
-    dry_mention = "(dry run)" if DRY_RUN else ""
+    dry_mention = "(dry run)" if dry_run else ""
 
     # Get the events from awards csv extended with title cleaning (merge.csv)
     events = pd.read_csv('./tmp/merge.csv')
@@ -186,6 +186,7 @@ def createEvents(DRY_RUN=True, DEBUG=True):
 
         # If no title is defined, skip the event
         if str(title) in ["nan", ""]:
+            warnings.warn(f"Create event : no title provided - skipping event...")
             continue
 
         # Check if meta event exists, if not, creates it
@@ -209,10 +210,7 @@ def createEvents(DRY_RUN=True, DEBUG=True):
                 type=type,
                 main_event=True
             )
-            if not DRY_RUN:
-                evt.save()
-                CREATED_CONTENT.append(evt)
-
+            evt.save(dry_run=False)
             created = True
 
         if created:
@@ -242,12 +240,9 @@ def createEvents(DRY_RUN=True, DEBUG=True):
                 type=type,
                 starting_date=starting_date
             )
-            if not DRY_RUN:
+            if not dry_run:
                 evt.save()
             created = True
-
-            # Log creation in global list
-            CREATED_CONTENT.append(evt)
 
 
         if created:
@@ -320,24 +315,28 @@ def getISOname(countryName=None, simili=False):
 
 
 
-def associateEventsPlaces(DRY_RUN=True, DEBUG=True):
+def associateEventsPlaces(dry_run=False, DEBUG=True):
     """Fill the place field of created events with the created places
 
     """
-
+    # Ignore association in dry mode
+    if dry_run : return
     # Get the events and places csv
     evt_places = pd.read_csv("./tmp/merge_events_places.csv")
 
     # Update the events with the place
     for ind, award in evt_places.iterrows():
-        event_id = int(award.event_id)
+
+        # Retrieve the event id
+        event_id = int(award.event_id) if not dry_run else 9999
+
         if str(award.place_id) != "nan":
             try:  # some events have no places specified
                 place_id = int(award.place_id)
                 evt = Event.objects.get(pk=event_id)
                 evt.place_id = place_id
-                if not DRY_RUN:
-                    evt.save()
+                # evt.save(dry_run=dry_run)
+                evt.save()
                 tools_logger.info(evt)
             except ValueError as ve:
                 tools_logger.info("ve", ve, "award.place_id", award.place_id)
@@ -358,7 +357,7 @@ def associateEventsPlaces(DRY_RUN=True, DEBUG=True):
 # artworkCleaning()
 
 # tools_logger.setLevel(logging.CRITICAL)
-# DRY_RUN = True
+# dry_run = True
 # #
 # # # createEvents()
 # # # createPlaces()

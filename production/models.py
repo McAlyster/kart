@@ -254,6 +254,13 @@ class Event(Production):
         else:
             return f"{self.title} (main event)"
 
+    def save(self, *args, **kwargs):
+        if 'dry_run' in kwargs and kwargs['dry_run'] == True :
+            print("DRY !")
+            return
+        super(Production, self).save(*args, **kwargs)
+
+
 
 class Exhibition(Event):
     pass  # TODO?

@@ -40,7 +40,7 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 #####
 
-def createPlaces(DRY_RUN = True, DEBUG = True):
+def createPlaces(dry_run = False, DEBUG = True):
     """Create the places listed in the awards csv files
 
     """
@@ -137,10 +137,9 @@ def createPlaces(DRY_RUN = True, DEBUG = True):
                 city=city,
                 country=codeCountryCSV if codeCountryCSV else ''
             )
-            if not DRY_RUN:
+            if not dry_run:
                 place_obj.save()
-                # Log creation in global list
-                CREATED_CONTENT.append(place_obj)
+            # TODO : modify model for dry_run mode (see event model)
 
             created = True
         if place.place_city == '':
@@ -170,7 +169,7 @@ def createPlaces(DRY_RUN = True, DEBUG = True):
     merge_df.to_csv('./tmp/merge_events_places.csv', index=False)
 
 
-def getISOname(countryName=None, simili=False, DRY_RUN=True, DEBUG=True):
+def getISOname(countryName=None, simili=False, dry_run=False, DEBUG=True):
     """Return the ISO3166 international value of `countryName`
 
     Parameters:

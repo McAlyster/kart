@@ -59,7 +59,7 @@ pd.set_option('display.expand_frame_repr', False)
 
 
 # TODO: Harmonise created and read files (merge.csv, ...)
-DRY_RUN = False  # No save() if True
+dry_run = False  # No save() if True
 DEBUG = True
 
 # Set file location as current working directory
@@ -300,7 +300,7 @@ def createEvents():
                 type=type,
                 main_event=True
             )
-            if not DRY_RUN:
+            if not dry_run:
                 evt.save()
             created = True
 
@@ -329,7 +329,7 @@ def createEvents():
                 type=type,
                 starting_date=starting_date
             )
-            if not DRY_RUN:
+            if not dry_run:
                 evt.save()
             created = True
 
@@ -420,7 +420,7 @@ def associateEventsPlaces():
                 place_id = int(award.place_id)
                 evt = Event.objects.get(pk=event_id)
                 evt.place_id = place_id
-                if not DRY_RUN:
+                if not dry_run:
                     evt.save()
                 logger.info(evt)
             except ValueError as ve:
@@ -584,7 +584,7 @@ def createAwards():
                 type="INDIVIDUAL"  # indivudal by default, no related info in csv
             )
             print(f"label {maward.label}, event {mevent}, description {description}")
-            if not DRY_RUN:
+            if not dry_run:
                 maward.save()
             logger.info(f"\"{maward}\" created ")
 
@@ -606,7 +606,7 @@ def createAwards():
             except AttributeError:
                 # logger.warning(f"Artist_id: {artist} caused an AttributeError")
                 pass
-            if not DRY_RUN:
+            if not dry_run:
                 new_aw.save()
         else:
             new_aw = Award(
@@ -616,7 +616,7 @@ def createAwards():
                 note=note
             )
             try:
-                if not DRY_RUN:
+                if not dry_run:
                     new_aw.save()
                     new_aw.artwork.add(artwork_id)
                     new_aw.save()
@@ -636,7 +636,7 @@ def createAwards():
 # artworkCleaning()
 
 # logger.setLevel(logging.CRITICAL)
-# DRY_RUN = True
+# dry_run = True
 # #
 # # # createEvents()
 # # # createPlaces()
@@ -921,7 +921,7 @@ def clean_csv(csv_path, dest='./') :
             user = User(**user_dict)
 
             # Save user
-            if not DRY_RUN :
+            if not dry_run :
                 user.save()
 
 
@@ -991,7 +991,7 @@ def clean_csv(csv_path, dest='./') :
             missing_artists += [artist]
 
         # Save artist
-        if not DRY_RUN :
+        if not dry_run :
             artist.save()
 
         ############
@@ -1033,7 +1033,7 @@ def clean_csv(csv_path, dest='./') :
                 missing_students += [student]
 
                 # Save student
-                if not DRY_RUN :
+                if not dry_run :
                     student.save()
             print("student.id", student.id)
 
@@ -1096,14 +1096,14 @@ def clean_csv(csv_path, dest='./') :
 
 
             # Save artwork
-            if not DRY_RUN :
+            if not dry_run :
                 artwork.save()
 
             # Add author to the artwork
             artwork.authors.add(artist)
 
             # Save artwork
-            if not DRY_RUN :
+            if not dry_run :
                 artwork.save()
 
         print("duration", row[kart2webf('artwork', 'duration')])

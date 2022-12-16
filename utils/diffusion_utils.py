@@ -33,7 +33,7 @@ logger.addHandler(ch)
 
 
 
-def createAwards(DRY_RUN = True, DEBUG = True):
+def createAwards(dry_run = False, DEBUG = True):
     """Create the awards listed in csv in Kart
 
     """
@@ -46,11 +46,16 @@ def createAwards(DRY_RUN = True, DEBUG = True):
 
     # Merge all the data in a dataframe
     total_df = pd.merge(awards, authors, how='left')
+    # Create a note column
     total_df["notes"] = ""
+
+    # Replace empty values with ''
     total_df.fillna('', inplace=True)
+
+    # Awards counter
     cpt = 0
 
-    # Check if artist are ok (not fully controled before ...)
+    # Check if artists info are complete
     # if no artist_id, search by name in db
     for id, row in total_df[total_df['artist_id'] == ''].iterrows():
         art = getArtistByNames(firstname=row['artist_firstname'], lastname=row['artist_lastname'], listing=False)
@@ -60,11 +65,15 @@ def createAwards(DRY_RUN = True, DEBUG = True):
             # the id is stored in df
             total_df.loc[id, "artist_id"] = art['artist'].id
 
+    # Iterate through all validated rows
     for ind, award in total_df.iterrows():
         # init
         artwork_id = artist = False
 
+        # Retrieve the award label
         label = award.meta_award_label
+
+        # Retrieve the event id
         event_id = int(award.event_id)
 
         # An artwork id is required to create the award
@@ -109,7 +118,7 @@ def createAwards(DRY_RUN = True, DEBUG = True):
                 type="INDIVIDUAL"  # indivudal by default, no related info in csv
             )
             print(f"label {maward.label}, event {mevent}, description {description}")
-            if not DRY_RUN:
+            if not dry_run:
                 maward.save()
             logger.info(f"\"{maward}\" created ")
 
@@ -131,7 +140,7 @@ def createAwards(DRY_RUN = True, DEBUG = True):
             except AttributeError:
                 # logger.warning(f"Artist_id: {artist} caused an AttributeError")
                 pass
-            if not DRY_RUN:
+            if not dry_run:
                 new_aw.save()
         else:
             new_aw = Award(
@@ -141,7 +150,7 @@ def createAwards(DRY_RUN = True, DEBUG = True):
                 note=note
             )
             try:
-                if not DRY_RUN:
+                if not dry_run:
                     new_aw.save()
                     new_aw.artwork.add(artwork_id)
                     new_aw.save()
