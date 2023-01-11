@@ -156,6 +156,7 @@ def infoCSVeventTitles():
 
 
 def createEvents(dry_run=False, DEBUG=True):
+
     """ Create (in Kart) the events listed in awards csv file
 
     1) Retrieve the data about the events listed in awards csv file
@@ -166,6 +167,12 @@ def createEvents(dry_run=False, DEBUG=True):
 
     # DRY RUN mention
     dry_mention = "(dry run)" if dry_run else ""
+
+    if not dry_run :
+        atomic_context = atomic()
+    else:
+        atomic_context = rollback_atomic()
+
 
     # Get the events from awards csv extended with title cleaning (merge.csv)
     events = pd.read_csv('./tmp/merge.csv')
