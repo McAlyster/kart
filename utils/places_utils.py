@@ -1,12 +1,24 @@
+import os
+import sys
 import pandas as pd
 import logging
+from difflib import SequenceMatcher
+import re
+import unidecode
+import pathlib
+
+
+import django
+from django.conf import settings
+sys.path.append(str(pathlib.Path(__file__).parent.parent.absolute()))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
+django.setup()
+
 
 from diffusion.models import Place
 from django.contrib.postgres.search import TrigramSimilarity
 from django_countries import countries
-from difflib import SequenceMatcher
-import re
-import unidecode
+
 
 
 
@@ -40,7 +52,11 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 #####
 
-def createPlaces(dry_run = False, DEBUG = True):
+
+
+DEFAULT_CSV = "/tmp/events.csv"
+
+def createPlaces(csv_file=DEFAULT_CSV, dry_run = False, DEBUG = True):
     """Create the places listed in the awards csv files
 
     """
@@ -225,3 +241,12 @@ def getISOname(countryName=None, simili=False, dry_run=False, DEBUG=True):
         return matchCodes[0]['code']
     except IndexError:
         return False
+
+
+if __name__ == "__main__":
+    
+    createPlaces()
+
+
+
+    

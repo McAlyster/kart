@@ -300,4 +300,5 @@ def csv2kart(field="", model="", csvkart_mapping=conf['csvkart_mapping']):
 if __name__ == "__main__" :
     # id_prod = 416
     # gal = getDiffGallery(id_prod)
-    run_import(csv_path="./Kart-TEASER_VOD.csvSd")
+    # run_import(csv_path="./Kart-TEASER_VOD.csvSd")
+    pass
