@@ -27,7 +27,7 @@ from people.models import FresnoyProfile, FresnoyStaff, Artist
 from school.models import Student, StudentApplication
 from production.models import Artwork
 
-from utils.csv_utils import getUserByNames
+from utils.user_utils import getUserByNames
 from utils.correction import Correction
 
 import requests
@@ -768,10 +768,11 @@ def clearTerm() :
 
 
 if __name__ == "__main__" :
+    
     # os.system("pwd")
     # os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --no-prompt")
 
-    os.system("/Users/ocapra/Desktop/PROJECTS/KART/kart/manage.py duplicates --debug-mode")
+    # os.system(" /Users/ocapra/PROJECTS/KART/kart/manage.py duplicates --debug-mode")
     # items = prompt_list()
     # print("ITEMS :", items)
     pass
