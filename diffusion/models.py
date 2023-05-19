@@ -13,6 +13,8 @@ class Place(models.Model):
     """
     Some place belonging to an organization
     """
+    
+
     name = models.CharField(max_length=255)
     description = models.TextField(null=True)
 
@@ -21,6 +23,31 @@ class Place(models.Model):
         max_length=10, blank=True, help_text="Code postal / Zipcode")
     city = models.CharField(max_length=50, blank=True)
     country = CountryField(default="")
+
+    # Continents 
+    ASIA = "AS"
+    AFRICA = "AF"
+    ANTARTICA = "AN"
+    AUSTRALIA = "AU"
+    EUROPE = "EU"
+    NORTH_AMERICA = "NA"
+    SOUTH_AMERICA = "SA"
+        	   
+    CONTINENTS = [
+        (ASIA, "Asia"),
+        (EUROPE, "Europe"),
+        (AFRICA, "Africa"),
+        (NORTH_AMERICA, "North America"),
+        (SOUTH_AMERICA, "South America"),
+        (AUSTRALIA, "Australia"),
+        (ANTARTICA, "Antartica"),
+    ]
+
+    continent = models.CharField(
+        max_length=2,
+        choices=CONTINENTS,
+        blank=True
+    )
 
     latitude = models.DecimalField(
         max_digits=9, decimal_places=6, null=True, blank=True)
