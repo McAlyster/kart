@@ -32,15 +32,19 @@ class Place(models.Model):
     EUROPE = "EU"
     NORTH_AMERICA = "NA"
     SOUTH_AMERICA = "SA"
+    MIDDLE_EAST = 'ME'
+    OCEANIA = 'OC'
         	   
     CONTINENTS = [
-        (ASIA, "Asia"),
+        (ASIA, "Asie"),
         (EUROPE, "Europe"),
-        (AFRICA, "Africa"),
-        (NORTH_AMERICA, "North America"),
-        (SOUTH_AMERICA, "South America"),
-        (AUSTRALIA, "Australia"),
-        (ANTARTICA, "Antartica"),
+        (AFRICA, "Afrique"),
+        (NORTH_AMERICA, "Amérique du Nord"),
+        (SOUTH_AMERICA, "Amérique du Sud"),
+        (AUSTRALIA, "Australie"),
+        (MIDDLE_EAST,"Moyen Orient"),
+        (ANTARTICA, "Antarctique"),
+        (OCEANIA, 'Océanie')
     ]
 
     continent = models.CharField(
