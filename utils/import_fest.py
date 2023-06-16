@@ -23,6 +23,29 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from difflib import SequenceMatcher
 
+# Logging
+logger = logging.getLogger('import_events')
+logger.setLevel(logging.DEBUG)
+# clear the logs
+open('events.log', 'w').close()
+# create file handler which logs even debug messages
+fh = logging.FileHandler('events.log')
+fh.setLevel(logging.INFO)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+# create formatter and add it to the handlers
+formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter1)
+formatter2 = logging.Formatter('%(message)s')
+ch.setFormatter(formatter2)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+#####
+
+
+
 
 # Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
 import django
@@ -63,7 +86,7 @@ CONTINENTS = [
 
 # DRY RUN
 dry_run = True
-dry_run = False
+# dry_run = False
 
 
 
@@ -110,8 +133,10 @@ for ind, data in fest_df.iterrows():
         # Extract id e.g. 1143
         r = re.match(patt, id2parse)
         id = r.group(1)
-        # Replace former value woth new one
+
+        # Replace former value with new one
         fest_df.loc[ind,'id'] = id
+        logger.debug(f"id event extracted : {id} from \"{id2parse}\"")
         
 
 # For each row check if exists in db 
@@ -124,7 +149,7 @@ for ind, data in fest_df.iterrows():
     try :
         ev = Event.objects.get(pk=id)
     except :
-        print(f"Can't find the object with id {id}")
+        logger.debug(f"Can't find the object with id {id}")
         continue
 
     # get the place from event
@@ -231,8 +256,8 @@ for ind, data in fest_df.iterrows():
                 
                 
                 if not ev.title == new_title :
-                    print('titre modifié', ev.title, ' >> ' , new_title)
-                    ev.title = new_title
+                   logger.debug(f"titre modifié {ev.title} >>  {new_title}")
+                   ev.title = new_title
 
             if 'GENRE' == m :
                 if 'Genre' in data.keys() :
@@ -244,14 +269,20 @@ for ind, data in fest_df.iterrows():
             if 'CONTINENT' == m :
                 new_continent = getContinent(data['continent'], True)
                 if not place.continent == new_continent and place :
-                    print('continent modifié', place.continent, ' >> ' , new_continent)
+                    if not place.continent : logger.debug(f"Continent non renseigné dans Kart")
+                    logger.debug(f"continent modifié {place.continent}  >>  {new_continent}")
                     place.continent =  new_continent
                     if not dry_run :
+                        
                         place.save()
+                    else :
+                       logger.debug(f"Dry run : {place} not saved")
             
 
             if not dry_run :
                     place.save()
+                    logger.info(f"Place {place} saved")
                     ev.save()
+                    logger.info(f"Event {ev} saved")
             else :
-                print("Event not saved -- DRY RUN")
+               logger.debug(f"Dry run : {ev} not saved")
