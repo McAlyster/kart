@@ -71,7 +71,7 @@ class Place(models.Model):
             address = self.address[0:20] + \
             "..." if len(self.address) > 30 else " - " + self.address
         else :
-            self.address = ""
+            address = ""
         
         # Concat with the city 
         if self.city : address += ", " + self.city
