@@ -1,245 +1,245 @@
-Refs Kart,Num,Type,Genre,nom,mois,site web,continent,pays,ville,lat,lng,Modif
-Seattle International Film Festival - Seattle (US) |code:1022,16,Festival,festival film international ,seattle international film festival,2,www.siff.net,amérique nord,usa,seattle,47.673455,-122.331537,MODIF GENRE
-Miff - Melbourne (AU) |code:1093,89,Festival,festival film international ,miff,8,www.miff.com.au,océanie,australie,melbourne,-37.825071,144.978682,MODIF GENRE
-This Is Not Art - Newcastle (AU) |code:939,178,Festival,festival art digital,this is not art,9,http://www.thisisnotart.org/,océanie,australie,newcastle,-32.9278,151.782607,MODIF CONTINENT
-Liquid Architecture - Sydney (AU) |code:951,190,Festival,festival création sonore,liquid architecture,5,http://www.liquidarchitecture.org.au/program/,océanie,australie,sydney,-34.035875,151.194191,MODIF CONTINENT
-Nahal Student Short Film Festival  - Teheran (IR) |code:1070,66,Festival,festival cinéma étudiant,nahal student short film festival ,6,http://nahalfestival.art.ac.ir/,moyen-orient,iran,teheran,35.69439,51.42151,MODIF GENRE
-Tau - Tel Aviv (IL) |code:1085,81,Festival,festival cinéma étudiant,tau,7,www.taufilmfest.com,moyen-orient,israël,tel aviv,32.072773,34.804786,MODIF GENRE
-Jerusalem Film Festival - Jerusalem (IL) |code:1087,83,Festival,festival film international ,jerusalem film festival,7,www.jff.org.il/en,moyen-orient,israël,jerusalem,31.76904,35.21633,MODIF GENRE
-Rencontres Internationales Paris/Berlin - Paris (FR) |code:1032,26,Festival,art contemporain,rencontres internationales paris/berlin,3,www.art-action.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
-Festival De Vienne - Vienne (AT) |code:1064,60,Festival,biennale  ,festival de vienne,5,www.viennale.at,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
-InvidéO - Milan (IT) |code:1143,139,Festival,exposition art vidéo,invidéo,11,www.mostrainvideo.com,europe,italie,milan,45.473702,9.170685,MODIF GENRE
-Festival Et Marché International Du Film D'Annecy - Annecy (FR) |code:1072,68,Festival,festival animation,festival et marché international du film d'annecy,6,www.annecy.org,europe,france,annecy,45.906143,6.125034,MODIF GENRE
-Mecal - Barcelone (ES) |code:1039,33,Festival,festival animation,mecal,3,www.mecalbcn.org,europe,espagne,barcelone,41.400347,2.159592,MODIF GENRE
-Anima - Bruxelles (BE) |code:1023,17,Festival,festival animation,anima,2,www.animafestival.be,europe,belgique,bruxelles,50.733183,4.436117,MODIF GENRE
-Festival National Du Film D'Animation. - Rennes (FR) |code:1031,25,Festival,festival animation,festival national du film d'animation.,3,www.festival-film-animation.fr,europe,france,rennes,48.110805,-1.665857,MODIF GENRE
-Stuttgart Festival Of Animated Film - Stuttgart (DE) |code:1058,54,Festival,festival animation,stuttgart festival of animated film,4,www.itfs.de/en,europe,allemagne,stuttgart,48.802275,9.188624,MODIF GENRE
-Animafest Zagreb - Zagreb (HR) |code:1080,76,Festival,festival animation,animafest zagreb,6,www.animafest.hr/en,europe,croatie,zagreb,45.806026,15.976218,MODIF GENRE
-Tricky Women Film Festival - Vienne (AT) |code:1046,41,Festival,festival animation femmes,tricky women film festival,3,https://www.trickywomen.at/de/festival/2017,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
-Transmediale - Berlin (DE) |code:971,5,Festival,Festival art et digital,transmediale,1,www.transmediale.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
-Festival Du CinéMa De Brive - Brive (FR) |code:1051,46,Festival,festival art et essai,festival du cinéma de brive,4,www.festivalcinemabrive.fr,europe,france,brive,45.156197,1.500454,MODIF GENRE
-Iffr - Rotterdam (NL) |code:1008,1,Festival,festival cinéma,iffr,1,www.iffr.com/en,europe,pays-bas,rotterdam,51.92278,4.47578,MODIF GENRE
-Encounters - Bristol () |code:1103,99,Festival,festival cinéma émergent,encounters,9,http://encounters-festival.org.uk,europe,grande-bretagne,bristol,51.455662,-2.582966,MODIF GENRE
-Semaine De La Critique - Cannes (FR) |code:1063,59,Festival,festival cinéma émergent,semaine de la critique,5,www.semainedelacritique.com,europe,france,cannes,43.557963,7.003061,MODIF GENRE
-Jihlava - Jihlava (CZ) |code:1112,108,Festival,festival cinéma émergent,jihlava,10,www.dokument-festival.com,europe,république tchèque,jihlava,49.400043,15.590803,MODIF GENRE
-Sitges - Sitges (ES) |code:1124,120,Festival,festival cinéma fantastique,sitges,10,http://sitgesfilmfestival.com,europe,espagne,sitges,41.230643,1.785764,MODIF GENRE
-Next Festival Bucharest - Bucharest (RO) |code:1083,79,Festival,festival cinéma indépendant,next festival bucharest,6,www.nextfilmfestival.ro/en,europe,roumanie,bucharest,44.435842,26.085733,MODIF GENRE
-Indiecork - Cork (IE) |code:1126,122,Festival,festival cinéma indépendant,indiecork,10,http://indiecork.com,europe,Irlande,cork,51.500106,-9.371343,MODIF GENRE
-IndieLisboa - Festival international du cinéma indépendant de Lisbonne - Lisboa (PT) |code:1059,55,Festival,festival cinéma indépendant,indielisboa,5,www.indielisboa.com,europe,portugal,lisboa,38.748243,-9.140093,MODIF GENRE
-Riff - Rome (IT) |code:1133,129,Festival,festival cinéma indépendant,riff,11,www.riff.it/en,europe,italie,rome,41.878243,12.52809,MODIF GENRE
-Torino Film Festival - Turin (IT) |code:1144,140,Festival,festival cinéma indépendant,torino film festival,11,www.torinofilmfest.org,europe,italie,turin,45.059405,7.652514,MODIF GENRE
-Festival Entrevues - Belfort (FR) |code:1127,123,Festival,festival cinéma indépendant et novateur,festival entrevues,10,www.festival-entrevues.com,europe,france,belfort,47.650546,6.90974,MODIF GENRE
-Naoussa International Film Festival - Naoussa (GR) |code:1118,114,Festival,festival cinéma novateur,naoussa international film festival,10,www.niff.gr/en,europe,grèce,naoussa,40.628945,22.069248,MODIF GENRE
-Norwegian Short Film Festival  - Grimstad (NO) |code:1082,78,Festival,festival courts métrages,norwegian short film festival ,6,https://kortfilmfestivalen.no/en/pages,europe,norvège,grimstad,58.338849,8.586019,MODIF GENRE
-Vis Vienna Shorts - Vienne (AT) |code:1074,70,Festival,festival courts métrages,vis vienna shorts,6,www.viennashorts.com/en,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
-Leuven International Short Film Festival - Louvain (BE) |code:1160,156,Festival,festival courts-métrage,leuven international short film festival,12,www.kortfilmfestival.be,europe,belgique,louvain,50.881011,4.710309,MODIF GENRE
-Festival EuropéEn Du Film Court De Brest - Brest (FR) |code:1134,130,Festival,festival de courts métrages,festival européen du film court de brest,11,www.filmcourt.fr,europe,france,brest,48.404244,-4.484974,MODIF GENRE
-Festival De Clermont-Ferrand - Clermont-Ferrand (FR) |code:1015,9,Festival,festival de courts métrages,festival de clermont-ferrand,2,www.clermont-filmfest.com,europe,france,clermont-ferrand,45.784832,3.114432,MODIF GENRE
-Ca Foscari - Venise (IT) |code:1041,35,Festival,festival de courts métrages,ca foscari,3,www.cafoscarishort.unive.it,europe,italie,venise,45.581192,12.561157,MODIF GENRE
-Wff - Varsovie (PL) |code:1125,121,Festival,festival de films de Varsovie,wff,10,https://wff.pl/en,europe,pologne,varsovie,52.237695,21.005427,MODIF GENRE
-Poitiers Films Festival - Poitiers (FR) |code:1162,158,Festival,festival d'école et jeune création,poitiers films festival,12,www.poitiersfilmfestival.com,europe,france,poitiers,46.578486,0.345003,MODIF GENRE
-Emaf - Osnabruck (DE) |code:955,48,Festival,festival digital,emaf,4,www.emaf.de,europe,allemagne,osnabruck,52.274158,8.047347,MODIF GENRE
-Les éCrans Documentaires - Arcueil (FR) |code:1150,146,Festival,festival documentaire,les écrans documentaires,11,www.lesecransdocumentaires.org,europe,france,arcueil,48.806082,2.334599,MODIF GENRE
-Zinebi - Bilbao (ES) |code:1155,151,Festival,festival documentaire,zinebi,11,http://zinebi.eus/web/en,europe,espagne,bilbao,43.258534,-2.937123,MODIF GENRE
-Kasseler Dokfest - Kassel (DE) |code:1138,134,Festival,festival documentaire,kasseler dokfest,11,www.kasselerdokfest.de,europe,allemagne,kassel,51.309934,9.47572,MODIF GENRE + TITRE
-Nordisk Panorama - Malmo (SE) |code:1104,100,Festival,festival documentaire,nordisk panorama,9,https://nordiskpanorama.com,europe,suède,malmo,55.59438,13.029953,MODIF GENRE
-Punto De Vista - Navarra (ES) |code:1038,32,Festival,festival documentaire,punto de vista,3,www.puntodevistafestival.com,europe,espagne,navarra,42.667152,-1.646057,MODIF CONTINENT
-Porto Post Doc - Porto (US) |code:1021,15,Festival,festival documentaire,porto post doc,2,www.portopostdoc.com,europe,portugal,porto,41.206541,-8.389829,MODIF CONTINENT
-Sheffield Doc Fest - Sheffield (GB) |code:1077,73,Festival,festival documentaire,sheffield doc fest,6,www.sheffdocfest.com,europe,uk,sheffield,53.390826,-1.468485,MODIF GENRE
-Idfa - Amsterdam (NL) |code:1132,128,Festival,Festival documentaire ,idfa,11,www.idfa.nl,europe,pays-bas,amsterdam,52.37243,4.89973,MODIF GENRE
-Fipa - Biarritz (FR) |code:1010,3,Festival,festival documentaire ,fipa,1,www.fipa.tv,europe,france,biarritz,43.47321,-1.554798,MODIF GENRE
-Cph Dox - Copenhague (DK) |code:1028,22,Festival,festival documentaire ,cph dox,3,www.cphdox.dk/en,europe,danemark,copenhague,55.704438,12.502119,MODIF GENRE
-Dok Leipzig - Leipzig (DE) |code:1110,106,Festival,festival documentaire ,dok leipzig,10,www.dok-leipzig.de,europe,allemagne,leipzig,51.341053,12.404024,MODIF GENRE
-Festival De Lussas - Lussas (FR) |code:1091,87,Festival,festival documentaire ,festival de lussas,8,www.lussasdoc.org,europe,france,lussas,44.620874,4.466305,MODIF GENRE
-Cinéma du réel -  () |code:1450,45,Festival,festival documentaire ,cinéma du réel,4,www.cinemadureel.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
-Bieff - Bucarest (RO) |code:1030,24,Festival,festival experimental,bieff,3,www.bieff.ro,europe,roumanie,bucarest,44.435842,26.085733,MODIF GENRE
-Festival Des Cinemas Differents Et ExpéRimentaux De Paris - Paris (FR) |code:1121,117,Festival,festival expérimental,festival des cinemas differents et expérimentaux de paris,10,www.cjcinema.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
-Courtisane - Gand (BE) |code:1040,34,Festival,festival fiction/politique,courtisane,3,www.courtisane.be,europe,belgique,gand,51.057496,3.732703,MODIF GENRE
-Premiers Plans - Angers (FR) |code:921,2,Festival,festival film,premiers plans,1,www.premiersplans.org,europe,france,angers,47.466354,-0.547184,MODIF CONTINENT
-Quinzaine Des RéAlisateurs - Cannes (FR) |code:1061,57,Festival,festival film,quinzaine des réalisateurs,5,www.quinzaine-realisateurs.com,europe,france,cannes,43.557963,7.003061,MODIF CONTINENT
-Alcine - Madrid (ES) |code:1154,150,Festival,festival film,alcine,11,http://alcine.org,europe,espagne,madrid,40.429913,-3.669245,MODIF GENRE
-San Sebastian Festival - Saint SéBastien (ES) |code:1106,102,Festival,festival film,san sebastian festival,9,www.sansebastianfestival.com,europe,espagne,saint sébastien,43.314798,-1.974583,MODIF GENRE
-Sarajevo Film Fest - Sarajevo (BA) |code:1094,90,Festival,festival film,sarajevo film fest,8,www.sff.ba/en,europe,bosnie,sarajevo,43.84864,18.35644,MODIF GENRE
-Trento Film Festival - Trento (IT) |code:1055,51,Festival,festival film,trento film festival,4,www.trentofestival.it,europe,italie,trento,46.131509,10.880622,MODIF GENRE
-Berlinale - Berlin (DE) |code:1017,11,Festival,festival Film ,berlinale,2,www.berlinale.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
-Rencontres Internationales Sciences Et CinéMas - Marseille (FR) |code:1131,127,Festival,festival film et science,rencontres internationales sciences et cinémas,11,festivalrisc.org,europe,france,marseille,43.295314,5.401581,MODIF GENRE
-Fiff Namur - Namur (BE) |code:1096,92,Festival,festival film francophone,fiff namur,9,www.fiff.be,europe,belgique,namur,50.385631,4.860581,MODIF GENRE
-Festival Tous Courts - Aix-En-Provence (FR) |code:1135,131,Festival,festival film international ,festival tous courts,11,www.festivaltouscourts.com,europe,france,aix-en-provence,43.526046,5.44467,MODIF GENRE
-Camerimage - Bydgoszcz (PL) |code:1149,145,Festival,festival film international ,camerimage,11,www.camerimage.pl,europe,pologne,bydgoszcz,53.122091,18.01434,MODIF GENRE
-Cork International Film Festival - Cork (IE) |code:1145,141,Festival,festival film international ,cork international film festival,11,www.corkfilmfest.org,europe,uk,cork,52.418788,-1.247349,MODIF GENRE + TITRE
-Kff - Cracovie (PL) |code:1069,65,Festival,festival film international ,kff,5,www.krakowfilmfestival.pl,europe,pologne,cracovie,50.052652,19.987345,MODIF GENRE
-Fribourg International Film Festival - Fribourg (CH) |code:1042,36,Festival,festival film international ,fribourg international film festival,3,www.fiff.ch,europe,suisse,fribourg,46.693044,7.101021,MODIF GENRE
-Ficx - Gijon (ES) |code:1157,153,Festival,festival film international ,ficx,11,http://www.gijonfilmfestival.com,europe,espagne,gijon,43.537055,-5.66717,MODIF GENRE
-Glasgow Festival - Glasgow (GB) |code:1019,13,Festival,festival film international ,glasgow festival,2,www.glasgowfilm.org/glasgow-film-festival,europe,uk,glasgow,55.860766,-4.268234,MODIF GENRE
-Huesca - Huesca (ES) |code:1081,77,Festival,festival film international ,huesca,6,www.huesca-filmfestival.com/en,europe,espagne,huesca,42.147507,-0.072973,MODIF GENRE
-Karlovy Vary International Film Festival - Karlovy Vary (CZ) |code:1079,75,Festival,festival film international ,karlovy vary international film festival,6,www.kviff.com,europe,république tchèque,karlovy vary,50.232816,12.848029,MODIF GENRE
-Doclisboa - Lisboa (PT) |code:1109,105,Festival,festival film international ,doclisboa,9,www.doclisboa.org,europe,portugal,lisboa,38.748243,-9.140093,MODIF GENRE
-Locarno - Locarno (CH) |code:1092,88,Festival,festival film international ,locarno,8,www.pardolive.ch,europe,suisse,locarno,46.243909,8.856296,MODIF GENRE
-Documenta - Madrid (ES) |code:1066,62,Festival,festival film international ,documenta,5,www.documentamadrid.com,europe,espagne,madrid,40.429913,-3.669245,MODIF GENRE
-Festival International De CinéMa De Marseille - Marseille (FR) |code:1086,82,Festival,festival film international ,festival international de cinéma de marseille,7,www.fidmarseille.org,europe,france,marseille,43.295314,5.401581,MODIF GENRE
-Visions Du RéEl - Nyon (CH) |code:1049,44,Festival,festival film international ,visions du réel,4,www.visionsdureel.ch,europe,suisse,nyon,46.38641,6.23562,MODIF GENRE
-Stockholm Internatinal Film Festival - Stockolm (SWE) |code:1153,149,Festival,festival film international ,stockholm international film festival,11,www.stockholmfilmfestival.se,europe,suède,stockolm,14.358933,100.573593,MODIF GENRE + TITRE
-Mostra Di Venezia - Venise (IT) |code:1142,138,Festival,festival film international ,mostra di venezia,11,www.labiennale.org/en/cinema,europe,italie,venise,45.581192,12.561157,MODIF GENRE
-Internationale Kurzfilmtage Winterthur - Winterthur (CH) |code:1128,124,Festival,festival film international ,Internationale Kurzfilmtage Winterthur,10,www.kurzfilmtage.ch,europe,suisse,winterthur,47.499693,8.728495,MODIF GENRE + TITRE
-25 Fps - Zagreb (HR) |code:1097,93,Festival,festival film/video experimental,25 fps,9,www.25fps.hr/en,europe,croatie,zagreb,45.806026,15.976218,MODIF GENRE
-Buff - Malmo (SE) |code:1044,39,Festival,festival films,buff,3,www.buff.se,europe,suède,malmo,55.59438,13.029953,MODIF GENRE
-CôTé Court - Pantin (FR) |code:1071,67,Festival,festival films,côté court,6,www.cotecourt.org,europe,france,pantin,48.898752,2.406974,MODIF GENRE
-Black Nights - Tallinn (EE) |code:1141,137,Festival,festival films,black nights,11,www.2017.poff.ee,europe,estonie,tallinn,59.401347,24.693912,MODIF GENRE
-Trieste Film Festival - Trieste (IT) |code:1014,8,Festival,festival films,trieste film festival,1,www.triestefilmfestival.it,europe,italie,trieste,45.686696,13.791014,MODIF GENRE
-Cinema Jove - Valence (ES) |code:1084,80,Festival,festival films,cinema jove,6,www.cinemajove.com,europe,espagne,valence,39.464773,-0.363258,MODIF GENRE
-Films De Femmes - CréTeil (FR) |code:1026,20,Festival,festival films de femmes,films de femmes,3,www.filmsdefemmes.com,europe,france,créteil,48.785152,2.455347,MODIF GENRE
-GöTeborg Film Festival - Gothenburg (SE) |code:1012,6,Festival,festival films de femmes,göteborg film festival,1,www.giff.se/en,europe,suède,gothenburg,57.735628,12.014286,MODIF GENRE
-Tampere Film Festival - Tampere (FI) |code:1029,23,Festival,festival films documentaires,tampere film festival,3,www.tamperefilmfestival.fi,europe,finlande,tampere,61.62611,23.88146,MODIF GENRE +TITRE
-Thessaloniki International Documentary Film Festival - Thessalonique (GR) |code:1152,148,Festival,festival films documentaires,thessaloniki international film festival,11,www2.filmfestival.gr/en,europe,grèce,thessalonique,40.656485,22.937343,MODIF GENRE
-Black Movie - GenèVe (CH) |code:1011,4,Festival,festival films indépendants,black movie,1,www.blackmovie.ch,europe,suisse,genève,46.208566,6.143124,MODIF GENRE
-Valladolid - Valladolid (ES) |code:1122,118,Festival,festival films international,valladolid,10,www.seminci.es,europe,espagne,valladolid,41.489063,-4.89167,MODIF GENRE
-Split Film Festival - Split (HR) |code:1119,115,Festival,festival indépendant. art et essai. expérimental,split film festival,10,www.splitfilmfestival.hr,europe,croatie,split,43.514594,16.452375,MODIF GENRE
-Film Fest Gent - Gand (BE) |code:1117,113,Festival,festival international   ,film fest gent,10,www.filmfestival.be/en,europe,belgique,gand,51.057496,3.732703,MODIF GENRE
-Interfilm Berlin - Berlin (DE) |code:1139,135,Festival,festival international courts métrages,interfilm berlin,11,www.interfilm.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
-International Short Film Festival In Drama - Drama (GR) |code:1102,98,Festival,festival international courts métrages,international short film festival in drama,9,www.dramafilmfestival.gr,europe,grèce,drama,41.150452,24.152498,MODIF GENRE
-Film Fest Dresden - Dresden (DE) |code:1053,49,Festival,festival international courts métrages,film fest dresden,4,www.filmfest-dresden.de,europe,allemagne,dresden,51.055604,13.731021,MODIF GENRE
-Giff - GenèVe (CH) |code:1136,132,Festival,festival international courts métrages,giff,11,www.giff.ch,europe,suisse,genève,46.19593,6.128052,MODIF GENRE
-Go Short - Nijmegen (NL) |code:1048,43,Festival,festival international courts métrages,go short,4,www.goshort.nl/en,europe,pays-bas,nijmegen,51.833609,5.847102,MODIF GENRE
-Oberhausen - Oberhausen (DE) |code:1060,56,Festival,festival international courts métrages,oberhausen,5,www.kurzfilmtage.de,europe,allemagne,oberhausen,51.498071,6.862345,MODIF GENRE
-Odense International Film Festival - Odense (DK) |code:1099,95,Festival,festival international courts métrages,odense international film festival,9,www.filmfestival.dk/en,europe,danemark,odense,55.391817,10.37355,MODIF GENRE
-Short Waves - Poznan (PL) |code:1037,31,Festival,festival international courts métrages,short waves,3,shortwaves.pl,europe,pologne,poznan,52.396172,16.916073,MODIF GENRE
-Sleepwalkers - Tallinn (EE) |code:1140,136,Festival,festival international courts métrages,sleepwalkers,11,wwww.shorts.poff.ee,europe,estonie,tallinn,59.401347,24.693912,MODIF GENRE
-Uppsala - Uppsala (SE) |code:1111,107,Festival,festival international courts métrages,uppsala,10,www.shortfilmfestival.com/en,europe,suède,uppsala,60.197663,17.742031,MODIF GENRE
-Milano Film Festival - Milan (IT) |code:1076,72,Festival,festival local,milano film festival,6,www.milanofilmfestival.it,europe,italie,milan,45.473702,9.170685,MODIF GENRE
-Munich Filmfest - Munich (DE) |code:1130,126,Festival,festival long métrage,munich filmfest,11,www.filmfest-muenchen.de,europe,allemagne,munich,48.152126,11.544467,MODIF GENRE
-Stuttgarter Filmwinter - Stuttgart (DE) |code:1025,19,Festival,festival médias,stuttgarter filmwinter,2,www.filmwinter.de,europe,allemagne,stuttgart,48.802275,9.188624,MODIF GENRE
-Ars Electronica - Linz (AT) |code:1100,96,Festival,festival numérique,ars electronica,9,www.aec.at,europe,autriche,linz,48.284136,14.306943,MODIF GENRE
-VidéOformes - Clermont-Ferrand (FR) |code:1027,21,Festival,festival numérique ,vidéoformes,3,www.videoformes.com,europe,france,clermont-ferrand,45.784832,3.114432,MODIF GENRE
-Kurzfilm Festival Hamburg - Hamburg (DE) |code:1073,69,Festival,festival pluridisciplinaire,kurzfilm festival hamburg,6,www.festival.shortfilm.com,europe,allemagne,hamburg,53.576158,10.007046,MODIF GENRE
-CinéFondation - Cannes (FR) |code:1062,58,Festival,jeune création,cinéfondation,5,www.cinefondation.com,europe,france,cannes,43.557963,7.003061,MODIF GENRE
-Off-Courts Trouville - Trouville (FR) |code:1101,97,Festival,résidence,off-courts trouville,9,www.offcourts.com,europe,france,trouville,49.585599,0.599937,MODIF GENRE
-Documenta - Kassel (DE) |code:922,159,Exposition,biennale,documenta,4,www.documenta14.de/en,europe,allemagne,kassel,51.309934,9.47572,MODIF CONTINENT
-Jeune CréAtion EuropéEnne - Paris (FR) |code:923,160,Exposition,biennale,jeune création européenne,10,www.biennalejce.com,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
-Experimenta - Grenoble (FR) |code:925,162,Exposition,biennale art et sciences,experimenta,2,https://www.experimenta.fr/,europe,france,grenoble,45.177879,5.718545,MODIF CONTINENT
-Nemo - Ile De France (FR) |code:929,166,Exposition,biennale numérique,nemo,11,https://www.biennalenemo.fr/,europe,france,ile de france,48.709279,2.503397,MODIF CONTINENT
+Refs Kart,Num,Type,Genre,nom,mois,site web,continent,pays,ville ,lat,lng,Modif
+Videoformes - Clermont-Ferrand (FR) |code:974,211,Festival,festival numérique,videoformes,3,http://videoformes.com/,europe ,france,clermont-ferrand,45.784832,3.114432,A SUPPRIMER - DOUBLON 1027
+Sxsw - Austin (US) |code:1035,29,Festival,Festival nouvelles technologies,sxsw,3,www.sxsw.com,amérique nord,usa,austin,30.222346,-97.836521,A SUPPRIMER - DOUBLON 1035
+Regard - Saguenay (CA) |code:1047,27,Festival,Festival international courts métrages,regard,3,www.festivalregard.com/en,amérique nord,canada,québec,46.855987,-71.276271,A SUPPRIMER - DOUBLON 1047
+Arselectronica - Linz (AT) |code:984,221,Festival,festival numérique,arselectronica,9,https://www.aec.at/error/de/,europe,autriche,linz,48.284136,14.306943,A SUPPRIMER - DOUBLON 1100
+Bogoshorts - Bogota (CO) |code:1161,157,Festival,festival de courts métrages,bogoshorts,12,http://festival.bogoshorts.com,amérique sud,colombie,bogota,4.60971,-74.08175,A SUPPRIMER - DOUBLON 1120
+Emaf - Osnabruck (DE) |code:955,194,Festival,festival digital,emaf,4,https://www.emaf.de/de/index.html#EMAF,europe,allemagne,osnabruck,52.274158,8.047347,A SUPPRIMER - DOUBLON 955
+Transmediale - Berlin (DE) |code:971,208,Festival,festival numérique,transmediale,1,https://transmediale.de/,europe ,allemagne,berlin,52.52045,13.40732,A SUPPRIMER - DOUBLON 971
+Acces - Pau (FR) |code:987,224,Festival,festival numérique,acces,10,https://acces-s.org/agenda/archives/festival/2017/1158-machines-sensibles/,europe,france,pau,43.312063,-0.352943,MODIF CONTINENT
+Archipel - GenèVe (CH) |code:945,184,Festival,festival art sonore,archipel,3,www.archipel.org,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
+Art Souterrain - MontréAl (CA) |code:954,193,Festival,festival digital,art souterrain,3,https://www.artsouterrain.com/fr/theme-2018/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+Audio Art - Cracovie (PL) |code:947,186,Festival,festival art sonore,audio art,11,http://www.audio.art.pl/,europe,pologne,cracovie,50.052652,19.987345,MODIF CONTINENT
+Bains Numeriques - Enghien (FR) |code:980,217,Festival,festival numérique,bains numeriques,6,http://www.cda95.fr/fr/bains-numeriques/programmation,europe,france,enghien,46.698481,2.549047,MODIF CONTINENT
 Berlinale Talent Campus - Berlin (DE) |code:931,168,Competition,cinélab,berlinale talent campus,2,https://www.berlinale-talents.de/,europe,allemagne,berlin,52.52045,13.40732,MODIF CONTINENT
+Bian - Montréal (CA) |code:928,165,Exposition,biennale numérique,bian,6,https://www.elektrafestival.ca/bian,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+ChâTeau Ephemere - Poissy (FR) |code:1006,243,Exposition,résidence,château ephemere,9,https://chateauephemere.org/residences/devenir-resident/,europe,france,poissy,48.933039,2.048817,MODIF CONTINENT
 Cinemart - Rotterdam (NL) |code:930,167,Competition,cinélab,cinemart,1,https://iffr.com/en/about-cinemart,europe,pays-bas,rotterdam,51.92278,4.47578,MODIF CONTINENT
+Citysonic - Mons (BE) |code:946,185,Festival,festival art sonore,citysonic,8,http://citysonic.be/festival2017/,europe,belgique,mons,50.422144,3.87418,MODIF CONTINENT
+Curiositas - Gif-Sur-Yvette (FR) |code:942,181,Festival,festival art et sciences,curiositas,5,http://www.ladiagonale-paris-saclay.fr/curiositas/,europe,france,gif-sur-yvette,48.697635,2.114662,MODIF CONTINENT
+Digital Choc - Tokyo (JP) |code:972,209,Festival,festival numérique,digital choc,2,http://www.institutfrancais.jp/tokyo/fr/events-manager/digital-choc-2018/,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
+Documenta - Kassel (DE) |code:922,159,Exposition,biennale,documenta,4,www.documenta14.de/en,europe,allemagne,kassel,51.309934,9.47572,MODIF CONTINENT
+Donau - Krems (AT) |code:978,215,Festival,festival numérique,donau,4,https://www.donaufestival.at/de/festival,europe,autriche,krems,48.406468,15.641828,MODIF CONTINENT
+E Fest - Carthage (TN) |code:944,183,Festival,festival art numérique,e fest,11,http://efest.xyz/,afrique nord,tunisie,carthage,33.687264,9.007775,MODIF CONTINENT
+Electron - GenèVe (CH) |code:965,204,Festival,festival musique et art electronique,electron,4,https://www.electronfestival.ch/,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
+Electropixel - Nantes (FR) |code:977,214,Festival,festival numérique,electropixel,4,http://apo33.org/electropixel/,europe,france,nantes,47.228973,-1.554004,MODIF CONTINENT
+Elektra - MontréAl (CA) |code:967,174,Festival,festival numérique,elektra,6,https://www.elektrafestival.ca/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+Elevate - Graz (AT) |code:973,210,Festival,festival numérique,elevate,2,https://elevate.at/arts/,europe,autriche,graz,47.065852,15.432739,MODIF CONTINENT
+Experimenta - Grenoble (FR) |code:925,162,Exposition,biennale art et sciences,experimenta,2,https://www.experimenta.fr/,europe,france,grenoble,45.177879,5.718545,MODIF CONTINENT
+File  - Rio De Janeiro (BR) |code:938,177,Festival,festival art digital,file ,3,https://file.org.br/,amérique sud,bresil,rio de janeiro,-22.935024,-43.518246,MODIF CONTINENT
+Gamerz - Aix-En-Provence (FR) |code:961,200,Festival,festival multimedia,gamerz,11,http://www.festival-gamerz.com/gamerz13/#home,europe,france,aix-en-provence,43.526046,5.44467,MODIF CONTINENT
+Gogbot - Enschede (NL) |code:958,197,Festival,festival digital,gogbot,9,http://2017.gogbot.nl/,europe,pays-bas,enschede,52.212261,6.881208,MODIF CONTINENT
+Htmlles - MontréAl (CA) |code:992,229,Festival,festival numérique et féministe,htmlles,11,https://htmlles.net/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+Imagen - Manizales (CO) |code:941,180,Festival,festival art et sciences,imagen,6,http://festivaldelaimagen.com/,amérique sud,colombie,manizales,5.06889,-75.51738,MODIF CONTINENT
+Japan Media - Tokyo (JP) |code:969,206,Festival,festival numérique,japan media,6,http://j-mediaarts.jp/en.php#,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
+Jeune CréAtion EuropéEnne - Paris (FR) |code:923,160,Exposition,biennale,jeune création européenne,10,www.biennalejce.com,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
+Kikk - Namur (BE) |code:990,227,Festival,festival numérique,kikk,11,https://www.kikk.be/2017/,europe,belgique,namur,50.385631,4.860581,MODIF CONTINENT
+Lab 30 - Augsburg (DE) |code:988,225,Festival,festival numérique,lab 30,10,http://www.lab30.de/programm/,europe,allemagne,augsburg,48.369338,10.896842,MODIF CONTINENT
+Les Instants Video - Marseille (FR) |code:993,230,Festival,festival numérique et poétique,les instants video,11,https://www.instantsvideo.com/blog/fr/archives/category/accueil,europe,france,marseille,43.295314,5.401581,MODIF CONTINENT
+Liquid Architecture - Sydney (AU) |code:951,190,Festival,festival création sonore,liquid architecture,5,http://www.liquidarchitecture.org.au/program/,océanie,australie,sydney,-34.035875,151.194191,MODIF CONTINENT
+Live Arts Week - Bologne (IT) |code:996,233,Festival,festival performance,live arts week,4,http://www.liveartsweek.it/2018/en/intro/,europe,italie,bologne,44.498216,11.426021,MODIF CONTINENT
+Loop - Barcelone (ES) |code:1002,239,Exposition,foire,loop,9,loop-barcelona.com/loop-festival,europe,espagne,barcelone,41.400347,2.159592,MODIF CONTINENT
+Lpm - Rome (IT) |code:997,234,Festival,festival performance,lpm,6,https://liveperformersmeeting.net/,europe,italie,rome,41.878243,12.52809,MODIF CONTINENT
+Madeiradig - MadèRe (PT) |code:964,203,Festival,festival musique et art digital,madeiradig,12,http://digitalinberlin.eu/,europe,portugal,madère,32.738702,-16.977516,MODIF CONTINENT
+Maintenant - Rennes (FR) |code:949,188,Festival,festival arts et technologie,maintenant,10,https://www.maintenant-festival.fr/2017/,europe,france,rennes,48.110805,-1.665857,MODIF CONTINENT
+Manifeste - Paris (FR) |code:981,218,Festival,festival numérique,manifeste,6,https://manifeste.ircam.fr/,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
+Mapping - GenèVe (CH) |code:948,187,Festival,festival art visuel et culutre numerique,mapping,5,https://2018.mappingfestival.com/infos/le-festival/,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
+Microwave - Hong-Kong (CN) |code:989,226,Festival,festival numérique,microwave,10,http://www.microwavefest.net/festival2017/,asie,chine,hong-kong,32.523743,106.431983,MODIF CONTINENT
+Mira - Berlin (DE) |code:979,216,Festival,festival numérique,mira,5,http://www.mirafestival.com/en/,europe,allemagne,berlin,52.52045,13.40732,MODIF CONTINENT
+Mirage - Lyon (FR) |code:968,205,Festival,festival numérique,mirage,4,https://www.miragefestival.com/,europe,france,lyon,45.752181,4.840823,MODIF CONTINENT
+Multi - QuéBec (CA) |code:959,198,Festival,festival électronique,multi,2,http://mmrectoverso.org/mois-multi/,amérique nord,canada,québec,46.855987,-71.276271,MODIF CONTINENT
+Nemo - Ile De France (FR) |code:929,166,Exposition,biennale numérique,nemo,11,https://www.biennalenemo.fr/,europe,france,ile de france,48.709279,2.503397,MODIF CONTINENT
+Newimages - Paris (FR) |code:1001,238,Festival,festival VR,newimages,4,https://www.forumdesimages.fr/les-programmes/newimages,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
+Node - Francfort (DE) |code:982,219,Festival,festival numérique,node,6,https://nodeforum.org/,europe,allemagne,francfort,50.041821,8.584764,MODIF CONTINENT
 Nuit Blanche - Bruxelles (BE) |code:935,172,Exposition,évènement artisitique,nuit blanche,10,http://nuitblanche.brussels/,europe,belgique,bruxelles,50.733183,4.436117,MODIF CONTINENT
 Nuit Blanche - Paris (FR) |code:934,171,Exposition,évènement artisitique,nuit blanche,10,https://www.paris.fr/nuitblanche,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
 Nuit NuméRique - Reims (FR) |code:933,170,Exposition,évènement artisitique,nuit numérique,3,http://www.saintex-reims.com/2018/02/nuitnumerique15/,europe,france,reims,49.253684,4.035785,MODIF CONTINENT
-Apart - Alpilles (FR) |code:937,176,Festival,festival art contemporain,apart,8,http://festival-apart.org/,europe,france,alpilles,46.698481,2.549047,MODIF CONTINENT + TITRE
-Curiositas - Gif-Sur-Yvette (FR) |code:942,181,Festival,festival art et sciences,curiositas,5,http://www.ladiagonale-paris-saclay.fr/curiositas/,europe,france,gif-sur-yvette,48.697635,2.114662,MODIF CONTINENT
-Audio Art - Cracovie (PL) |code:947,186,Festival,festival art sonore,audio art,11,http://www.audio.art.pl/,europe,pologne,cracovie,50.052652,19.987345,MODIF CONTINENT
-Archipel - GenèVe (CH) |code:945,184,Festival,festival art sonore,archipel,3,www.archipel.org,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
-Citysonic - Mons (BE) |code:946,185,Festival,festival art sonore,citysonic,8,http://citysonic.be/festival2017/,europe,belgique,mons,50.422144,3.87418,MODIF CONTINENT
-Mapping - GenèVe (CH) |code:948,187,Festival,festival art visuel et culutre numerique,mapping,5,https://2018.mappingfestival.com/infos/le-festival/,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
-Maintenant - Rennes (FR) |code:949,188,Festival,festival arts et technologie,maintenant,10,https://www.maintenant-festival.fr/2017/,europe,france,rennes,48.110805,-1.665857,MODIF CONTINENT
-Ofni - Poitiers (FR) |code:952,191,Festival,festival création visuelle et sonore,ofni,11,http://www.nyktalopmelodie.org/festival-ofni/,europe,france,poitiers,46.578486,0.345003,MODIF CONTINENT
-Sensorium - Bratislava (SK) |code:956,195,Festival,festival digital,sensorium,5,https://sensorium.is/,europe,slovaquie,bratislava,48.315715,17.174044,MODIF CONTINENT
-Gogbot - Enschede (NL) |code:958,197,Festival,festival digital,gogbot,9,http://2017.gogbot.nl/,europe,pays-bas,enschede,52.212261,6.881208,MODIF CONTINENT
-Emaf - Osnabruck (DE) |code:955,194,Festival,festival digital,emaf,4,https://www.emaf.de/de/index.html#EMAF,europe,allemagne,osnabruck,52.274158,8.047347,A SUPPRIMER - DOUBLON 955
-Gamerz - Aix-En-Provence (FR) |code:961,200,Festival,festival multimedia,gamerz,11,http://www.festival-gamerz.com/gamerz13/#home,europe,france,aix-en-provence,43.526046,5.44467,MODIF CONTINENT
-Madeiradig - MadèRe (PT) |code:964,203,Festival,festival musique et art digital,madeiradig,12,http://digitalinberlin.eu/,europe,portugal,madère,32.738702,-16.977516,MODIF CONTINENT
-Electron - GenèVe (CH) |code:965,204,Festival,festival musique et art electronique,electron,4,https://www.electronfestival.ch/,europe,suisse,genève,46.19593,6.128052,MODIF CONTINENT
-Lab 30 - Augsburg (DE) |code:988,225,Festival,festival numérique,lab 30,10,http://www.lab30.de/programm/,europe,allemagne,augsburg,48.369338,10.896842,MODIF CONTINENT
-Piksel - Bergen (NO) |code:991,228,Festival,festival numérique,piksel,11,http://piksel.no/,europe,norvège,bergen,60.354965,5.302935,MODIF CONTINENT
-Mira - Berlin (DE) |code:979,216,Festival,festival numérique,mira,5,http://www.mirafestival.com/en/,europe,allemagne,berlin,52.52045,13.40732,MODIF CONTINENT
-Bains Numeriques - Enghien (FR) |code:980,217,Festival,festival numérique,bains numeriques,6,http://www.cda95.fr/fr/bains-numeriques/programmation,europe,france,enghien,46.698481,2.549047,MODIF CONTINENT
-Node - Francfort (DE) |code:982,219,Festival,festival numérique,node,6,https://nodeforum.org/,europe,allemagne,francfort,50.041821,8.584764,MODIF CONTINENT
-Elevate - Graz (AT) |code:973,210,Festival,festival numérique,elevate,2,https://elevate.at/arts/,europe,autriche,graz,47.065852,15.432739,MODIF CONTINENT
-Donau - Krems (AT) |code:978,215,Festival,festival numérique,donau,4,https://www.donaufestival.at/de/festival,europe,autriche,krems,48.406468,15.641828,MODIF CONTINENT
-Arselectronica - Linz (AT) |code:984,221,Festival,festival numérique,arselectronica,9,https://www.aec.at/error/de/,europe,autriche,linz,48.284136,14.306943,A SUPPRIMER - DOUBLON 1100
-Mirage - Lyon (FR) |code:968,205,Festival,festival numérique,mirage,4,https://www.miragefestival.com/,europe,france,lyon,45.752181,4.840823,MODIF CONTINENT
-Kikk - Namur (BE) |code:990,227,Festival,festival numérique,kikk,11,https://www.kikk.be/2017/,europe,belgique,namur,50.385631,4.860581,MODIF CONTINENT
-Electropixel - Nantes (FR) |code:977,214,Festival,festival numérique,electropixel,4,http://apo33.org/electropixel/,europe,france,nantes,47.228973,-1.554004,MODIF CONTINENT
-Scopitone - Nantes (FR) |code:983,220,Festival,festival numérique,scopitone,9,https://www.stereolux.org/scopitone-2017,europe,france,nantes,47.228973,-1.554004,MODIF CONTINENT
-Manifeste - Paris (FR) |code:981,218,Festival,festival numérique,manifeste,6,https://manifeste.ircam.fr/,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
-Acces - Pau (FR) |code:987,224,Festival,festival numérique,acces,10,https://acces-s.org/agenda/archives/festival/2017/1158-machines-sensibles/,europe,france,pau,43.312063,-0.352943,MODIF CONTINENT
-OsosphèRes - Strasbourg (FR) |code:976,213,Festival,festival numérique,ososphères,4,https://www.ososphere.org/,europe,france,strasbourg,48.570721,7.758374,MODIF CONTINENT
-Oscura - Ganges (FR) |code:994,231,Festival,festival numérique et poétique,oscura,11,http://www.oudeis.fr/oscura/,europe,france,ganges,43.900134,3.722722,MODIF CONTINENT
-Les Instants Video - Marseille (FR) |code:993,230,Festival,festival numérique et poétique,les instants video,11,https://www.instantsvideo.com/blog/fr/archives/category/accueil,europe,france,marseille,43.295314,5.401581,MODIF CONTINENT
-Live Arts Week - Bologne (IT) |code:996,233,Festival,festival performance,live arts week,4,http://www.liveartsweek.it/2018/en/intro/,europe,italie,bologne,44.498216,11.426021,MODIF CONTINENT
-Lpm - Rome (IT) |code:997,234,Festival,festival performance,lpm,6,https://liveperformersmeeting.net/,europe,italie,rome,41.878243,12.52809,MODIF CONTINENT
 Offf - Barcelone (ES) |code:1000,237,Festival,festival post digital,offf,5,http://offf.barcelona/,europe,espagne,barcelone,41.400347,2.159592,MODIF CONTINENT
-Newimages - Paris (FR) |code:1001,238,Festival,festival VR,newimages,4,https://www.forumdesimages.fr/les-programmes/newimages,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
-Loop - Barcelone (ES) |code:1002,239,Exposition,foire,loop,9,loop-barcelona.com/loop-festival,europe,espagne,barcelone,41.400347,2.159592,MODIF CONTINENT
-ChâTeau Ephemere - Poissy (FR) |code:1006,243,Exposition,résidence,château ephemere,9,https://chateauephemere.org/residences/devenir-resident/,europe,france,poissy,48.933039,2.048817,MODIF CONTINENT
-Salon De Montrouge - Montrouge (FR) |code:1007,244,Exposition,salon,salon de montrouge,5,www.ville-montrouge.fr/actualite/316/1-accueil.htm,europe,france,montrouge,48.815839,2.316222,MODIF CONTINENT
-Strp - Eindhoven (NL) |code:926,163,Exposition,biennale numérique,strp,3,https://strp.nl/en/,europe,pays-bas,eindhoven,51.455555,5.478826,MODIF CONTINENT
-Wro - Wroclaw (PL) |code:927,164,Exposition,biennale numérique,wro,5,http://wrocenter.pl/en/biennale-wro/,europe,pologne,wroclaw,51.097349,17.023978,MODIF CONTINENT
-Torinolab - Torino (IT) |code:932,169,Competition,cinélab,torinolab,11,http://www.torinofilmlab.it/,europe,italie,torino,45.059405,7.652514,MODIF CONTINENT
-Riam - Marseille (FR) |code:950,189,Festival,festival arts multimédia,riam,10,http://www.riam.info/2012/05/04/festival/,europe,france,marseille,43.295314,5.401581,MODIF CONTINENT
-Sonar - Barcelone (ES) |code:957,196,Festival,festival digital,sonar,6,https://sonar.es/,europe,espagne,barcelone,41.400347,2.159592,MODIF CONTINENT
-Traverse Video - Toulouse (FR) |code:953,192,Festival,festival digital,traverse video,3,http://traverse-video.org/,europe,france,toulouse,43.603902,1.440694,MODIF CONTINENT
-Sideration - Paris (FR) |code:960,199,Festival,festival imaginaires spatiaux,sideration,3,http://www.cnes-observatoire.net/memoire/creation_artscene/21_festival-sideration-2018/festival-sideration-edition-2018.html,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
-Reworks - Thessalonique (GR) |code:962,201,Festival,festival musique et art contemporain,reworks,9,https://reworks.gr/en/about/,europe,grèce,thessalonique,40.656485,22.937343,MODIF CONTINENT
-Rokolectiv - Bucharest (RO) |code:963,202,Festival,festival musique et art digital,rokolectiv,4,http://www.rokolectiv.ro/#about/about_rokolectiv_2018,europe,roumanie,bucharest,44.435842,26.085733,MODIF CONTINENT
-Transmediale - Berlin (DE) |code:971,208,Festival,festival numérique,transmediale,1,https://transmediale.de/,europe,allemagne,berlin,52.52045,13.40732,A SUPPRIMER - DOUBLON 971
-Videoformes - Clermont-Ferrand (FR) |code:974,211,Festival,festival numérique,videoformes,3,http://videoformes.com/,europe,france,clermont-ferrand,45.784832,3.114432,A SUPPRIMER - DOUBLON 1027
-Todays Art - La Haye (NL) |code:986,223,Festival,festival numérique,todays art,9,http://todaysart.org/,europe,pays-bas,la haye,52.07114,4.29916,MODIF CONTINENT
-TransnuméRiques - Louvain-La-Neuve (BE) |code:966,173,Festival,festival numérique,transnumériques,3,http://transnumeriques.be/festival2018/,europe,belgique,louvain-la-neuve,50.881011,4.710309,MODIF CONTINENT
-Vision R - Paris (FR) |code:970,207,Festival,festival numérique,vision r,1,https://fr-fr.facebook.com/VJfestivalVisionR/,europe,france,paris,48.859116,2.331839,MODIF CONTINENT
-Praflows - Vienne (AT) |code:985,222,Festival,festival numérique,praflows,9,http://www.paraflows.at/index.php?id=759,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
-Voix Off Arles - Arles (FR) |code:998,235,Festival,festival photographie,voix off arles,7,voies-off.com,europe,france,arles,43.676505,4.637023,MODIF CONTINENT
-Via - Maubeuge (FR) |code:999,236,Festival,festival pluridisciplinaire,via,11,https://www.agglo-maubeugevaldesambre.fr/events/festival-via-2017/,europe,france,maubeuge,50.281649,3.970297,MODIF CONTINENT
-Villa  VéLasquez - Madrid (ES) |code:1004,241,Exposition,résidence,villa  vélasquez,0,www.casadevelazquez.org,europe,espagne,madrid,40.429913,-3.669245,MODIF CONTINENT
-Villa MéDicis - Rome (IT) |code:1003,240,Exposition,résidence,villa médicis,0,www.villamedici.it/fr,europe,italie,rome,41.878243,12.52809,MODIF CONTINENT
-Plumsfest - Moscou (RU) |code:940,179,Festival,festival art digital,plumsfest,12,http://plumsfest.ru/welcome-to-plums-festival/,europe,russie,moscou,55.741469,37.615561,MODIF CONTINENT
-Hiroshima Film Festival - Hiroshima (JP) |code:1151,147,Festival,festival cinéma émergent,hiroshima film festival,11,www.hiff.jp/en,asie,japon,hiroshima,34.397832,132.453581,MODIF GENRE
-Busan International Film Festival - Busan (KR) |code:1113,109,Festival,festival de cinéma international et asiatique,busan international film festival,10,www.biff.kr/structure/eng/default.asp,asie,corée du sud,busan,35.11741,129.002102,MODIF GENRE + TITRE
-Hkbu Student Film Festival - Hong Kong (CN) |code:1159,155,Festival,festival étudiant,hkbu student film festival,11,http://af.hkbu.edu.hk/en/events/1584,asie,chine,hong kong,32.523743,106.431983,MODIF GENRE
-Sgiff - Singapour (SG) |code:1158,154,Festival,festival film,sgiff,11,http://sgiff.com,asie,singapour,singapour,1.316382,103.833828,MODIF GENRE
-Jeonju Festival - Jeonju (KR) |code:1067,63,Festival,festival film international ,jeonju festival,5,http://eng.jiff.or.kr/about_jiff/,asie,coree du sud,jeonju,35.826708,127.128262,MODIF GENRE
-Kaoshiung - Kaohsiung (TW) |code:1057,53,Festival,festival international courts métrages,kaoshiung,4,www.filmfreeway.com/2017KaohsiungFilmFestivalInternationalShortFilmCompetition,asie,taiwan,kaohsiung,22.629212,120.319724,MODIF GENRE
-Sapporo Short Film Festival - Sapporo (JP) |code:1068,64,Festival,festival international courts métrages,sapporo short film festival,5,www.sapporoshortfest.jp/en,asie,japon,sapporo,43.080237,141.336707,MODIF GENRE
-Short Short Film Festival And Asia - Tokyo (JP) |code:1078,74,Festival,festival international courts métrages,short short film festival and asia,6,www.shortshorts.org,asie,japon,tokyo,35.695126,139.75391,MODIF GENRE
-Csff - Shenzhen (CN) |code:1148,144,Festival,festival nouveaux médias,csff,11,www.csff.com.cn,asie,chine,shenzhen,22.551224,113.930539,MODIF GENRE
-Yebizo - Tokyo (JP) |code:936,175,Festival,festival art contemporain,yebizo,2,https://www.yebizo.com/en/information/,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
-Microwave - Hong-Kong (CN) |code:989,226,Festival,festival numérique,microwave,10,http://www.microwavefest.net/festival2017/,asie,chine,hong-kong,32.523743,106.431983,MODIF CONTINENT
-Digital Choc - Tokyo (JP) |code:972,209,Festival,festival numérique,digital choc,2,http://www.institutfrancais.jp/tokyo/fr/events-manager/digital-choc-2018/,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
-Japan Media - Tokyo (JP) |code:969,206,Festival,festival numérique,japan media,6,http://j-mediaarts.jp/en.php#,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
-Villa Kujoyama - Kujoyama (JP) |code:1005,242,Exposition,résidence,villa kujoyama,2,www.villakujoyama.jp,asie,japon,kujoyama,34.986533,135.744161,MODIF CONTINENT
-Anima Mundi - Sao Paulo (BR) |code:1088,84,Festival,festival animation,anima mundi,7,www.animamundi.com.br/pt/festival,amérique sud,brésil,Sao Paulo,-21.034508,-41.073083,MODIF GENRE
-Festival Du CinéMa IndéPendant - Lima (PE) |code:1147,143,Festival,festival cinéma indépendant et novateur,festival du cinéma indépendant,11,www.limaindependiente.com.pe,amérique sud,pérou,lima,-12.04318,-77.02824,MODIF GENRE
-Belo Horizonte Film Festival - Belo Horizonte (BR) |code:1105,101,Festival,festival de cinéma latino-américain,belo horizonte film festival,9,http://festivaldecurtasbh.com.br/19/?lang=en,amérique sud,brésil,belo horizonte,-19.914319,-43.959502,MODIF GENRE
-Bogoshorts - Bogota (CO) |code:1161,157,Festival,festival de courts métrages,bogoshorts,12,http://festival.bogoshorts.com,amérique sud,colombie,bogota,4.60971,-74.08175,A SUPPRIMER - DOUBLON 1120
-Bafici - Buenos Aires (AR) |code:1056,52,Festival,festival fiction/documentaire/expérimental,bafici,4,www.festivales.buenosaires.gob.ar/2017/bafici,amérique sud,argentine,buenos aires,-34.607357,-58.454595,MODIF GENRE
-VidéObrasil - Sao Paulo (BR) |code:1114,110,Festival,festival film,vidéobrasil,10,www.festivalsescvideobrasil.org.br,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
-Mar Del Plata - Buenos Aires (AR) |code:1129,125,Festival,festival film international ,mar del plata,11,www.mardelplatafilmfest.com,amérique sud,argentine,buenos aires,-34.607357,-58.454595,MODIF GENRE
-Guanajuato - Guanajuato (MX) |code:1089,85,Festival,festival film international ,guanajuato,7,http://giff.mx,amérique sud,mexique,guanajuato,20.967412,-101.132191,MODIF GENRE
-Ficg - Mexico City (MX) |code:1045,40,Festival,festival film international ,ficg,3,www.ficg.mx,amérique sud,mexique,mexico city,19.371422,-99.150344,MODIF GENRE
-Morelia - Morelia (MX) |code:1123,119,Festival,festival film international ,morelia,10,https://moreliafilmfest.com,amérique sud,mexique,morelia,19.699076,-101.199996,MODIF GENRE
-Festival De Rio - Rio De Janeiro (BR) |code:1115,111,Festival,festival film international ,festival de rio,10,www.festivaldorio.com.br/en,amérique sud,brésil,rio de janeiro,-22.935024,-43.518246,MODIF GENRE
-Mostra Internacional De Cinema - Sao Paulo (BR) |code:1116,112,Festival,festival film international ,mostra internacional de cinema,10,www.40.mostra.org/en,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
-Bogota Short Film Fest - Bogota (CO) |code:1120,116,Festival,festival international courts métrages,bogota short film fest,10,www.biff.co,amérique sud,colombie,bogota,4.60971,-74.08175,MODIF GENRE
-Sao Paulo International Short Film - Sao Paulo (BR) |code:1095,91,Festival,festival international courts métrages,sao paulo international short film,8,www.kinoforum.org/curtas,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
-Ficunam - Mexique (MX) |code:1020,14,Festival,festival long métrage,ficunam,2,www.ficunam.unam.mx/en,amérique sud,mexique,mexique,23.920061,-102.289691,MODIF GENRE
-Curta Cinema - Rio De Janeiro (BR) |code:1146,142,Festival,festival numérique,curta cinema,11,www.curtacinema.com.br,amérique sud,brésil,rio de janeiro,-22.935024,-43.518246,MODIF GENRE
-File  - Rio De Janeiro (BR) |code:938,177,Festival,festival art digital,file ,3,https://file.org.br/,amérique sud,bresil,rio de janeiro,-22.935024,-43.518246,MODIF CONTINENT
-Imagen - Manizales (CO) |code:941,180,Festival,festival art et sciences,imagen,6,http://festivaldelaimagen.com/,amérique sud,colombie,manizales,5.06889,-75.51738,MODIF CONTINENT
-Nyff - New-York (US) |code:1108,104,Festival,festival film international ,nyff,9,https://www.filmlinc.org/nyff56-submissions/,amérique nord,etats-unis,new-york,40.68295,-73.9708,MODIF GENRE
-Siggraph - Los Angeles (US) |code:1090,86,Festival,art intéractif ,siggraph,7,http://s2017.siggraph.org/computer-animation-festival-submissions,amérique nord,etats-unis,los angeles,34.05513,-118.25703,MODIF GENRE
-New Directors New Films - New-York (US) |code:1036,30,Festival,festival cinéma d'anticipation,new directors new films,3,www.filmlinc.org/festivals/new-directors-new-films-2017,amérique nord,usa,new-york,40.68295,-73.9708,MODIF GENRE
-Chicago International Children'S Film Festival - Chicago (US) |code:1156,152,Festival,festival de films pour enfants,chicago international children's film festival,11,https://www.chicagofilmfestival.com,amérique nord,etats-unis,chicago,41.87897,-87.66063,MODIF GENRE
-True/False Film Fest - Columbia (US) |code:1043,38,Festival,festival documentaire,true/false film fest,3,https://truefalse.org,amérique nord,usa,columbia,34.044165,-80.846323,MODIF GENRE
-Ridm - MontréAl (CA) |code:1137,133,Festival,festival documentaire,ridm,11,www.ridm.ca,amérique nord,canada,montreal,45.572744,-73.586295,MODIF GENRE
-Hot Docs - Toronto (CA) |code:1052,47,Festival,Festival documentaire ,hot docs,4,www.hotdocs.ca,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
-Ann Arbor - Ann Arbor (US) |code:1034,28,Festival,festival experimental,ann arbor,3,www.aafilmfest.org,amérique nord,usa,ann arbor,42.279731,-83.736923,MODIF GENRE
-Tribeca - New-York (US) |code:1054,50,Festival,festival film,tribeca,4,www.tribecafilm.com,amérique nord,usa,new-york,40.68295,-73.9708,MODIF GENRE
-Sundance Film Festival - Sundance (US) |code:1013,7,Festival,festival film,sundance film festival,1,www.sundance.org/festivals/sundance-film-festival,amérique nord,usa,sundance,44.40595,-104.355256,MODIF GENRE
-Chicago International Film Festival - Chicago (US) |code:1065,61,Festival,festival film international ,chicago international film festival,5,www.chicagofilmfestival.com,amérique nord,usa,chicago,41.87897,-87.66063,MODIF GENRE
-Palm Springs International film festival - Palm Springs (US) |code:1075,71,Festival,festival film international ,palm springs international film festival,6,www.psfilmfest.org,amérique nord,usa,palm springs,33.807808,-116.527883,MODIF GENRE + TITRE
-Tiff - Toronto (CA) |code:1098,94,Festival,festival film international ,tiff,9,www.tiff.net,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
-New York International  Children'S Film Festival - New-York (US) |code:1024,18,Festival,festival film pour enfants,new york international  children's film festival,2,nyicff.org,amérique nord,etats-unis,new-york,40.68295,-73.9708,MODIF GENRE
-Wavelenght - Toronto (CA) |code:1016,10,Festival,festival films d'art,wavelenght,2,www.tiff.net/films/wavelength,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
-Regard - Saguenay (CA) |code:1047,27,Festival,Festival international courts métrages,regard,3,www.festivalregard.com/en,amérique nord,canada,québec,46.855987,-71.276271,A SUPPRIMER - DOUBLON 1047
-Regard - Saguenay (CA) |code:1047,42,Festival,festival international courts métrages,regard,3,https://festivalregard.com/,amérique nord,canada,saguenay,48.357428,-71.162699,MODIF GENRE
-Fncm - MontréAl (CA) |code:1107,103,Festival,festival nouveau cinéma,fncm,9,www.nouveaucinema.ca,amérique nord,canada,montreal,45.572744,-73.586295,MODIF GENRE
-Sxsw - Austin (US) |code:1035,29,Festival,Festival nouvelles technologies,sxsw,3,www.sxsw.com,amérique nord,usa,austin,30.222346,-97.836521,A SUPPRIMER - DOUBLON 1035
-Sxsw - Austin (US) |code:1035,37,Festival,festival nouvelles technologies,sxsw,3,www.sxsw.com,amérique nord,usa,Austin,30.222346,-97.836521,MODIF GENRE
-Bian - Montréal (CA) |code:928,165,Exposition,biennale numérique,bian,6,https://www.elektrafestival.ca/bian,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+Ofni - Poitiers (FR) |code:952,191,Festival,festival création visuelle et sonore,ofni,11,http://www.nyktalopmelodie.org/festival-ofni/,europe,france,poitiers,46.578486,0.345003,MODIF CONTINENT
+Oscura - Ganges (FR) |code:994,231,Festival,festival numérique et poétique,oscura,11,http://www.oudeis.fr/oscura/,europe,france,ganges,43.900134,3.722722,MODIF CONTINENT
+OsosphèRes - Strasbourg (FR) |code:976,213,Festival,festival numérique,ososphères,4,https://www.ososphere.org/,europe,france,strasbourg,48.570721,7.758374,MODIF CONTINENT
+Piksel - Bergen (NO) |code:991,228,Festival,festival numérique,piksel,11,http://piksel.no/,europe,norvège,bergen,60.354965,5.302935,MODIF CONTINENT
+Plumsfest - Moscou (RU) |code:940,179,Festival,festival art digital,plumsfest,12,http://plumsfest.ru/welcome-to-plums-festival/,europe nord,russie,moscou,55.741469,37.615561,MODIF CONTINENT
+Porto Post Doc - Porto (US) |code:1021,15,Festival,festival documentaire,porto post doc,2,www.portopostdoc.com,europe,portugal,porto,41.206541,-8.389829,MODIF CONTINENT
+Premiers Plans - Angers (FR) |code:921,2,Festival,festival film,premiers plans,1,www.premiersplans.org,europe,france,angers,47.466354,-0.547184,MODIF CONTINENT
+Punto De Vista - Navarra (ES) |code:1038,32,Festival,festival documentaire,punto de vista,3,www.puntodevistafestival.com,europe,espagne,navarra,42.667152,-1.646057,MODIF CONTINENT
+Quinzaine Des RéAlisateurs - Cannes (FR) |code:1061,57,Festival,festival film,quinzaine des réalisateurs,5,www.quinzaine-realisateurs.com,europe,france,cannes,43.557963,7.003061,MODIF CONTINENT
+Reworks - Thessalonique (GR) |code:962,201,Festival,festival musique et art contemporain,reworks,9,https://reworks.gr/en/about/,europe ,grèce,thessalonique,40.656485,22.937343,MODIF CONTINENT
 Rhizome - Washington Dc (US) |code:943,182,Festival,festival art numérique,rhizome,4,http://www.rhizomedc.org/,amérique nord,etats-unis,washington dc,38.912097,-77.014683,MODIF CONTINENT
-Art Souterrain - MontréAl (CA) |code:954,193,Festival,festival digital,art souterrain,3,https://www.artsouterrain.com/fr/theme-2018/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
-Multi - QuéBec (CA) |code:959,198,Festival,festival électronique,multi,2,http://mmrectoverso.org/mois-multi/,amérique nord,canada,québec,46.855987,-71.276271,MODIF CONTINENT
-Elektra - MontréAl (CA) |code:967,174,Festival,festival numérique,elektra,6,https://www.elektrafestival.ca/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
-Htmlles - MontréAl (CA) |code:992,229,Festival,festival numérique et féministe,htmlles,11,https://htmlles.net/,amérique nord,canada,montréal,45.572744,-73.586295,MODIF CONTINENT
+Riam - Marseille (FR) |code:950,189,Festival,festival arts multimédia,riam,10,http://www.riam.info/2012/05/04/festival/,europe ,france,marseille,43.295314,5.401581,MODIF CONTINENT
+Rokolectiv - Bucharest (RO) |code:963,202,Festival,festival musique et art digital,rokolectiv,4,http://www.rokolectiv.ro/#about/about_rokolectiv_2018,europe ,roumanie,bucharest,44.435842,26.085733,MODIF CONTINENT
+Salon De Montrouge - Montrouge (FR) |code:1007,244,Exposition,salon,salon de montrouge,5,www.ville-montrouge.fr/actualite/316/1-accueil.htm,europe,france,montrouge,48.815839,2.316222,MODIF CONTINENT
+Scopitone - Nantes (FR) |code:983,220,Festival,festival numérique,scopitone,9,https://www.stereolux.org/scopitone-2017,europe,france,nantes,47.228973,-1.554004,MODIF CONTINENT
+Sensorium - Bratislava (SK) |code:956,195,Festival,festival digital,sensorium,5,https://sensorium.is/,europe,slovaquie,bratislava,48.315715,17.174044,MODIF CONTINENT
+Sideration - Paris (FR) |code:960,199,Festival,festival imaginaires spatiaux,sideration,3,http://www.cnes-observatoire.net/memoire/creation_artscene/21_festival-sideration-2018/festival-sideration-edition-2018.html,europe ,france,paris,48.859116,2.331839,MODIF CONTINENT
 Sight And Sound - MontréAl (CA) |code:995,232,Festival,festival performance,sight and sound,9,https://easternbloc.ca/fr/festival-sight-sound,amérique nord,canada,montreal,45.572744,-73.586295,MODIF CONTINENT
+Sonar - Barcelone (ES) |code:957,196,Festival,festival digital,sonar,6,https://sonar.es/,europe ,espagne,barcelone,41.400347,2.159592,MODIF CONTINENT
+Strp - Eindhoven (NL) |code:926,163,Exposition,biennale numérique,strp,3,https://strp.nl/en/,europe ,pays-bas,eindhoven,51.455555,5.478826,MODIF CONTINENT
+This Is Not Art - Newcastle (AU) |code:939,178,Festival,festival art digital,this is not art,9,http://www.thisisnotart.org/,océanie,australie,newcastle,-32.9278,151.782607,MODIF CONTINENT
+Todays Art - La Haye (NL) |code:986,223,Festival,festival numérique,todays art,9,http://todaysart.org/,europe ,pays-bas,la haye,52.07114,4.29916,MODIF CONTINENT
+Torinolab - Torino (IT) |code:932,169,Competition,cinélab,torinolab,11,http://www.torinofilmlab.it/,europe ,italie,torino,45.059405,7.652514,MODIF CONTINENT
+TransnuméRiques - Louvain-La-Neuve (BE) |code:966,173,Festival,festival numérique,transnumériques,3,http://transnumeriques.be/festival2018/,europe ,belgique,louvain-la-neuve,50.881011,4.710309,MODIF CONTINENT
+Traverse Video - Toulouse (FR) |code:953,192,Festival,festival digital,traverse video,3,http://traverse-video.org/,europe ,france,toulouse,43.603902,1.440694,MODIF CONTINENT
+Via - Maubeuge (FR) |code:999,236,Festival,festival pluridisciplinaire,via,11,https://www.agglo-maubeugevaldesambre.fr/events/festival-via-2017/,europe ,france,maubeuge,50.281649,3.970297,MODIF CONTINENT
+Villa  VéLasquez - Madrid (ES) |code:1004,241,Exposition,résidence,villa  vélasquez,0,www.casadevelazquez.org,europe ,espagne,madrid,40.429913,-3.669245,MODIF CONTINENT
+Villa Kujoyama - Kujoyama (JP) |code:1005,242,Exposition,résidence,villa kujoyama,2,www.villakujoyama.jp,asie,japon,kujoyama,34.986533,135.744161,MODIF CONTINENT
+Villa MéDicis - Rome (IT) |code:1003,240,Exposition,résidence,villa médicis,0,www.villamedici.it/fr,europe ,italie,rome,41.878243,12.52809,MODIF CONTINENT
+Vision R - Paris (FR) |code:970,207,Festival,festival numérique,vision r,1,https://fr-fr.facebook.com/VJfestivalVisionR/,europe ,france,paris,48.859116,2.331839,MODIF CONTINENT
+Voix Off Arles - Arles (FR) |code:998,235,Festival,festival photographie,voix off arles,7,voies-off.com,europe ,france,arles,43.676505,4.637023,MODIF CONTINENT
+Wro - Wroclaw (PL) |code:927,164,Exposition,biennale numérique,wro,5,http://wrocenter.pl/en/biennale-wro/,europe ,pologne,wroclaw,51.097349,17.023978,MODIF CONTINENT
+Yebizo - Tokyo (JP) |code:936,175,Festival,festival art contemporain,yebizo,2,https://www.yebizo.com/en/information/,asie,japon,tokyo,35.695126,139.75391,MODIF CONTINENT
+Apart - Alpilles (FR) |code:937,176,Festival,festival art contemporain,apart,8,http://festival-apart.org/,europe,france,alpilles,46.698481,2.549047,MODIF CONTINENT + TITRE
+25 Fps - Zagreb (HR) |code:1097,93,Festival,festival film/video experimental,25 fps,9,www.25fps.hr/en,europe,croatie,zagreb,45.806026,15.976218,MODIF GENRE
+Alcine - Madrid (ES) |code:1154,150,Festival,festival film,alcine,11,http://alcine.org,europe,espagne,madrid,40.429913,-3.669245,MODIF GENRE
+Anima - Bruxelles (BE) |code:1023,17,Festival,festival animation,anima,2,www.animafestival.be,europe,belgique,bruxelles,50.733183,4.436117,MODIF GENRE
+Anima Mundi - Sao Paulo (BR) |code:1088,84,Festival,festival animation,anima mundi,7,www.animamundi.com.br/pt/festival,amérique sud,brésil,Sao Paulo,-21.034508,-41.073083,MODIF GENRE
+Animafest Zagreb - Zagreb (HR) |code:1080,76,Festival,festival animation,animafest zagreb,6,www.animafest.hr/en,europe,croatie,zagreb,45.806026,15.976218,MODIF GENRE
+Ann Arbor - Ann Arbor (US) |code:1034,28,Festival,festival experimental,ann arbor,3,www.aafilmfest.org,amérique nord,usa,ann arbor,42.279731,-83.736923,MODIF GENRE
+Ars Electronica - Linz (AT) |code:1100,96,Festival,festival numérique,ars electronica,9,www.aec.at,europe,autriche,linz,48.284136,14.306943,MODIF GENRE
+Bafici - Buenos Aires (AR) |code:1056,52,Festival,festival fiction/documentaire/expérimental,bafici,4,www.festivales.buenosaires.gob.ar/2017/bafici,amérique sud,argentine,buenos aires,-34.607357,-58.454595,MODIF GENRE
+Belo Horizonte Film Festival - Belo Horizonte (BR) |code:1105,101,Festival,festival de cinéma latino-américain,belo horizonte film festival,9,http://festivaldecurtasbh.com.br/19/?lang=en,amérique sud,brésil,belo horizonte,-19.914319,-43.959502,MODIF GENRE
+Berlinale - Berlin (DE) |code:1017,11,Festival,festival Film ,berlinale,2,www.berlinale.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
+Bieff - Bucarest (RO) |code:1030,24,Festival,festival experimental,bieff,3,www.bieff.ro,europe,roumanie,bucarest,44.435842,26.085733,MODIF GENRE
+Black Movie - GenèVe (CH) |code:1011,4,Festival,festival films indépendants,black movie,1,www.blackmovie.ch,europe,suisse,genève,46.208566,6.143124,MODIF GENRE
+Black Nights - Tallinn (EE) |code:1141,137,Festival,festival films,black nights,11,www.2017.poff.ee,europe,estonie,tallinn,59.401347,24.693912,MODIF GENRE
+Bogota Short Film Fest - Bogota (CO) |code:1120,116,Festival,festival international courts métrages,bogota short film fest,10,www.biff.co,amérique sud,colombie,bogota,4.60971,-74.08175,MODIF GENRE
+Buff - Malmo (SE) |code:1044,39,Festival,festival films,buff,3,www.buff.se,europe,suède,malmo,55.59438,13.029953,MODIF GENRE
+Ca Foscari - Venise (IT) |code:1041,35,Festival,festival de courts métrages,ca foscari,3,www.cafoscarishort.unive.it,europe,italie,venise,45.581192,12.561157,MODIF GENRE
+Camerimage - Bydgoszcz (PL) |code:1149,145,Festival,festival film international ,camerimage,11,www.camerimage.pl,europe,pologne,bydgoszcz,53.122091,18.01434,MODIF GENRE
+Chicago International Children'S Film Festival - Chicago (US) |code:1156,152,Festival,festival de films pour enfants,chicago international children's film festival,11,https://www.chicagofilmfestival.com,amérique nord,etats-unis,chicago,41.87897,-87.66063,MODIF GENRE
+Chicago International Film Festival - Chicago (US) |code:1065,61,Festival,festival film international ,chicago international film festival,5,www.chicagofilmfestival.com,amérique nord,usa,chicago,41.87897,-87.66063,MODIF GENRE
+CinéFondation - Cannes (FR) |code:1062,58,Festival,jeune création,cinéfondation,5,www.cinefondation.com,europe,france,cannes,43.557963,7.003061,MODIF GENRE
+Cinéma du réel -  () |code:1450,45,Festival,festival documentaire ,cinéma du réel,4,www.cinemadureel.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
+Cinema Jove - Valence (ES) |code:1084,80,Festival,festival films,cinema jove,6,www.cinemajove.com,europe,espagne,valence,39.464773,-0.363258,MODIF GENRE
+CôTé Court - Pantin (FR) |code:1071,67,Festival,festival films,côté court,6,www.cotecourt.org,europe,france,pantin,48.898752,2.406974,MODIF GENRE
+Courtisane - Gand (BE) |code:1040,34,Festival,festival fiction/politique,courtisane,3,www.courtisane.be,europe,belgique,gand,51.057496,3.732703,MODIF GENRE
+Cph Dox - Copenhague (DK) |code:1028,22,Festival,festival documentaire ,cph dox,3,www.cphdox.dk/en,europe,danemark,copenhague,55.704438,12.502119,MODIF GENRE
+Csff - Shenzhen (CN) |code:1148,144,Festival,festival nouveaux médias,csff,11,www.csff.com.cn,asie,chine,shenzhen,22.551224,113.930539,MODIF GENRE
+Curta Cinema - Rio De Janeiro (BR) |code:1146,142,Festival,festival numérique,curta cinema,11,www.curtacinema.com.br,amérique sud,brésil,rio de janeiro,-22.935024,-43.518246,MODIF GENRE
+Doclisboa - Lisboa (PT) |code:1109,105,Festival,festival film international ,doclisboa,9,www.doclisboa.org,europe,portugal,lisboa,38.748243,-9.140093,MODIF GENRE
+Documenta - Madrid (ES) |code:1066,62,Festival,festival film international ,documenta,5,www.documentamadrid.com,europe,espagne,madrid,40.429913,-3.669245,MODIF GENRE
+Dok Leipzig - Leipzig (DE) |code:1110,106,Festival,festival documentaire ,dok leipzig,10,www.dok-leipzig.de,europe,allemagne,leipzig,51.341053,12.404024,MODIF GENRE
+Emaf - Osnabruck (DE) |code:955,48,Festival,festival digital,emaf,4,www.emaf.de,europe,allemagne,osnabruck,52.274158,8.047347,MODIF GENRE
+Encounters - Bristol () |code:1103,99,Festival,festival cinéma émergent,encounters,9,http://encounters-festival.org.uk,europe,grande-bretagne,bristol,51.455662,-2.582966,MODIF GENRE
 Fespaco - Ouagadougou (BF) |code:1018,12,Festival,festival cinéma panafricain,fespaco,2,www.fespaco.bf/fr,afrique,burkina faso,ouagadougou,12.36566,-1.53388,MODIF GENRE
-E Fest - Carthage (TN) |code:944,183,Festival,festival art numérique,e fest,11,http://efest.xyz/,afrique,tunisie,carthage,33.687264,9.007775,MODIF CONTINENT
-The Wrong - Monde (FR) |code:924,161,Exposition,biennale numérique,the wrong,11,http://thewrong.org/,,monde,monde,46.180618,6.156568,MODIF GENRE
+Festival De Clermont-Ferrand - Clermont-Ferrand (FR) |code:1015,9,Festival,festival de courts métrages,festival de clermont-ferrand,2,www.clermont-filmfest.com,europe,france,clermont-ferrand,45.784832,3.114432,MODIF GENRE
+Festival De Lussas - Lussas (FR) |code:1091,87,Festival,festival documentaire ,festival de lussas,8,www.lussasdoc.org,europe,france,lussas,44.620874,4.466305,MODIF GENRE
+Festival De Rio - Rio De Janeiro (BR) |code:1115,111,Festival,festival film international ,festival de rio,10,www.festivaldorio.com.br/en,amérique sud,brésil,rio de janeiro,-22.935024,-43.518246,MODIF GENRE
+Festival De Vienne - Vienne (AT) |code:1064,60,Festival,biennale  ,festival de vienne,5,www.viennale.at,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
+Festival Des Cinemas Differents Et ExpéRimentaux De Paris - Paris (FR) |code:1121,117,Festival,festival expérimental,festival des cinemas differents et expérimentaux de paris,10,www.cjcinema.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
+Festival Du CinéMa De Brive - Brive (FR) |code:1051,46,Festival,festival art et essai,festival du cinéma de brive,4,www.festivalcinemabrive.fr,europe,france,brive,45.156197,1.500454,MODIF GENRE
+Festival Du CinéMa IndéPendant - Lima (PE) |code:1147,143,Festival,festival cinéma indépendant et novateur,festival du cinéma indépendant,11,www.limaindependiente.com.pe,amérique sud,pérou,lima,-12.04318,-77.02824,MODIF GENRE
+Festival Entrevues - Belfort (FR) |code:1127,123,Festival,festival cinéma indépendant et novateur,festival entrevues,10,www.festival-entrevues.com,europe,france,belfort,47.650546,6.90974,MODIF GENRE
+Festival Et Marché International Du Film D'Annecy - Annecy (FR) |code:1072,68,Festival,festival animation,festival et marché international du film d'annecy,6,www.annecy.org,europe,france,annecy,45.906143,6.125034,MODIF GENRE
+Festival EuropéEn Du Film Court De Brest - Brest (FR) |code:1134,130,Festival,festival de courts métrages,festival européen du film court de brest,11,www.filmcourt.fr,europe,france,brest,48.404244,-4.484974,MODIF GENRE
+Festival International De CinéMa De Marseille - Marseille (FR) |code:1086,82,Festival,festival film international ,festival international de cinéma de marseille,7,www.fidmarseille.org,europe,france,marseille,43.295314,5.401581,MODIF GENRE
+Festival National Du Film D'Animation. - Rennes (FR) |code:1031,25,Festival,festival animation,festival national du film d'animation.,3,www.festival-film-animation.fr,europe,france,rennes,48.110805,-1.665857,MODIF GENRE
+Festival Tous Courts - Aix-En-Provence (FR) |code:1135,131,Festival,festival film international ,festival tous courts,11,www.festivaltouscourts.com,europe,france,aix-en-provence,43.526046,5.44467,MODIF GENRE
+Ficg - Mexico City (MX) |code:1045,40,Festival,festival film international ,ficg,3,www.ficg.mx,amérique sud,mexique,mexico city,19.371422,-99.150344,MODIF GENRE
+Ficunam - Mexique (MX) |code:1020,14,Festival,festival long métrage,ficunam,2,www.ficunam.unam.mx/en,amérique sud,mexique,mexique,23.920061,-102.289691,MODIF GENRE
+Ficx - Gijon (ES) |code:1157,153,Festival,festival film international ,ficx,11,http://www.gijonfilmfestival.com,europe,espagne,gijon,43.537055,-5.66717,MODIF GENRE
+Fiff Namur - Namur (BE) |code:1096,92,Festival,festival film francophone,fiff namur,9,www.fiff.be,europe,belgique,namur,50.385631,4.860581,MODIF GENRE
+Film Fest Dresden - Dresden (DE) |code:1053,49,Festival,festival international courts métrages,film fest dresden,4,www.filmfest-dresden.de,europe,allemagne,dresden,51.055604,13.731021,MODIF GENRE
+Film Fest Gent - Gand (BE) |code:1117,113,Festival,festival international   ,film fest gent,10,www.filmfestival.be/en,europe,belgique,gand,51.057496,3.732703,MODIF GENRE
+Films De Femmes - CréTeil (FR) |code:1026,20,Festival,festival films de femmes,films de femmes,3,www.filmsdefemmes.com,europe,france,créteil,48.785152,2.455347,MODIF GENRE
+Fipa - Biarritz (FR) |code:1010,3,Festival,festival documentaire ,fipa,1,www.fipa.tv,europe,france,biarritz,43.47321,-1.554798,MODIF GENRE
+Fncm - MontréAl (CA) |code:1107,103,Festival,festival nouveau cinéma,fncm,9,www.nouveaucinema.ca,amérique nord,canada,montreal,45.572744,-73.586295,MODIF GENRE
+Fribourg International Film Festival - Fribourg (CH) |code:1042,36,Festival,festival film international ,fribourg international film festival,3,www.fiff.ch,europe,suisse,fribourg,46.693044,7.101021,MODIF GENRE
+Giff - GenèVe (CH) |code:1136,132,Festival,festival international courts métrages,giff,11,www.giff.ch,europe,suisse,genève,46.19593,6.128052,MODIF GENRE
+Glasgow Festival - Glasgow (GB) |code:1019,13,Festival,festival film international ,glasgow festival,2,www.glasgowfilm.org/glasgow-film-festival,europe,uk,glasgow,55.860766,-4.268234,MODIF GENRE
+Go Short - Nijmegen (NL) |code:1048,43,Festival,festival international courts métrages,go short,4,www.goshort.nl/en,europe,pays-bas,nijmegen,51.833609,5.847102,MODIF GENRE
+GöTeborg Film Festival - Gothenburg (SE) |code:1012,6,Festival,festival films de femmes,göteborg film festival,1,www.giff.se/en,europe,suède,gothenburg,57.735628,12.014286,MODIF GENRE
+Guanajuato - Guanajuato (MX) |code:1089,85,Festival,festival film international ,guanajuato,7,http://giff.mx,amérique sud,mexique,guanajuato,20.967412,-101.132191,MODIF GENRE
+Hiroshima Film Festival - Hiroshima (JP) |code:1151,147,Festival,festival cinéma émergent,hiroshima film festival,11,www.hiff.jp/en,asie,japon,hiroshima,34.397832,132.453581,MODIF GENRE
+Hkbu Student Film Festival - Hong Kong (CN) |code:1159,155,Festival,festival étudiant,hkbu student film festival,11,http://af.hkbu.edu.hk/en/events/1584,asie,chine,hong kong,32.523743,106.431983,MODIF GENRE
+Hot Docs - Toronto (CA) |code:1052,47,Festival,Festival documentaire ,hot docs,4,www.hotdocs.ca,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
+Huesca - Huesca (ES) |code:1081,77,Festival,festival film international ,huesca,6,www.huesca-filmfestival.com/en,europe,espagne,huesca,42.147507,-0.072973,MODIF GENRE
+Idfa - Amsterdam (NL) |code:1132,128,Festival,Festival documentaire ,idfa,11,www.idfa.nl,europe,pays-bas,amsterdam,52.37243,4.89973,MODIF GENRE
+Iffr - Rotterdam (NL) |code:1008,1,Festival,festival cinéma,iffr,1,www.iffr.com/en,europe,pays-bas,rotterdam,51.92278,4.47578,MODIF GENRE
+Indiecork - Cork (IE) |code:1126,122,Festival,festival cinéma indépendant,indiecork,10,http://indiecork.com,europe,Irlande,cork,51.500106,-9.371343,MODIF GENRE
+IndieLisboa - Festival international du cinéma indépendant de Lisbonne - Lisboa (PT) |code:1059,55,Festival,festival cinéma indépendant,indielisboa,5,www.indielisboa.com,europe,portugal,lisboa,38.748243,-9.140093,MODIF GENRE
+Interfilm Berlin - Berlin (DE) |code:1139,135,Festival,festival international courts métrages,interfilm berlin,11,www.interfilm.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
+International Short Film Festival In Drama - Drama (GR) |code:1102,98,Festival,festival international courts métrages,international short film festival in drama,9,www.dramafilmfestival.gr,europe,grèce,drama,41.150452,24.152498,MODIF GENRE
+InvidéO - Milan (IT) |code:1143,139,Festival,exposition art vidéo,invidéo,11,www.mostrainvideo.com,europe,italie,milan,45.473702,9.170685,MODIF GENRE
+Jeonju Festival - Jeonju (KR) |code:1067,63,Festival,festival film international ,jeonju festival,5,http://eng.jiff.or.kr/about_jiff/,asie,coree du sud,jeonju,35.826708,127.128262,MODIF GENRE
+Jerusalem Film Festival - Jerusalem (IL) |code:1087,83,Festival,festival film international ,jerusalem film festival,7,www.jff.org.il/en,moyen-orient,israël,jerusalem,31.76904,35.21633,MODIF GENRE
+Jihlava - Jihlava (CZ) |code:1112,108,Festival,festival cinéma émergent,jihlava,10,www.dokument-festival.com,europe,république tchèque,jihlava,49.400043,15.590803,MODIF GENRE
+Kaoshiung - Kaohsiung (TW) |code:1057,53,Festival,festival international courts métrages,kaoshiung,4,www.filmfreeway.com/2017KaohsiungFilmFestivalInternationalShortFilmCompetition,asie,taiwan,kaohsiung,22.629212,120.319724,MODIF GENRE
+Karlovy Vary International Film Festival - Karlovy Vary (CZ) |code:1079,75,Festival,festival film international ,karlovy vary international film festival,6,www.kviff.com,europe,république tchèque,karlovy vary,50.232816,12.848029,MODIF GENRE
+Kff - Cracovie (PL) |code:1069,65,Festival,festival film international ,kff,5,www.krakowfilmfestival.pl,europe,pologne,cracovie,50.052652,19.987345,MODIF GENRE
+Kurzfilm Festival Hamburg - Hamburg (DE) |code:1073,69,Festival,festival pluridisciplinaire,kurzfilm festival hamburg,6,www.festival.shortfilm.com,europe,allemagne,hamburg,53.576158,10.007046,MODIF GENRE
+Les éCrans Documentaires - Arcueil (FR) |code:1150,146,Festival,festival documentaire,les écrans documentaires,11,www.lesecransdocumentaires.org,europe,france,arcueil,48.806082,2.334599,MODIF GENRE
+Leuven International Short Film Festival - Louvain (BE) |code:1160,156,Festival,festival courts-métrage,leuven international short film festival,12,www.kortfilmfestival.be,europe,belgique,louvain,50.881011,4.710309,MODIF GENRE
+Locarno - Locarno (CH) |code:1092,88,Festival,festival film international ,locarno,8,www.pardolive.ch,europe,suisse,locarno,46.243909,8.856296,MODIF GENRE
+Mar Del Plata - Buenos Aires (AR) |code:1129,125,Festival,festival film international ,mar del plata,11,www.mardelplatafilmfest.com,amérique sud,argentine,buenos aires,-34.607357,-58.454595,MODIF GENRE
+Mecal - Barcelone (ES) |code:1039,33,Festival,festival animation,mecal,3,www.mecalbcn.org,europe,espagne,barcelone,41.400347,2.159592,MODIF GENRE
+Miff - Melbourne (AU) |code:1093,89,Festival,festival film international ,miff,8,www.miff.com.au,océanie,australie,melbourne,-37.825071,144.978682,MODIF GENRE
+Milano Film Festival - Milan (IT) |code:1076,72,Festival,festival local,milano film festival,6,www.milanofilmfestival.it,europe,italie,milan,45.473702,9.170685,MODIF GENRE
+Morelia - Morelia (MX) |code:1123,119,Festival,festival film international ,morelia,10,https://moreliafilmfest.com,amérique sud,mexique,morelia,19.699076,-101.199996,MODIF GENRE
+Mostra Di Venezia - Venise (IT) |code:1142,138,Festival,festival film international ,mostra di venezia,11,www.labiennale.org/en/cinema,europe,italie,venise,45.581192,12.561157,MODIF GENRE
+Mostra Internacional De Cinema - Sao Paulo (BR) |code:1116,112,Festival,festival film international ,mostra internacional de cinema,10,www.40.mostra.org/en,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
+Munich Filmfest - Munich (DE) |code:1130,126,Festival,festival long métrage,munich filmfest,11,www.filmfest-muenchen.de,europe,allemagne,munich,48.152126,11.544467,MODIF GENRE
 Mutek - Monde (FR) |code:975,212,Festival,festival numérique,mutek,3,http://www.mutek.org/fr,,monde,monde,46.180618,6.156568,MODIF GENRE
+Nahal Student Short Film Festival  - Teheran (IR) |code:1070,66,Festival,festival cinéma étudiant,nahal student short film festival ,6,http://nahalfestival.art.ac.ir/,moyen orient,iran,teheran,35.69439,51.42151,MODIF GENRE
+Naoussa International Film Festival - Naoussa (GR) |code:1118,114,Festival,festival cinéma novateur,naoussa international film festival,10,www.niff.gr/en,europe,grèce,naoussa,40.628945,22.069248,MODIF GENRE
+New Directors New Films - New-York (US) |code:1036,30,Festival,festival cinéma d'anticipation,new directors new films,3,www.filmlinc.org/festivals/new-directors-new-films-2017,amérique nord,usa,new-york,40.68295,-73.9708,MODIF GENRE
+New York International  Children'S Film Festival - New-York (US) |code:1024,18,Festival,festival film pour enfants,new york international  children's film festival,2,nyicff.org,amérique nord,etats-unis,new-york,40.68295,-73.9708,MODIF GENRE
+Next Festival Bucharest - Bucharest (RO) |code:1083,79,Festival,festival cinéma indépendant,next festival bucharest,6,www.nextfilmfestival.ro/en,europe,roumanie,bucharest,44.435842,26.085733,MODIF GENRE
+Nordisk Panorama - Malmo (SE) |code:1104,100,Festival,festival documentaire,nordisk panorama,9,https://nordiskpanorama.com,europe,suède,malmo,55.59438,13.029953,MODIF GENRE
+Norwegian Short Film Festival  - Grimstad (NO) |code:1082,78,Festival,festival courts métrages,norwegian short film festival ,6,https://kortfilmfestivalen.no/en/pages,europe,norvège,grimstad,58.338849,8.586019,MODIF GENRE
+Nyff - New-York (US) |code:1108,104,Festival,festival film international ,nyff,9,https://www.filmlinc.org/nyff56-submissions/,amerique du nord,etats-unis,new-york,40.68295,-73.9708,MODIF GENRE
+Oberhausen - Oberhausen (DE) |code:1060,56,Festival,festival international courts métrages,oberhausen,5,www.kurzfilmtage.de,europe,allemagne,oberhausen,51.498071,6.862345,MODIF GENRE
+Odense International Film Festival - Odense (DK) |code:1099,95,Festival,festival international courts métrages,odense international film festival,9,www.filmfestival.dk/en,europe,danemark,odense,55.391817,10.37355,MODIF GENRE
+Off-Courts Trouville - Trouville (FR) |code:1101,97,Festival,résidence,off-courts trouville,9,www.offcourts.com,europe,france,trouville,49.585599,0.599937,MODIF GENRE
+Poitiers Films Festival - Poitiers (FR) |code:1162,158,Festival,festival d'école et jeune création,poitiers films festival,12,www.poitiersfilmfestival.com,europe,france,poitiers,46.578486,0.345003,MODIF GENRE
+Praflows - Vienne (AT) |code:985,222,Festival,festival numérique,praflows,9,http://www.paraflows.at/index.php?id=759,europe ,autriche,vienne,48.198674,16.348388,MODIF GENRE
+Regard - Saguenay (CA) |code:1047,42,Festival,festival international courts métrages,regard,3,https://festivalregard.com/,amérique nord,canada,saguenay,48.357428,-71.162699,MODIF GENRE
+Rencontres Internationales Paris/Berlin - Paris (FR) |code:1032,26,Festival,art contemporain,rencontres internationales paris/berlin,3,www.art-action.org,europe,france,paris,48.859116,2.331839,MODIF GENRE
+Rencontres Internationales Sciences Et CinéMas - Marseille (FR) |code:1131,127,Festival,festival film et science,rencontres internationales sciences et cinémas,11,festivalrisc.org,europe,france,marseille,43.295314,5.401581,MODIF GENRE
+Ridm - MontréAl (CA) |code:1137,133,Festival,festival documentaire,ridm,11,www.ridm.ca,amérique nord,canada,montreal,45.572744,-73.586295,MODIF GENRE
+Riff - Rome (IT) |code:1133,129,Festival,festival cinéma indépendant,riff,11,www.riff.it/en,europe,italie,rome,41.878243,12.52809,MODIF GENRE
+San Sebastian Festival - Saint SéBastien (ES) |code:1106,102,Festival,festival film,san sebastian festival,9,www.sansebastianfestival.com,europe,espagne,saint sébastien,43.314798,-1.974583,MODIF GENRE
+Sao Paulo International Short Film - Sao Paulo (BR) |code:1095,91,Festival,festival international courts métrages,sao paulo international short film,8,www.kinoforum.org/curtas,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
+Sapporo Short Film Festival - Sapporo (JP) |code:1068,64,Festival,festival international courts métrages,sapporo short film festival,5,www.sapporoshortfest.jp/en,asie,japon,sapporo,43.080237,141.336707,MODIF GENRE
+Sarajevo Film Fest - Sarajevo (BA) |code:1094,90,Festival,festival film,sarajevo film fest,8,www.sff.ba/en,europe,bosnie,sarajevo,43.84864,18.35644,MODIF GENRE
+Seattle International Film Festival - Seattle (US) |code:1022,16,Festival,festival film international ,seattle international film festival,2,www.siff.net,usa,usa,seattle,47.673455,-122.331537,MODIF GENRE
+Semaine De La Critique - Cannes (FR) |code:1063,59,Festival,festival cinéma émergent,semaine de la critique,5,www.semainedelacritique.com,europe,france,cannes,43.557963,7.003061,MODIF GENRE
+Sgiff - Singapour (SG) |code:1158,154,Festival,festival film,sgiff,11,http://sgiff.com,asie,singapour,singapour,1.316382,103.833828,MODIF GENRE
+Sheffield Doc Fest - Sheffield (GB) |code:1077,73,Festival,festival documentaire,sheffield doc fest,6,www.sheffdocfest.com,europe,uk,sheffield,53.390826,-1.468485,MODIF GENRE
+Short Short Film Festival And Asia - Tokyo (JP) |code:1078,74,Festival,festival international courts métrages,short short film festival and asia,6,www.shortshorts.org,asie,japon,tokyo,35.695126,139.75391,MODIF GENRE
+Short Waves - Poznan (PL) |code:1037,31,Festival,festival international courts métrages,short waves,3,shortwaves.pl,europe,pologne,poznan,52.396172,16.916073,MODIF GENRE
+Siggraph - Los Angeles (US) |code:1090,86,Festival,art intéractif ,siggraph,7,http://s2017.siggraph.org/computer-animation-festival-submissions,amérique nord,etats-unis,los angeles,34.05513,-118.25703,MODIF GENRE
+Sitges - Sitges (ES) |code:1124,120,Festival,festival cinéma fantastique,sitges,10,http://sitgesfilmfestival.com,europe,espagne,sitges,41.230643,1.785764,MODIF GENRE
+Sleepwalkers - Tallinn (EE) |code:1140,136,Festival,festival international courts métrages,sleepwalkers,11,wwww.shorts.poff.ee,europe,estonie,tallinn,59.401347,24.693912,MODIF GENRE
+Split Film Festival - Split (HR) |code:1119,115,Festival,"festival indépendant, art et essai, expérimental",split film festival,10,www.splitfilmfestival.hr,europe,croatie,split,43.514594,16.452375,MODIF GENRE
+Stuttgart Festival Of Animated Film - Stuttgart (DE) |code:1058,54,Festival,festival animation,stuttgart festival of animated film,4,www.itfs.de/en,europe,allemagne,stuttgart,48.802275,9.188624,MODIF GENRE
+Stuttgarter Filmwinter - Stuttgart (DE) |code:1025,19,Festival,festival médias,stuttgarter filmwinter,2,www.filmwinter.de,europe,allemagne,stuttgart,48.802275,9.188624,MODIF GENRE
+Sundance Film Festival - Sundance (US) |code:1013,7,Festival,festival film,sundance film festival,1,www.sundance.org/festivals/sundance-film-festival,amérique nord,usa,sundance,44.40595,-104.355256,MODIF GENRE
+Sxsw - Austin (US) |code:1035,37,Festival,festival nouvelles technologies,sxsw,3,www.sxsw.com,amérique nord,usa,Austin,30.222346,-97.836521,MODIF GENRE
+Tau - Tel Aviv (IL) |code:1085,81,Festival,festival cinéma étudiant,tau,7,www.taufilmfest.com,moyen orient,israël,tel aviv,32.072773,34.804786,MODIF GENRE
+The Wrong - Monde (FR) |code:924,161,Exposition,biennale numérique,the wrong,11,http://thewrong.org/,,monde,monde,46.180618,6.156568,MODIF GENRE
+Thessaloniki International Documentary Film Festival - Thessalonique (GR) |code:1152,148,Festival,festival films documentaires,thessaloniki international film festival,11,www2.filmfestival.gr/en,europe,grèce,thessalonique,40.656485,22.937343,MODIF GENRE
+Tiff - Toronto (CA) |code:1098,94,Festival,festival film international ,tiff,9,www.tiff.net,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
+Torino Film Festival - Turin (IT) |code:1144,140,Festival,festival cinéma indépendant,torino film festival,11,www.torinofilmfest.org,europe,italie,turin,45.059405,7.652514,MODIF GENRE
+Transmediale - Berlin (DE) |code:971,5,Festival,Festival art et digital,transmediale,1,www.transmediale.de,europe,allemagne,berlin,52.52045,13.40732,MODIF GENRE
+Trento Film Festival - Trento (IT) |code:1055,51,Festival,festival film,trento film festival,4,www.trentofestival.it,europe,italie,trento,46.131509,10.880622,MODIF GENRE
+Tribeca - New-York (US) |code:1054,50,Festival,festival film,tribeca,4,www.tribecafilm.com,amérique nord,usa,new-york,40.68295,-73.9708,MODIF GENRE
+Tricky Women Film Festival - Vienne (AT) |code:1046,41,Festival,festival animation femmes,tricky women film festival,3,https://www.trickywomen.at/de/festival/2017,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
+Trieste Film Festival - Trieste (IT) |code:1014,8,Festival,festival films,trieste film festival,1,www.triestefilmfestival.it,europe,italie,trieste,45.686696,13.791014,MODIF GENRE
+True/False Film Fest - Columbia (US) |code:1043,38,Festival,festival documentaire,true/false film fest,3,https://truefalse.org,amérique nord,usa,columbia,34.044165,-80.846323,MODIF GENRE
+Uppsala - Uppsala (SE) |code:1111,107,Festival,festival international courts métrages,uppsala,10,www.shortfilmfestival.com/en,europe,suède,uppsala,60.197663,17.742031,MODIF GENRE
+Valladolid - Valladolid (ES) |code:1122,118,Festival,festival films international,valladolid,10,www.seminci.es,europe,espagne,valladolid,41.489063,-4.89167,MODIF GENRE
+VidéObrasil - Sao Paulo (BR) |code:1114,110,Festival,festival film,vidéobrasil,10,www.festivalsescvideobrasil.org.br,amérique sud,brésil,sao paulo,-21.034508,-41.073083,MODIF GENRE
+VidéOformes - Clermont-Ferrand (FR) |code:1027,21,Festival,festival numérique ,vidéoformes,3,www.videoformes.com,europe,france,clermont-ferrand,45.784832,3.114432,MODIF GENRE
+Vis Vienna Shorts - Vienne (AT) |code:1074,70,Festival,festival courts métrages,vis vienna shorts,6,www.viennashorts.com/en,europe,autriche,vienne,48.198674,16.348388,MODIF GENRE
+Visions Du RéEl - Nyon (CH) |code:1049,44,Festival,festival film international ,visions du réel,4,www.visionsdureel.ch,europe,suisse,nyon,46.38641,6.23562,MODIF GENRE
+Wavelenght - Toronto (CA) |code:1016,10,Festival,festival films d'art,wavelenght,2,www.tiff.net/films/wavelength,amérique nord,canada,toronto,43.64877,-79.38171,MODIF GENRE
+Wff - Varsovie (PL) |code:1125,121,Festival,festival de films de Varsovie,wff,10,https://wff.pl/en,europe,pologne,varsovie,52.237695,21.005427,MODIF GENRE
+Zinebi - Bilbao (ES) |code:1155,151,Festival,festival documentaire,zinebi,11,http://zinebi.eus/web/en,europe,espagne,bilbao,43.258534,-2.937123,MODIF GENRE
+Busan International Film Festival - Busan (KR) |code:1113,109,Festival,festival de cinéma international et asiatique,busan international film festival,10,www.biff.kr/structure/eng/default.asp,asie,corée du sud,busan,35.11741,129.002102,MODIF GENRE + TITRE
+Cork International Film Festival - Cork (IE) |code:1145,141,Festival,festival film international ,cork international film festival,11,www.corkfilmfest.org,europe,uk,cork,52.418788,-1.247349,MODIF GENRE + TITRE
+Internationale Kurzfilmtage Winterthur - Winterthur (CH) |code:1128,124,Festival,festival film international ,Internationale Kurzfilmtage Winterthur,10,www.kurzfilmtage.ch,europe,suisse,winterthur,47.499693,8.728495,MODIF GENRE + TITRE
+Kasseler Dokfest - Kassel (DE) |code:1138,134,Festival,festival documentaire,kasseler dokfest,11,www.kasselerdokfest.de,europe,allemagne,kassel,51.309934,9.47572,MODIF GENRE + TITRE
+Palm Springs International film festival - Palm Springs (US) |code:1075,71,Festival,festival film international ,palm springs international film festival,6,www.psfilmfest.org,amérique nord,usa,palm springs,33.807808,-116.527883,MODIF GENRE + TITRE
+Stockholm Internatinal Film Festival - Stockolm (SWE) |code:1153,149,Festival,festival film international ,stockholm international film festival,11,www.stockholmfilmfestival.se,europe,suède,stockolm,14.358933,100.573593,MODIF GENRE + TITRE
+Tampere Film Festival - Tampere (FI) |code:1029,23,Festival,festival films documentaires,tampere film festival,3,www.tamperefilmfestival.fi,europe,finlande,tampere,61.62611,23.88146,MODIF GENRE +TITRE
