@@ -99,23 +99,21 @@ def getContinent(name, index=True) :
     param :
         index: (bool) if true, return the index, the full name otherwise
     """
+
     #  Loop through continents and compute similarity score
     scores = [SequenceMatcher(None, cont[1], name).ratio() for cont in CONTINENTS]
+    
     # Return the elemens with highest score 
     ans = CONTINENTS[scores.index(max(scores))][0] if index else CONTINENTS[scores.index(max(scores))][1]
+    
     # print(f"continent demandé : {name}, continent retourné : {ans}",)
     return ans
 
 
-
-
-
-
-
-
-
 # Load csv file 
-fest_df = pd.read_csv(Path(pathlib.Path(__file__).parent , './fest_full_incorrect.csv'))
+csvpath = Path(pathlib.Path(__file__).parent , './fest_full_incorrect.csv')
+logger.debug(f"Loading CSV file to dataframe : {csvpath}")
+fest_df = pd.read_csv(csvpath)
 # fest_df = pd.read_csv(Path(pathlib.Path(__file__).parent , './fest_full_correct.csv'))
 # print(fest_df)
 
@@ -123,8 +121,12 @@ fest_df = pd.read_csv(Path(pathlib.Path(__file__).parent , './fest_full_incorrec
 if 'ID Event' in fest_df.columns : fest_df.rename(columns={'ID Event':'id'}, inplace=True)
 if 'Refs Kart' in fest_df.columns : fest_df.rename(columns={'Refs Kart':'id'}, inplace=True)
 
-# Parsing uncorrect fest csv 
+# Parsing incorrect fest csv 
+# get the artwork code
 patt = re.compile('.*code:(.*)$')
+
+logger.debug(f"------------ Looping through rows to detect events")
+
 for ind, data in fest_df.iterrows():
     
     # Current value e.g. InvidéO - Milan (IT) |code:1143
@@ -138,7 +140,10 @@ for ind, data in fest_df.iterrows():
         # Replace former value with new one
         fest_df.loc[ind,'id'] = id
         logger.debug(f"id event extracted : {id} from \"{id2parse}\"")
+
+
         
+logger.debug(f"\n\n------------ Looping through events and check their presence in Kart")
 
 # For each row check if exists in db 
 for ind, data in fest_df.iterrows():
@@ -149,6 +154,7 @@ for ind, data in fest_df.iterrows():
     # Retrieve the event in Kart 
     try :
         ev = Event.objects.get(pk=id)
+        logger.debug(f"\n{ev} retrieved")
     except :
         logger.debug(f"Can't find the object with id {id}")
         continue
@@ -162,10 +168,12 @@ for ind, data in fest_df.iterrows():
         place = Place()
         # Associate it to current event 
         ev.place = place
+        logger.debug(f"No place associated to {ev}. Creating one...")
 
     ####################
     # Cities are replaced with csv data
     ev.place.name = data['ville'].lower() 
+    logger.debug(f"Fill 'city' from csv : {ev.place.name}")
 
     # Lat and long come from Kart, because probably the most recent 
     # print("same city ? ", ev.place.name.lower() == data['ville'].lower(), data['ville'].lower())
@@ -179,6 +187,8 @@ for ind, data in fest_df.iterrows():
     #  Rencontres Internationales Paris/Berlin - Paris (FR) |code:1032	26	Festival	art contemporain	rencontres internationales paris/berlin	3	www.art-action.org	europe	france	paris	48,859116	2,331839	MODIF GENRE
 
     # Get modification type
+    logger.debug(f"Get the modif specified in csv ...")
+
     if 'Modif' in data.keys() :
         # init 
         modif_l = None
@@ -186,10 +196,13 @@ for ind, data in fest_df.iterrows():
         modif = data['Modif']
         
         # get rid of "MODIF " string
+        # e.g. "MODIF CONTINENT"
         if "MODIF " == modif[:6]:
+            # e.g. CONTINENT
             modif = modif[6:]
                 
-            
+        
+        # In case of duplicate
         if modif.startswith("A SUPPRIMER - DOUBLON ") :
             # Keep DOUBLON XXX
             modif = modif[14:]
@@ -202,6 +215,8 @@ for ind, data in fest_df.iterrows():
 
         # loop on elements e.g. GENRE,TITRE
         for m in modif_l :
+
+            logger.debug(f"Modif detected : {m}")
 
             if "DOUBLON" in m :
                 id = data['id']
@@ -216,17 +231,19 @@ for ind, data in fest_df.iterrows():
                 # Check if id2keep is different from id to delete
                 if id2keep == id :
                     # do nothing, it's not a true duplicate
+                    logger.debug(f"**************** Do nothing, it's not a true duplicate {id2keep} VS {id}")
                     pass
                 else :
                     # Check where the id2del is referenced
                     id2del = id 
                     print("id2del : ", id2del)
                     print("id2keep : ", id2keep)
+
                     # MetaAwards 
                     try :
                         ma = MetaAward.objects.get(event_id=id2del)
                         mak = MetaAward.objects.get(event_id=id2keep)
-                        print("MetaAwards del :",ma," keep :", mak)
+                        logger.debug(f"MetaAwards del : {ma} keep : {mak}")
                     except :
                         pass
 
@@ -234,7 +251,7 @@ for ind, data in fest_df.iterrows():
                     try :
                         ma = MetaEvent.objects.get(event_id=id2del)
                         mak = MetaEvent.objects.get(event_id=id2keep)
-                        print("MetaEvent del :",ma," keep :", mak)
+                        logger.debug(f"MetaEvent del : {ma} keep : {mak}")
                     except :
                         pass
 
@@ -242,7 +259,7 @@ for ind, data in fest_df.iterrows():
                     try :
                         ma = Diffusion.objects.get(event_id=id2del)
                         mak = Diffusion.objects.get(event_id=id2keep)
-                        print("Diffusion del :",ma," keep :", mak)
+                        logger.debug(f"Diffusion del :{ma},keep : {mak}")
                     except :
                         pass
                     
@@ -271,7 +288,7 @@ for ind, data in fest_df.iterrows():
                 new_continent = getContinent(data['continent'], True)
                 if not place.continent == new_continent and place :
                     if not place.continent : logger.debug(f"Continent non renseigné dans Kart")
-                    logger.debug(f"continent modifié {place.continent}  >>  {new_continent}")
+                    logger.debug(f"Continent modifié '{place.continent}'  devient  '{new_continent}'")
                     place.continent =  new_continent
                     if not dry_run :
                         
