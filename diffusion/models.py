@@ -7,9 +7,8 @@ from multiselectfield import MultiSelectField
 
 from people.models import User, Organization
 
+
 # TODO: Add field is_city - is_country
-
-
 class Place(models.Model):
     """
     Some place belonging to an organization
@@ -34,15 +33,20 @@ class Place(models.Model):
     def __str__(self):
         # Concat extra info about the place
         extra_info = self.organization if self.organization else self.country
-        # Prepare string repr
-        if self.address :
-            address = self.address[0:20] + "..." if len(self.address) > 30 else " - " + self.address
+        if self.address:
+            address = self.address[0:20] + \
+                "..." if len(self.address) > 30 else " - " + self.address
+        else:
+            address = ""
+
+        # Concat with the city
+        if self.city:
             address += ", " + self.city
-        
-            if address.lower().find(self.name.lower()):
-                return f'{self.name} {address} ({extra_info})'
-        return f'{self.name} {self.city} ({extra_info})'
-            
+
+        if not address.lower().find(self.name.lower()):
+            return f'{self.name} {self.city} ({extra_info})'
+        else:
+            return f'{self.name} {address} ({extra_info})'
 
 
 def main_event_true():

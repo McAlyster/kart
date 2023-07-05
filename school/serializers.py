@@ -1,15 +1,52 @@
 from rest_framework import serializers
-from drf_haystack.serializers import HaystackSerializer
-from rest_auth.serializers import PasswordResetSerializer
+from drf_haystack.serializers import HaystackSerializerMixin
+from dj_rest_auth.serializers import PasswordResetSerializer
 
-from .models import Promotion, Student, StudentApplication, StudentApplicationSetup
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+
+from people.serializers import PublicUserSerializer
+
+from .models import (Promotion, Student, PhdStudent, ScienceStudent, TeachingArtist,
+                     VisitingStudent, StudentApplication, StudentApplicationSetup)
 from .search_indexes import StudentIndex
 from .utils import candidature_close
+
+
+class PhdStudentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PhdStudent
+        fields = '__all__'
+
+
+class ScienceStudentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ScienceStudent
+        fields = '__all__'
+
+
+class VisitingStudentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = VisitingStudent
+        fields = '__all__'
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Student
+        fields = '__all__'
+        # depth = 1
+    user_infos = PublicUserSerializer(source='user', read_only=True)
+    phd_student = PhdStudentSerializer(required=False,)
+    science_student = ScienceStudentSerializer(required=False,)
+
+    user = serializers.HyperlinkedRelatedField(view_name="user-detail",
+                                               queryset=User.objects.all(), write_only=True)
+
+
+class TeachingArtistSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = TeachingArtist
         fields = '__all__'
 
 
@@ -19,19 +56,17 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class StudentAutocompleteSerializer(HaystackSerializer):
-    class Meta:
+class StudentAutocompleteSerializer(HaystackSerializerMixin, StudentSerializer):
+    class Meta(StudentSerializer.Meta):
         index_classes = [StudentIndex]
-        # fields = ["firstname", "lastname"]
-        ignore_fields = ["autocomplete"]
-
-        # The `field_aliases` attribute can be used in order to alias a
-        # query parameter to a field attribute. In this case a query like
-        # /search/?q=oslo would alias the `q` parameter to the `autocomplete`
-        # field on the index.
+        search_fields = ("content_auto", )
+        fields = ["url", "number", "graduate", "promotion", "artist", "user", ]
         field_aliases = {
-            "q": "autocomplete"
+            "q": "content_auto"
         }
+        depth = 1
+
+    user = PublicUserSerializer()
 
 
 class StudentApplicationSerializer(serializers.HyperlinkedModelSerializer):
@@ -118,6 +153,11 @@ class StudentApplicationSetupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StudentPasswordResetSerializer(PasswordResetSerializer):
+
+    @property
+    def password_reset_form_class(self):
+        return PasswordResetForm
+
     def get_email_options(self):
         return {
             'subject_template_name': 'emails/account/password_reset_subject.txt',

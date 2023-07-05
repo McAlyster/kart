@@ -4,27 +4,31 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.http import base36_to_int
 
+import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework_jwt.settings import api_settings
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from drf_haystack.filters import HaystackAutocompleteFilter
 from drf_haystack.viewsets import HaystackViewSet
 
-from rest_auth.views import PasswordResetView
+from dj_rest_auth.views import PasswordResetView
 
 from guardian.shortcuts import assign_perm
 
 from people.models import User, FresnoyProfile, Artist
 from people.serializers import UserRegisterSerializer
 
-from .models import Promotion, Student, StudentApplication, StudentApplicationSetup
+from .models import (Promotion, Student, PhdStudent, ScienceStudent, TeachingArtist,
+                     VisitingStudent, StudentApplication, StudentApplicationSetup)
+
 from .serializers import (StudentPasswordResetSerializer,
-                          PromotionSerializer, StudentSerializer,
-                          StudentAutocompleteSerializer,
+                          PromotionSerializer, StudentSerializer, PhdStudentSerializer, ScienceStudentSerializer,
+                          TeachingArtistSerializer, VisitingStudentSerializer, StudentAutocompleteSerializer,
                           PublicStudentApplicationSerializer, StudentApplicationSerializer,
                           StudentApplicationSetupSerializer
                           )
@@ -53,6 +57,58 @@ class PromotionViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter,)
+    search_fields = ('user__username',)
+    ordering_fields = ('user__last_name',)
+    filterset_fields = ('artist',
+                        'user',
+                        'promotion',)
+
+
+class PhdStudentViewSet(viewsets.ModelViewSet):
+    queryset = PhdStudent.objects.all()
+    serializer_class = PhdStudentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter,)
+    search_fields = ('student__user__username',)
+    ordering_fields = ('student__user__last_name',)
+    filterset_fields = ('student__artist',
+                        'student__user',)
+
+
+class ScienceStudentViewSet(viewsets.ModelViewSet):
+    queryset = ScienceStudent.objects.all()
+    serializer_class = ScienceStudentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter,)
+    search_fields = ('student__user__username',)
+    ordering_fields = ('student__user__last_name',)
+    filterset_fields = ('student__artist',
+                        'student__user',)
+
+
+class TeachingArtistFilterSet(django_filters.FilterSet):
+    year = django_filters.NumberFilter(field_name="artworks_supervision__production_date", lookup_expr='year__exact')
+
+    class Meta:
+        model = TeachingArtist
+        fields = ['artist', ]
+
+
+class TeachingArtistViewSet(viewsets.ModelViewSet):
+    queryset = TeachingArtist.objects.all().distinct()
+    serializer_class = TeachingArtistSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    search_fields = ('artist__user__username',)
+    ordering_fields = ('artist__user__last_name',)
+    filterset_class = TeachingArtistFilterSet
+
+
+class VisitingStudentViewSet(viewsets.ModelViewSet):
+    queryset = VisitingStudent.objects.all()
+    serializer_class = VisitingStudentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter,)
     search_fields = ('user__username',)
@@ -118,7 +174,7 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
             # pbuteau bug : is in db (staff) but not created with Application UX : Can't applicate
             try:
                 group = Group.objects.get(name='School Application')
-                if(not user.groups.filter(name=group.name).exists()):
+                if (not user.groups.filter(name=group.name).exists()):
                     user.groups.add(group)
                     user.save()
             except Group.DoesNotExist:
@@ -203,43 +259,43 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
 
         # FIXME: dead code since it never pass througth the previous test
         # send email to admin and USER (who click) is completed
-        if(request.data.get('application_completed')):
+        if (request.data.get('application_completed')):
             application = self.get_object()
             send_candidature_completed_email_to_user(request, user, application)
             send_candidature_completed_email_to_admin(request, user, application)
 
         # send email to candidat when candidature is complete (admin valid infos)
-        if(request.data.get('application_complete')):
+        if (request.data.get('application_complete')):
             application = self.get_object()
             candidat = application.artist.user
             send_candidature_complete_email_to_candidat(request, candidat, application)
 
         # send email to candidat when on interview waiting list
-        if(request.data.get('wait_listed_for_interview')):
+        if (request.data.get('wait_listed_for_interview')):
             application = self.get_object()
             candidat = application.artist.user
             send_interview_selection_on_waitlist_email_to_candidat(request, candidat, application)
 
         # send email to candidat when select for interviews
-        if(request.data.get('selected_for_interview')):
+        if (request.data.get('selected_for_interview')):
             application = self.get_object()
             candidat = application.artist.user
             send_interview_selection_email_to_candidat(request, candidat, application)
 
         # send email to candidat when selected
-        if(request.data.get('selected')):
+        if (request.data.get('selected')):
             application = self.get_object()
             candidat = application.artist.user
             send_selected_candidature_email_to_candidat(request, candidat, application)
 
         # send email to candidat when is select on waiting list
-        if(request.data.get('wait_listed')):
+        if (request.data.get('wait_listed')):
             application = self.get_object()
             candidat = application.artist.user
             send_selected_on_waitlist_candidature_email_to_candidat(request, candidat, application)
 
         # send email to candidat when is not selected
-        if(request.data.get('unselected')):
+        if (request.data.get('unselected')):
             application = self.get_object()
             candidat = application.artist.user
             send_not_selected_candidature_email_to_candidat(request, candidat, application)
@@ -306,16 +362,12 @@ def user_activate(request, uidb64, token):
 
         setup = StudentApplicationSetup.objects.filter(is_current_setup=True).first()
 
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-        custom_infos = user
-
-        payload = jwt_payload_handler(custom_infos)
-        front_token = jwt_encode_handler(payload)
         route = "candidature.account.login"
 
-        change_password_link = "{0}/{1}/{2}".format(setup.reset_password_url, front_token, route)
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        change_password_link = "{0}/{1}/{2}".format(setup.reset_password_url, access_token, route)
 
         token_is_valid = default_token_generator.check_token(user, token)
 
