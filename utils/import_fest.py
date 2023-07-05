@@ -170,6 +170,8 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False) :
 
 
 before = summary()
+# print("before", before)
+
 
 ASIA = "AS"
 AFRICA = "AF"
@@ -196,8 +198,8 @@ CONTINENTS = [
 
 
 # DRY RUN
-dry_run = True
-# dry_run = False
+# dry_run = True
+dry_run = False
 
 
 
@@ -288,6 +290,10 @@ for ind, data in fest_df.iterrows():
         ev.place = place
         logger.debug(f"No place associated to {ev}. Creating one...")
 
+    if not dry_run :
+        place.save()
+
+    
     ####################
     # Cities are replaced with csv data
     ev.place.name = data['ville'].lower() 
@@ -427,4 +433,10 @@ for ind, data in fest_df.iterrows():
                     logger.info(f"Event {ev} saved")
             else :
                logger.debug(f"Dry run : {ev} not saved")
+
+after = summary()
+# print("after", after)
+comp = compareSummaries(before,after)
+print(comp)
+
 
