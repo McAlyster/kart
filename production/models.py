@@ -219,7 +219,7 @@ class Event(Production):
     )
 
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
-    
+
     # Free text denomination of the event (e.g. : "festival cinéma émergent")
     subtype = models.CharField(max_length=255,  null=True)
 

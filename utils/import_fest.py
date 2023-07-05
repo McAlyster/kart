@@ -7,24 +7,30 @@
 import sys
 import os
 import copy
-import copy
 
 import pathlib
 import logging
 import pandas as pd
 import warnings
-
-from datetime import datetime
-
-from django.db.utils import IntegrityError
-from django_countries import countries
-from django.db.models.functions import Concat, Lower
-from django.db.models import CharField, Value
-from django.contrib.postgres.search import TrigramSimilarity
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-
-
+from pathlib import Path
+import re
 from difflib import SequenceMatcher
+
+
+# Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
+import django
+
+# from diffusion.management.commands.import_awards.tools import summary, compareSummariesimport
+from production.models import Event
+from diffusion.models import Place, MetaAward, MetaEvent, Diffusion
+
+# from utils.kart_tools import *
+
+from django.apps import apps
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent.absolute()))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
+django.setup()
 
 # Logging
 logger = logging.getLogger('import_events')
@@ -45,37 +51,6 @@ ch.setFormatter(formatter2)
 # add the handlers to the logger
 logger.addHandler(fh)
 logger.addHandler(ch)
-#####
-
-
-
-
-# Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
-import django
-from django.conf import settings
-sys.path.append(str(pathlib.Path(__file__).parent.parent.absolute()))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
-django.setup()
-
-from pathlib import Path
-import re
-# from diffusion.management.commands.import_awards.tools import summary, compareSummariesimport
-from production.models import Artwork, Event
-from people.models import Artist
-from diffusion.models import Award, MetaAward, Place
-from school.models import Student
-
-# from utils.kart_tools import *
-
-from production.models import Event
-from diffusion.models import Place, MetaAward, MetaEvent, Diffusion
-from django.apps import apps
-
-
-
-
-
-
 
 
 def custom_formatwarning(msg, *args, **kwargs):
@@ -85,11 +60,13 @@ def custom_formatwarning(msg, *args, **kwargs):
 
 warnings.formatwarning = custom_formatwarning
 
-def summary(restrict=None) :
+
+def summary(restrict=None):
     """ Return general description and statistics about the current database
 
         Params
-        restrict(list): List of models that will be considered in the summary. If empty (default), all models are included.
+        restrict(list): List of models that will be considered in the summary. If empty (default), all models
+        are included.
     """
 
     # Get the all the current models
@@ -99,17 +76,17 @@ def summary(restrict=None) :
     summary_d = {}
 
     # Iterate through models ...
-    for m in mods :
+    for m in mods:
         # .. to populate the summary dict if models is in restrict list
         # or no restriction required
-        if  (restrict and (m.__name__ in restrict)) or not restrict :
+        if (restrict and (m.__name__ in restrict)) or not restrict:
             summary_d[f"{m._meta.app_label}.{m.__name__}"] = m._default_manager.count()
 
     # Return the summary dict
     return summary_d
 
 
-def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False) :
+def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False):
     """ Compare 2 summaries and expose counting differences
 
         params :
@@ -127,7 +104,7 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False) :
         compareSummaries(sum1)
     """
 
-    if not sum1 or not sum2 or type(sum1) is not dict or type(sum2) is not dict :
+    if not sum1 or not sum2 or type(sum1) is not dict or type(sum2) is not dict:
         raise TypeError('compareSummaries requires 2 dict as arguments')
 
     sum1 = {key: value for key, value in sorted(sum1.items())}
@@ -140,15 +117,15 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False) :
     fakediff = force_display
 
     # Try to globally compare dictionnaries
-    if sum1 == sum2 :
-        warnings.warn(f"Summaries are identical.")
+    if sum1 == sum2:
+        warnings.warn("Summaries are identical.")
         # return
 
     # Iterate models and countings
-    for k,v in sum1.items() :
+    for k, v in sum1.items():
 
         # If the model is not in both summaries, no comp is possible
-        if not k in sum2.keys() :
+        if k not in sum2.keys():
             warnings.warn(f"Model {k} not in both summaries")
             continue
 
@@ -156,17 +133,16 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False) :
         diff = sum2[k]-v
 
         # If diff and model is in the restricted list, show it
-        if  fakediff or (diff and ( (restrict and (k in restrict and k in sum2.keys() )) or not restrict)):
+        if fakediff or (diff and ((restrict and (k in restrict and k in sum2.keys())) or not restrict)):
             diff_d[k] = diff
             sign = "-" if diff < 0 else "+"
             print(f"{k} model count was {v}, is now {sum2[k]} ({sign} {diff})")
 
             # Retriving individual references
-            model = apps.get_model(f"{k}")
+            # model = apps.get_model(f"{k}")
             # print(model.objects.values_list('pk'))
 
     return diff_d
-
 
 
 before = summary()
@@ -191,7 +167,7 @@ CONTINENTS = [
         (NORTH_AMERICA, "Amérique du Nord"),
         (SOUTH_AMERICA, "Amérique du Sud"),
         (AUSTRALIA, "Australie"),
-        (MIDDLE_EAST,"Moyen Orient"),
+        (MIDDLE_EAST, "Moyen Orient"),
         (ANTARTICA, "Antarctique"),
         (OCEANIA, 'Océanie')
     ]
@@ -202,9 +178,8 @@ CONTINENTS = [
 dry_run = False
 
 
-
-# Utils 
-def getContinent(name, index=True) :
+# Utils
+def getContinent(name, index=True):
     """
     Return the most similar continent from a given name
 
@@ -214,20 +189,20 @@ def getContinent(name, index=True) :
 
     #  Loop through continents and compute similarity score
     scores = [SequenceMatcher(None, cont[1], name).ratio() for cont in CONTINENTS]
-    
-    # Return the elemens with highest score 
+
+    # Return the elemens with highest score
     ans = CONTINENTS[scores.index(max(scores))][0] if index else CONTINENTS[scores.index(max(scores))][1]
-    
+
     # print(f"continent demandé : {name}, continent retourné : {ans}",)
     return ans
 
 
-# Load csv file 
-csvpath = Path(pathlib.Path(__file__).parent , './fest_full_incorrect.csv')
+# Load csv file
+csvpath = Path(pathlib.Path(__file__).parent, './fest_full_incorrect.csv')
 logger.debug(f"Loading CSV file to dataframe : {csvpath}")
 fest_df = pd.read_csv(csvpath)
 
-# Clean the columns name 
+# Clean the columns name
 fest_df.columns = [col.strip() for col in fest_df.columns]
 logger.debug(f"fest_df : {fest_df.columns}")
 
@@ -235,208 +210,202 @@ logger.debug(f"fest_df : {fest_df.columns}")
 # print(fest_df)
 
 # Rename columns (depending on the original csv file)
-if 'ID Event' in fest_df.columns : fest_df.rename(columns={'ID Event':'id'}, inplace=True)
-if 'Refs Kart' in fest_df.columns : fest_df.rename(columns={'Refs Kart':'id'}, inplace=True)
+if 'ID Event' in fest_df.columns:
+    fest_df.rename(columns={'ID Event': 'id'}, inplace=True)
+if 'Refs Kart' in fest_df.columns:
+    fest_df.rename(columns={'Refs Kart': 'id'}, inplace=True)
 
-# Parsing incorrect fest csv 
+# Parsing incorrect fest csv
 # get the artwork code
 patt = re.compile('.*code:(.*)$')
 
-logger.debug(f"------------ Looping through rows to detect events")
+logger.debug("------------ Looping through rows to detect events")
 
 for ind, data in fest_df.iterrows():
-    
+
     # Current value e.g. InvidéO - Milan (IT) |code:1143
     id2parse = fest_df.iloc[ind]['id']
 
-    if "code:" in str(id2parse) : 
+    if "code:" in str(id2parse):
         # Extract id e.g. 1143
         r = re.match(patt, id2parse)
         id = r.group(1)
 
         # Replace former value with new one
-        fest_df.loc[ind,'id'] = id
+        fest_df.loc[ind, 'id'] = id
         logger.debug(f"id event extracted : {id} from \"{id2parse}\"")
 
 
-        
-logger.debug(f"\n\n------------ Looping through events and check their presence in Kart")
+logger.debug("\n\n------------ Looping through events and check their presence in Kart")
 
-# For each row check if exists in db 
+# For each row check if exists in db
 for ind, data in fest_df.iterrows():
-    
+
     logger.debug(f"\n{data['ville']}")
 
-
-    # Get the Kart id of the event 
+    # Get the Kart id of the event
     id = data['id']
 
-    # Retrieve the event in Kart 
-    try :
+    # Retrieve the event in Kart
+    try:
         ev = Event.objects.get(pk=id)
         logger.debug(f"\n{ev} retrieved")
-    except :
+    except Exception:
         logger.debug(f"Can't find the object with id {id}")
         continue
 
     # get the place from event
     place = ev.place
 
-    # If no place associated wirth event 
-    if place is None :
-        # Create new place instance 
+    # If no place associated wirth event
+    if place is None:
+        # Create new place instance
         place = Place()
-        # Associate it to current event 
+        # Associate it to current event
         ev.place = place
         logger.debug(f"No place associated to {ev}. Creating one...")
 
-    if not dry_run :
+    if not dry_run:
         place.save()
 
-    
     ####################
     # Cities are replaced with csv data
-    ev.place.name = data['ville'].lower() 
+    ev.place.name = data['ville'].lower()
     logger.debug(f"Fill 'city' from csv : {ev.place.name}")
 
-    # Lat and long come from Kart, because probably the most recent 
+    # Lat and long come from Kart, because probably the most recent
     # print("same city ? ", ev.place.name.lower() == data['ville'].lower(), data['ville'].lower())
     # print("same lat ? ", float(ev.place.latitude) == float(data['lat']), ev.place.latitude ,data['lat'])
     # print("same lng ? ", float(ev.place.longitude) == float(data['lng']), ev.place.longitude ,data['lng'])
     #####################
 
-
-    # Example of a row in csv (fest_full_incorrect.csv):           
+    # Example of a row in csv (fest_full_incorrect.csv):
     # Refs Kart	Num	Type	Genre	nom	mois	site web	continent	pays	ville 	lat	lng	Modif
-    #  Rencontres Internationales Paris/Berlin - Paris (FR) |code:1032	26	Festival	art contemporain	rencontres internationales paris/berlin	3	www.art-action.org	europe	france	paris	48,859116	2,331839	MODIF GENRE
+    #  Rencontres Internationales Paris/Berlin - Paris (FR) |code:1032	26	Festival	art contemporain	rencontres
+    # internationales paris/berlin	3	www.art-action.org	europe	france	paris	48,859116	2,331839	MODIF GENRE
 
     # Get modification type
-    logger.debug(f"Get the modif specified in csv ...")
+    logger.debug("Get the modif specified in csv ...")
 
-    if 'Modif' in data.keys() :
-        # init 
+    if 'Modif' in data.keys():
+        # init
         modif_l = None
 
         modif = data['Modif']
-        
+
         # get rid of "MODIF " string
         # e.g. "MODIF CONTINENT"
         if "MODIF " == modif[:6]:
             # e.g. CONTINENT
             modif = modif[6:]
-                
-        
+
         # In case of duplicate
-        if modif.startswith("A SUPPRIMER - DOUBLON ") :
+        if modif.startswith("A SUPPRIMER - DOUBLON "):
             # Keep DOUBLON XXX
             modif = modif[14:]
-    
+
         # modif can include plus sign e.g. GENRE + TITRE
         modif_l = modif.split('+')
-        
+
         # remove lead/trail spaces
         modif_l = [m.strip() for m in modif_l]
 
         # loop on elements e.g. GENRE,TITRE
-        for m in modif_l :
+        for m in modif_l:
 
             logger.debug(f"Modif detected : {m}")
 
-            if "DOUBLON" in m :
+            if "DOUBLON" in m:
                 id = data['id']
-                # Info de la part de Danaé : 
+                # Info de la part de Danaé :
                 # id to delete from Kart : data['id']
                 # id to Keep : DOUBLON XXXXX
-                pat = "DOUBLON (\d*)"
+                pat = r"DOUBLON (\d*)"
                 r = re.match(pat, m)
                 id2keep = r.group(1)
-               
 
                 # Check if id2keep is different from id to delete
-                if id2keep == id :
+                if id2keep == id:
                     # do nothing, it's not a true duplicate
                     logger.debug(f"**************** Do nothing, it's not a true duplicate {id2keep} VS {id}")
                     pass
-                else :
+                else:
                     # Check where the id2del is referenced
-                    id2del = id 
+                    id2del = id
                     print("id2del : ", id2del)
                     print("id2keep : ", id2keep)
 
-                    # MetaAwards 
-                    try :
+                    # MetaAwards
+                    try:
                         ma = MetaAward.objects.get(event_id=id2del)
                         mak = MetaAward.objects.get(event_id=id2keep)
                         logger.debug(f"MetaAwards del : {ma} keep : {mak}")
-                    except :
+                    except Exception:
                         pass
 
-                    # MetaEvent 
-                    try :
+                    # MetaEvent
+                    try:
                         ma = MetaEvent.objects.get(event_id=id2del)
                         mak = MetaEvent.objects.get(event_id=id2keep)
                         logger.debug(f"MetaEvent del : {ma} keep : {mak}")
-                    except :
+                    except Exception:
                         pass
 
-                    # Diffusion 
-                    try :
+                    # Diffusion
+                    try:
                         ma = Diffusion.objects.get(event_id=id2del)
                         mak = Diffusion.objects.get(event_id=id2keep)
                         logger.debug(f"Diffusion del :{ma},keep : {mak}")
-                    except :
+                    except Exception:
                         pass
-                    
 
-            if 'TITRE' == m :
-                # Depending on csv files "TITRE" column may have different names ... 
-                if 'Titre' in data.keys() : 
+            if 'TITRE' == m:
+                # Depending on csv files "TITRE" column may have different names ...
+                if 'Titre' in data.keys():
                     new_title = data['Titre']
-                # ...                     
-                if 'nom' in data.keys() : 
+                # ...
+                if 'nom' in data.keys():
                     new_title = data['nom']
-                
-                if not ev.title == new_title :
-                   logger.debug(f"titre modifié '{ev.title}' devient  '{new_title}'")
-                   ev.title = new_title
 
-            if 'GENRE' == m :
+                if not ev.title == new_title:
+                    logger.debug(f"titre modifié '{ev.title}' devient  '{new_title}'")
+                    ev.title = new_title
+
+            if 'GENRE' == m:
                 logger.debug(f"Genre : {data['Genre']}")
-                if 'Genre' in data.keys() :
+                if 'Genre' in data.keys():
                     new_subtype = data['Genre']
                     logger.debug(f"ev.subtype {ev.subtype} --- new_subtype : {new_subtype}")
 
-                    if  ev.subtype != new_subtype :
-                        print('subtype modifié', ev.subtype, ' >> ' , new_subtype)
+                    if ev.subtype != new_subtype:
+                        print('subtype modifié', ev.subtype, ' >> ', new_subtype)
                         ev.subtype = new_subtype
-                        if not dry_run :
+                        if not dry_run:
                             ev.save()
-                        else :
+                        else:
                             logger.debug(f"Dry run : {ev} (subtype) not saved")
 
-            if 'CONTINENT' == m :
+            if 'CONTINENT' == m:
                 new_continent = getContinent(data['continent'], True)
-                if not place.continent == new_continent and place :
-                    if not place.continent : logger.debug(f"Continent non renseigné dans Kart")
+                if not place.continent == new_continent and place:
+                    if not place.continent:
+                        logger.debug("Continent non renseigné dans Kart")
                     logger.debug(f"Continent modifié '{place.continent}'  devient  '{new_continent}'")
-                    place.continent =  new_continent
-                    if not dry_run :
+                    place.continent = new_continent
+                    if not dry_run:
                         place.save()
-                    else :
-                       logger.debug(f"Dry run : {place} (place) not saved")
-            
+                    else:
+                        logger.debug(f"Dry run : {place} (place) not saved")
 
-            if not dry_run :
-                    place.save()
-                    logger.info(f"Place {place} saved")
-                    ev.save()
-                    logger.info(f"Event {ev} saved")
-            else :
-               logger.debug(f"Dry run : {ev} not saved")
+            if not dry_run:
+                place.save()
+                logger.info(f"Place {place} saved")
+                ev.save()
+                logger.info(f"Event {ev} saved")
+            else:
+                logger.debug(f"Dry run : {ev} not saved")
 
 after = summary()
 # print("after", after)
-comp = compareSummaries(before,after)
+comp = compareSummaries(before, after)
 print(comp)
-
-

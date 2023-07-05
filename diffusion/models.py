@@ -13,7 +13,6 @@ class Place(models.Model):
     """
     Some place belonging to an organization
     """
-    
 
     
 
@@ -26,7 +25,7 @@ class Place(models.Model):
     city = models.CharField(max_length=50, blank=True)
     country = CountryField(default="")
 
-    # Continents 
+    # Continents
     ASIA = "AS"
     AFRICA = "AF"
     ANTARTICA = "AN"
@@ -36,7 +35,7 @@ class Place(models.Model):
     SOUTH_AMERICA = "SA"
     MIDDLE_EAST = 'ME'
     OCEANIA = 'OC'
-        	   
+
     CONTINENTS = [
         (ASIA, "Asie"),
         (EUROPE, "Europe"),
@@ -44,7 +43,7 @@ class Place(models.Model):
         (NORTH_AMERICA, "Amérique du Nord"),
         (SOUTH_AMERICA, "Amérique du Sud"),
         (AUSTRALIA, "Australie"),
-        (MIDDLE_EAST,"Moyen Orient"),
+        (MIDDLE_EAST, "Moyen Orient"),
         (ANTARTICA, "Antarctique"),
         (OCEANIA, 'Océanie')
     ]
