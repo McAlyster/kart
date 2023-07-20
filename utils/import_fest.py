@@ -20,10 +20,6 @@ from difflib import SequenceMatcher
 # Shell Plus Django Imports (uncomment to use script in standalone mode, recomment before flake8)
 import django
 
-# from diffusion.management.commands.import_awards.tools import summary, compareSummariesimport
-from production.models import Event
-from diffusion.models import Place, MetaAward, MetaEvent, Diffusion
-
 # from utils.kart_tools import *
 
 from django.apps import apps
@@ -31,6 +27,10 @@ from django.apps import apps
 sys.path.append(str(pathlib.Path(__file__).parent.parent.absolute()))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kart.settings")
 django.setup()
+
+# from diffusion.management.commands.import_awards.tools import summary, compareSummariesimport
+from production.models import Event
+from diffusion.models import Place, MetaAward, MetaEvent, Diffusion
 
 # Logging
 logger = logging.getLogger('import_events')
