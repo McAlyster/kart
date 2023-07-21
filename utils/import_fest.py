@@ -600,7 +600,10 @@ def importAwards2023():
                 continue
             event_to_create = {'title':event_alt}
             logger.info(f"No event with id in csv, using the alternative : {event_alt}")
-
+            # Check if a date is provided
+            if event_year:
+                event_to_create = {'title':event_alt}
+                
         if ma_to_create:
             createAward(ma_to_create)
 
