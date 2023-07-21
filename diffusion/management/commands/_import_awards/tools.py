@@ -2,6 +2,7 @@
 # -*- coding=utf8 -*-
 
 import os
+import sys
 from difflib import SequenceMatcher
 
 # import matplotlib.pyplot as plt
@@ -56,7 +57,7 @@ pathlib.Path('./.tmp').mkdir(exist_ok=True)
 CharField.register_lookup(Lower)
 
 # Logging
-logger = logging.getLogger("import_awards")
+logger = logging.getLogger('tools')
 logger.setLevel(logging.DEBUG)
 # clear the logs
 open("awards.log", "w").close()
@@ -798,9 +799,37 @@ def createPlaces(source_df=None):
     for ind, place in places.iterrows():
         city = place.place_city
         country = place.place_country
-        if city == country == "":
-            continue
-        logger.info(f"\n\nPLACE: {city} - {country}")
+        processPlace(city, country)
+        
+        # Store the id of the place
+        places.loc[ind, 'place_id'] = place_obj.id
+
+    # Store the places
+    places.to_csv('./tmp/places.csv', index=False)
+
+    # test to deal with city only rows, use "NULL" to allow the merging with missing data
+    places.loc[places['place_city'] == '', 'place_city'] = "**NULL**"
+    merge.loc[merge['place_city'].isna(), 'place_city'] = "**NULL**"
+
+    merge_df = pd.merge(
+        merge,
+        places[["place_city", "place_country", "place_id"]],
+        how='left', on=["place_city", "place_country"]
+    )
+    # Restore the missing data after the merge
+    merge_df.loc[merge_df['place_city'] == "**NULL**", 'place_city'] = ''
+    merge_df.to_csv('./tmp/merge_events_places.csv', index=False)
+
+# TODO: Fill artwork in the event
+
+
+def processPlace(city="", country="", dry=True):
+    global logger
+    DRY_RUN = dry
+    
+    if city == country == '':
+        return
+    logger.info(f"\n\nPLACE: {city} - {country}")
 
         # Processing CITY
         # Look for really approaching (simi=.9) name of city in Kart
@@ -820,19 +849,19 @@ def createPlaces(source_df=None):
                 "No close city name in Kart, the place should be created or is empty"
             )
 
-        # Processing COUNTRY
-        # Look for ISO country code related to the country name in csv
-        codeCountryCSV = getISOname(country)
+    # Processing COUNTRY
+    # Look for ISO country code related to the country name in csv
+    codeCountryCSV = getISOname(country)
 
-        # If code is easly found, keep it
-        if codeCountryCSV:
-            logger.info(f"CODE FOUND: {country} -> {codeCountryCSV}")
+    # If code is easly found, keep it
+    if codeCountryCSV:
+        logger.info(f"CODE FOUND: {country} -> {codeCountryCSV}")
 
-        # If no code found, check if the country associated with the city found in Kart
-        # is close from the country in csv file to use its code instead
-        elif guessCity:
-            codeCountryKart = guessCity[0].country
-            countryNameKart = dict(countries)[codeCountryKart]
+    # If no code found, check if the country associated with the city found in Kart
+    # is close from the country in csv file to use its code instead
+    elif guessCity:
+        codeCountryKart = guessCity[0].country
+        countryNameKart = dict(countries)[codeCountryKart]
 
             # Compute the distance between the 2 country names
             dist = round(

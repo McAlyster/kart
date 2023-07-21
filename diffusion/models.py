@@ -97,23 +97,36 @@ class MetaAward(models.Model):
     """
     Award from main event
     """
+
+    # 2 meta awards with same event and label should not exist
+    class Meta:
+        unique_together = ['event', 'label']
+    
     TYPE_CHOICES = (
         ('INDIVIDUAL', 'Individual'),
         ('GROUP', 'Group'),
         ('CAREER', 'Career'),
         ('OTHER', 'Other'),
     )
-
-    label = models.CharField(max_length=255, null=True)
+    
+    # The name of the award
+    label = models.CharField(max_length=255, null=True,
+                             help_text="The name of the award")
+    
+    # A few words about the award
     description = models.TextField(null=True)
 
+    # The related event - must be a main event
     event = models.ForeignKey('production.Event',
                               limit_choices_to=main_event_true,
-                              help_text="Main Event",
+                              help_text="The related event - must be a main event",
                               related_name='meta_award',
                               null=True, on_delete=models.SET_NULL)
+    
+
     type = models.CharField(max_length=10, null=True, choices=TYPE_CHOICES)
 
+    # The awarded discipline/skill/role
     task = models.ForeignKey('production.StaffTask',
                              blank=True,
                              null=True,
@@ -139,34 +152,51 @@ def staff_and_artist_user_limit():
 
 class Award(models.Model):
     """
-    Awards given to artworks & such.
+    An award given to an artist/artwork
     """
+
+    # (required) The meta award 
     meta_award = models.ForeignKey(
-        MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT)
+        MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT,
+        help_text="The meta award")
+
+    # The rewarded artwork
     artwork = models.ManyToManyField(
-        'production.Artwork', blank=True, related_name='award')
-    # artist is Artist or Staff
+        'production.Artwork', blank=True, related_name='award',
+        help_text="The awarded artwork")
+
+    # The rewarded author - can be an artist or staff
     artist = models.ManyToManyField(User,
                                     blank=True,
                                     limit_choices_to=staff_and_artist_user_limit,
                                     related_name='award',
-                                    help_text="Staff or Artist")
+                                    help_text="The awarded author - can be Artist or Staff")
+
+    # The event during which the award was given
     event = models.ForeignKey('production.Event',
                               null=True,
                               blank=False,
                               limit_choices_to=main_event_false,
                               related_name='award',
-                              on_delete=models.PROTECT)
+                              on_delete=models.PROTECT,
+                              help_text="The event during which the award was given")
 
-    ex_aequo = models.BooleanField(default=False)
+    # In case of ex-aequo 
+    ex_aequo = models.BooleanField(default=False,
+                                   help_text="Check in case of ex aequo")
 
+    # The person(s) delivering the award
     giver = models.ManyToManyField(
         User, blank=True, help_text="Who hands the arward", related_name='give_award')
 
     sponsor = models.ForeignKey(
         Organization, null=True, blank=True, related_name='award', on_delete=models.SET_NULL)
 
-    date = models.DateField(null=True)
+    date = models.DateField(blank=True, null=True)
+
+    # Fields used when no precise date is possible
+    year = models.IntegerField(blank=True, null=True)
+    month = models.IntegerField(blank=True, null=True)
 
     amount = models.CharField(
         max_length=255, blank=True, help_text="money, visibility, currency free")
