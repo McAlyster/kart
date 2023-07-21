@@ -205,8 +205,12 @@ def main_event_false_limit():
 
 
 class Event(Production):
+
+    # A main event can not be a subevent
+    # e.g. Panorama is a main event
     main_event = models.BooleanField(default=False, help_text="Meta Event")
 
+    # The type of event
     TYPE_CHOICES = (
         ('FEST', 'Festival'),
         ('COMP', 'Competition'),
@@ -217,7 +221,6 @@ class Event(Production):
         ('WORKSHOP', 'Workshop'),
         ('EVENING', 'Evening'),
     )
-
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
 
     # Free text denomination of the event (e.g. : "festival cinéma émergent")
