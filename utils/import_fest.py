@@ -8,7 +8,8 @@
 TODO create meta event if dont exist, create associated meta awards - DONE 
 21 juillet : 
 Quid des meta event ? A quoi servent ils sur le front ?
-
+25 juillet :
+Je stoppe le dev sur cette branche en attendant la décision sur les modifications importantes des Events.
 """
 import sys
 import os
