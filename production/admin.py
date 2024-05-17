@@ -43,7 +43,7 @@ class InstallationChildAdmin(ArtworkChildAdmin):
 @admin.register(Production)
 class ProductionParentAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
     list_display = ('title', 'subtitle',)
-    search_fields = ['title']
+    search_fields = ['title','websites']
     inlines = (CollaboratorsInline, PartnersInline)
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
@@ -102,9 +102,13 @@ class PerformanceAdmin(ArtworkAdmin):
 class EventAdmin(ProductionChildAdmin):
     show_in_index = True
     list_display = (ProductionChildAdmin.list_display + ('starting_date', 'type', 'main_event'))
-    search_fields = ['title', 'parent_event__title']
+    # search_fields = ['title', 'parent_event__title']
+    search_fields = ['title', 'parent_event__title', 'websites']
+
     inlines = (CollaboratorsInline, PartnersInline)
     filter_vertical = ('subevents', "films", "installations", "performances")
+    autocomplete_fields = ('websites',)
+    #autocomplete_fields = ('subevents', "films", "installations", "performances", 'websites')
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
