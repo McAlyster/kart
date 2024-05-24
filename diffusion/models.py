@@ -77,14 +77,14 @@ class MetaAward(models.Model):
     event = models.ForeignKey('production.Event',
                               limit_choices_to=main_event_true,
                               help_text="Main Event",
-                              related_name='meta_award',
+                              related_name='hosted_meta_award',
                               null=True, on_delete=models.SET_NULL)
     type = models.CharField(max_length=10, null=True, choices=TYPE_CHOICES)
 
     task = models.ForeignKey('production.StaffTask',
                              blank=True,
                              null=True,
-                             related_name='meta_award',
+                             related_name='dedicated_meta_award',
                              on_delete=models.PROTECT)
 
     def __str__(self):
@@ -109,29 +109,29 @@ class Award(models.Model):
     Awards given to artworks & such.
     """
     meta_award = models.ForeignKey(
-        MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT)
+        MetaAward, null=True, blank=False, related_name='award_instance', on_delete=models.PROTECT)
     artwork = models.ManyToManyField(
-        'production.Artwork', blank=True, related_name='award')
+        'production.Artwork', blank=True, related_name='award_obtained')
     # artist is Artist or Staff
     artist = models.ManyToManyField(User,
                                     blank=True,
                                     limit_choices_to=staff_and_artist_user_limit,
-                                    related_name='award',
+                                    related_name='award_received',
                                     help_text="Staff or Artist")
     event = models.ForeignKey('production.Event',
                               null=True,
                               blank=False,
                               limit_choices_to=main_event_false,
-                              related_name='award',
+                              related_name='hosted_award',
                               on_delete=models.PROTECT)
 
     ex_aequo = models.BooleanField(default=False)
 
     giver = models.ManyToManyField(
-        User, blank=True, help_text="Who hands the arward", related_name='give_award')
+        User, blank=True, help_text="Who hands the arward", related_name='given_award')
 
     sponsor = models.ForeignKey(
-        Organization, null=True, blank=True, related_name='award', on_delete=models.SET_NULL)
+        Organization, null=True, blank=True, related_name='sponsored_award', on_delete=models.SET_NULL)
 
     date = models.DateField(null=True)
 
@@ -189,6 +189,7 @@ class Diffusion(models.Model):
                               blank=False,
                               null=False,
                               default=1,
+                              related_name='hosted_diffusion',
                               limit_choices_to=main_event_false,
                               on_delete=models.PROTECT
                               )
@@ -197,7 +198,7 @@ class Diffusion(models.Model):
                                 null=False,
                                 blank=False,
                                 default=1,
-                                related_name='diffusion',
+                                related_name='diffusions',
                                 on_delete=models.PROTECT)
 
     first = models.CharField(max_length=5,
