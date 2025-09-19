@@ -1,0 +1,50 @@
+import os
+import dj_database_url
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+# Database
+# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True,
+    )
+}
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+if not DEBUG:
+  SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+  CSRF_COOKIE_SECURE = True
+  SESSION_COOKIE_SECURE = True
+  USE_X_FORWARDED_HOST = True
+
+# MEDIA & STATIC
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+# HAYSTACK
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'kart.elasticsearch-config.Elasticsearch71SearchEngine',
+        'URL': os.getenv('ELASTICSEARCH_URL'),
+        'INDEX_NAME': os.getenv('ELASTICSEARCH_INDEX'),
+    },
+}
+
+
+FROM_EMAIL = ''
+
+GRAPPELLI_ADMIN_TITLE = ''
+
+SITE_ID = 2
