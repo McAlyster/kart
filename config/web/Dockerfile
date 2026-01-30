@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     libpq-dev gcc python3-dev musl-dev \
     netcat-openbsd \
+    zsh \
     && apt-get clean
 
 

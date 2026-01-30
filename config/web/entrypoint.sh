@@ -6,6 +6,11 @@ echo "⏳ Waiting for PostgreSQL at $POSTGRES_HOST:$POSTGRES_PORT..."
 #  sleep 1
 # done
 
+
+# Install omz
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+
 echo "✅ PostgreSQL is up. Running migrations..."
 python manage.py migrate --noinput
 

@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./config/web/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     container_name: kart_web
     volumes:
       - ./app:/app
