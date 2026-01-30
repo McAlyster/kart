@@ -19,6 +19,9 @@ services:
       - "8002:8000"
     depends_on:
       - elasticsearch
+    networks:
+      kart_net:
+        ipv4_address: ${KART_WEB_IPV4}
 
   nginx:
     image: nginx:latest
@@ -31,6 +34,9 @@ services:
       - ./media:/app/media
     depends_on:
       - web
+    networks:
+      kart_net:
+        ipv4_address: ${KART_NGINX_IPV4}
   
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
@@ -48,8 +54,23 @@ services:
       - esdata:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
+    networks:
+      kart_net:
+        ipv4_address: ${KART_ELASTICSEARCH_IPV4}
+
 
 volumes:
   esdata:
   static_volume:
+
+
+networks:
+  kart_net:
+    name: ${KART_NETWORK_NAME}
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${KART_SUBNET}
+          gateway: ${KART_GATEWAY}
+
 
