@@ -1,7 +1,7 @@
 Kart
 ====
 
-[![Build Status](https://travis-ci.org/Fresnoy/kart.svg?branch=master)](https://travis-ci.org/Fresnoy/kart)
+[![Django CI](https://github.com/Fresnoy/kart/actions/workflows/django.yml/badge.svg)](https://github.com/Fresnoy/kart/actions)
 
 LeFresnoy's data server.
 

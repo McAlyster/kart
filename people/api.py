@@ -19,7 +19,8 @@ class UserResource(ModelResource):
         queryset = User.objects.exclude(username=ANONYMOUS_USER_NAME)  # Exclude anonymous user
         detail_uri_name = 'username'
         resource_name = 'people/user'
-        fields = ['username', 'first_name', 'last_name', 'id', ]
+        # fields = ['username', 'first_name', 'last_name', 'id', ]
+        fields = ['first_name', 'last_name', 'id', ]
         filtering = {
             'first_name': ALL,
             'last_name': ALL
@@ -38,6 +39,8 @@ class UserResource(ModelResource):
             bundle.data['nationality'] = bundle.obj.profile.nationality
             bundle.data['homeland_country'] = bundle.obj.profile.homeland_country
             bundle.data['birthplace_country'] = bundle.obj.profile.birthplace_country
+            # 03june2026
+            bundle.data.pop('resource_uri', None)
 
         return bundle
 

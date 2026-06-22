@@ -81,7 +81,11 @@ class StudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("user__username",)
+    search_fields = (
+        "user__username",
+        "=user__last_name",
+        "=user__profile__preferred_last_name",
+    )
     ordering_fields = ("user__last_name",)
     filterset_fields = (
         "artist",
@@ -99,7 +103,11 @@ class PhdStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("student__user__username",)
+    search_fields = (
+        "student__user__username",
+        "=student__user__last_name",
+        "=student__user__profile__preferred_last_name",
+    )
     ordering_fields = ("student__user__last_name",)
     filterset_fields = (
         "student__artist",
@@ -116,7 +124,11 @@ class ScienceStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("student__user__username",)
+    search_fields = (
+        "student__user__username",
+        "=student__user__last_name",
+        "=student__user__profile__preferred_last_name",
+    )
     ordering_fields = ("student__user__last_name",)
     filterset_fields = (
         "student__artist",
@@ -143,7 +155,11 @@ class TeachingArtistViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     )
-    search_fields = ("artist__user__username",)
+    search_fields = (
+        "artist__user__username",
+        "=artist__user__last_name",
+        "=artist__user__profile__preferred_last_name",
+    )
     ordering_fields = ("artist__user__last_name",)
     filterset_class = TeachingArtistFilterSet
 
@@ -157,7 +173,11 @@ class VisitingStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("user__username",)
+    search_fields = (
+        "user__username",
+        "user__last_name",
+        "=user__profile__preferred_last_name",
+    )
     ordering_fields = ("user__last_name",)
     filterset_fields = (
         "artist",
@@ -193,7 +213,8 @@ class AdminStudentApplicationViewSet(viewsets.ModelViewSet):
     )
     search_fields = (
         "=application__artist__user__username",
-        "application__artist__user__last_name",
+        "=application__artist__user__last_name",
+        "=applucation__artist__user__profile__preferred_last_name",
     )
     filterset_fields = (
         "application__application_completed",
@@ -262,8 +283,8 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
     )
     search_fields = (
         "=artist__user__username",
-        "artist__user__last_name",
-        "artist__user__profile__preferred_last_name",
+        "=artist__user__last_name",
+        "=artist__user__profile__preferred_last_name",
     )
     filterset_fields = (
         "application_completed",

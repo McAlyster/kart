@@ -51,7 +51,10 @@ from assets import views as assets_views
 from school.schema_views import (PromotionViewGQL, StudentViewGQL, TeachinArtistListViewGQL,
                                  TeachingArtistGQL, CandidatureResultsGQL,)
 from production.schema_views import Artworks25ViewGQL
+
+from kart.graphql_views import SecureGraphQLView
 from graphene_django.views import GraphQLView
+
 from django.views.decorators.csrf import csrf_exempt
 
 admin.autodiscover()
@@ -124,6 +127,13 @@ v2_api.register(r'assets/gallery', GalleryViewSet)
 v2_api.register(r'assets/medium', MediumViewSet)
 
 
+# Sélection des vues en fonction de l'environnement (DEBUG)
+if settings.DEBUG:
+    graphql_view = GraphQLView.as_view(graphiql=True)
+else:
+    graphql_view = SecureGraphQLView.as_view(graphiql=False)
+
+
 urlpatterns = [
     # basic Django user account reset password
     path('account/reset_password/',
@@ -189,7 +199,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Graphene
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
+    path("graphql", csrf_exempt(graphql_view), name="graphql"),
 
     path("page/promotionGQL/<int:id>", csrf_exempt(PromotionViewGQL.as_view()),
          name='promotionGQL'),

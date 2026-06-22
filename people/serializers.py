@@ -113,8 +113,8 @@ class UserSerializer(serializers.ModelSerializer):
 class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'url', 'username', 'first_name', 'last_name', 'profile')
-        read_only_fields = ('id', 'url', 'username', 'first_name', 'last_name', 'profile')
+        fields = ('id', 'url', 'first_name', 'last_name', 'profile')
+        read_only_fields = ('id', 'url', 'first_name', 'last_name', 'profile')
 
     profile = PublicFresnoyProfileSerializer(required=False, read_only=True)
 

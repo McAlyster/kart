@@ -17,6 +17,22 @@ from diffusion.models import Diffusion
 from common.schema import WebsiteType
 from diffusion.schema import DiffusionType
 
+
+from graphql import GraphQLError
+
+
+def require_staff(info):
+    user = info.context.user
+
+    if not user or not user.is_authenticated:
+        raise GraphQLError("Authentication required")
+
+    if not user.is_staff:
+        raise GraphQLError("Permission denied")
+
+    return user
+
+
 # User fields
 USER_FIELDS = [ff.name for ff in get_user_model()._meta.get_fields()]
 # FresnoyProfile fields
@@ -55,10 +71,16 @@ def camel2snake(cam):
 
 class DynNameResolver:
 
-    def __init__(self, interface=""):
+    def __init__(self, interface="", confidential=False, fallback="Private Info"):
         self.interface = interface
+        self.confidential = confidential
+        self.fallback = fallback
 
     def __call__(self, instance, info, **kwargs):
+        if self.confidential:
+            user_requesting = info.context.user
+            if not user_requesting.is_authenticated or not user_requesting.is_staff:
+                return self.fallback
 
         # For GraphQLList, a list is expected to be returned
         listReturn = "GraphQLList" in str(type(info.return_type))
@@ -159,7 +181,9 @@ class ArtistEmbeddedInterface(graphene.Interface):
     residence_country = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
     homeland_phone = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
     residence_phone = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
-    social_insurance_number = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
+    social_insurance_number = graphene.String(
+        resolver=DynNameResolver(interface="ArtistEmbedded", confidential=True, fallback="Private info")
+    )
     family_status = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
     mother_tongue = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
     other_language = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
@@ -264,7 +288,11 @@ class UserType(DjangoObjectType):
     residenceCountry = graphene.String(resolver=DynNameResolver())
     homelandPhone = graphene.String(resolver=DynNameResolver())
     residencePhone = graphene.String(resolver=DynNameResolver())
-    socialInsuranceNumber = graphene.String(resolver=DynNameResolver())
+    socialInsuranceNumber = graphene.String(
+        resolver=DynNameResolver(
+            confidential=True,
+        )
+    )
     familyStatus = graphene.String(resolver=DynNameResolver())
     motherTongue = graphene.String(resolver=DynNameResolver())
     otherLanguage = graphene.String(resolver=DynNameResolver())
@@ -389,6 +417,7 @@ class Query(graphene.ObjectType):
     profiles = graphene.List(FresnoyProfileType)
 
     def resolve_users(root, info, **kwargs):
+        require_staff(info)
         users = get_user_model().objects.all()
         name = kwargs.get('name')
         if name:
@@ -406,6 +435,7 @@ class Query(graphene.ObjectType):
         return users
 
     def resolve_user(root, info, **kwargs):
+        require_staff(info)
         id = kwargs.get('id')
         if id is not None:
             return User.objects.get(pk=id)
@@ -478,9 +508,11 @@ class Query(graphene.ObjectType):
         return artists
 
     def resolve_profiles(root, info, **kwargs):
+        require_staff(info)
         return FresnoyProfile.objects.all()
 
     def resolve_profile(root, info, **kwargs):
+        require_staff(info)
         id = kwargs.get('id')
         if id is not None:
             return FresnoyProfile.objects.get(pk=id)

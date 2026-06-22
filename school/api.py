@@ -9,12 +9,16 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.resources import ALL, ALL_WITH_RELATIONS
 from tastypie.utils import trailing_slash
-from tastypie.authorization import DjangoAuthorization
+# from tastypie.authorization import DjangoAuthorization
 
 from people.api import ArtistResource
 from .models import Promotion, Student, StudentApplication
 
 from assets.api import GalleryResource
+
+# 03june26
+from tastypie.authorization import Authorization
+from tastypie.exceptions import Unauthorized
 
 
 class PromotionResource(ModelResource):
@@ -28,17 +32,27 @@ class StudentResource(ArtistResource):
     class Meta:
         queryset = Student.objects.all()
         resource_name = "school/student"
+        # ordering = [
+        #     "artist",
+        #     "user",
+        # ]
+
         ordering = [
             "artist",
-            "user",
         ]
+        #  filtering = {
+        #      "artist": ALL_WITH_RELATIONS,
+        #      "user": ALL_WITH_RELATIONS,
+        #      "user__last_name__istartswith": ALL_WITH_RELATIONS,
+        #      "promotion": ALL,
+        #  }
+
         filtering = {
             "artist": ALL_WITH_RELATIONS,
-            "user": ALL_WITH_RELATIONS,
-            "user__last_name__istartswith": ALL_WITH_RELATIONS,
             "promotion": ALL,
         }
-        fields = ["id", "number", "promotion", "graduate", "user", "artist"]
+        # fields = ["id", "number", "promotion", "graduate", "user", "artist"]
+        fields = ["id", "number", "promotion", "graduate", "artist"]
 
     promotion = fields.ForeignKey(PromotionResource, "promotion")
     artist = fields.ForeignKey(ArtistResource, "artist", full=True)
@@ -102,13 +116,59 @@ class StudentResource(ArtistResource):
         return self.create_response(request, object_list)
 
 
+class StudentApplicationAuthorization(Authorization):
+    def read_list(self, object_list, bundle):
+        user = bundle.request.user
+
+        if not user or not user.is_authenticated:
+            return object_list.none()
+
+        if user.is_staff:
+            return object_list
+
+        return object_list.filter(artist__user=user)
+
+    def read_detail(self, object_list, bundle):
+        user = bundle.request.user
+        obj = bundle.obj
+
+        if not user or not user.is_authenticated:
+            raise Unauthorized("Authentication required")
+
+        if user.is_staff:
+            return True
+
+        return obj.artist and obj.artist.user_id == user.id
+
+    def create_detail(self, object_list, bundle):
+        user = bundle.request.user
+        return bool(user and user.is_authenticated)
+
+    def update_detail(self, object_list, bundle):
+        user = bundle.request.user
+        obj = bundle.obj
+
+        if not user or not user.is_authenticated:
+            raise Unauthorized("Authentication required")
+
+        if user.is_staff:
+            return True
+
+        return obj.artist and obj.artist.user_id == user.id
+
+    def delete_detail(self, object_list, bundle):
+        user = bundle.request.user
+        return bool(user and user.is_staff)
+
+
 class StudentApplicationResource(ModelResource):
     class Meta:
         queryset = StudentApplication.objects.all()
         resource_name = "school/application"
         ordering = ["created_on"]
         # no authorization for Anonymous user
-        authorization = DjangoAuthorization()
+        # authorization = DjangoAuthorization()
+        authorization = StudentApplicationAuthorization()
 
     artist = fields.ForeignKey(ArtistResource, "artist")
     administrative_galleries = fields.ToManyField(GalleryResource, "administrative_galleries", full=True, null=True)

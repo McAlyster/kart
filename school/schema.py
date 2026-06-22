@@ -110,7 +110,7 @@ class StudentEmbeddedInterface(graphene.Interface):
     residence_country = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
     homeland_phone = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
     residence_phone = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
-    social_insurance_number = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
+    # social_insurance_number = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
     family_status = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
     mother_tongue = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
     other_language = graphene.String(resolver=DynNameResolver(interface="StudentEmbedded"))
@@ -252,6 +252,10 @@ class StudentApplicationSetupType(DjangoObjectType):
 
     def resolve_information_and_tour_date(self, info):
         return self.information_and_tour_date.astimezone() if self.information_and_tour_date else None
+
+    @staff_member_required
+    def resolve_applications(self, info):
+        return self.applications.all()
 
 
 class StudentApplicationType(DjangoObjectType):

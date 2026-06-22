@@ -227,7 +227,7 @@ class Command(BaseCommand):
 
         user_fields_infos = [
             "photo",
-            "social_insurance_number",
+            # "social_insurance_number",
             "cursus",
             "birthdate",
             "birthplace",

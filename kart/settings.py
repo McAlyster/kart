@@ -8,8 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-from kart.site_settings import * # NOQA
-from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR, FROM_EMAIL
+from kart.site_settings import *  # NOQA
+from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR, FROM_EMAIL, SETTINGS_SECRET_KEY
 import datetime
 import os
 
@@ -17,7 +17,7 @@ import os
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$17%$7@*^nmx&(mb)5=o9v9if&_%s67-*^-skk!iaef3%16*12'
+SECRET_KEY = SETTINGS_SECRET_KEY
 
 PASSWORD_TOKEN = r'(?P<uidb64>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,40})'
 
@@ -82,19 +82,13 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-
     'corsheaders.middleware.CorsMiddleware',
-
 )
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
-            os.path.join(BASE_DIR, 'people', 'templates')
-        ],
-
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'people', 'templates')],
         'OPTIONS': {
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
@@ -108,10 +102,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader'
-            ],
+            'loaders': ['django.template.loaders.filesystem.Loader', 'django.template.loaders.app_directories.Loader'],
         },
     },
 ]
@@ -120,7 +111,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # this is default
     'guardian.backends.ObjectPermissionBackend',
     'graphql_jwt.backends.JSONWebTokenBackend',
-
 )
 
 ROOT_URLCONF = 'kart.urls'
@@ -141,7 +131,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, 'kart/locale'), )
+LOCALE_PATHS = (os.path.join(BASE_DIR, 'kart/locale'),)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -162,9 +152,7 @@ TASTYPIE_SWAGGER_API_MODULE = 'kart.urls.v1_api'
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.DjangoObjectPermissions',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.DjangoObjectPermissions',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -173,13 +161,20 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
+# add DRF HTML renderer on DEBUG
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    )
 
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=15),
     "AUTH_HEADER_TYPES": ("JWT",),
-
 }
 REST_AUTH = {
     'USE_JWT': True,
@@ -199,25 +194,58 @@ GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
         "user": ("username__icontains", "first_name__icontains", "last_name__icontains", "email__icontains"),
     },
     "people": {
-        "artist": ("nickname__icontains", "user__first_name__icontains", "user__last_name__icontains",),
+        "artist": (
+            "nickname__icontains",
+            "user__first_name__icontains",
+            "user__last_name__icontains",
+        ),
         "organization": ("name__icontains",),
-        "staff": ("user__first_name__icontains", "user__last_name__icontains",),
+        "staff": (
+            "user__first_name__icontains",
+            "user__last_name__icontains",
+        ),
     },
-    "common": {
-        "website": ("title_fr__icontains", "title_en__icontains", "url__icontains")
-    },
+    "common": {"website": ("title_fr__icontains", "title_en__icontains", "url__icontains")},
     "production": {
-        "production": ("title__icontains", "production_date__year__icontains", "authors__nickname__icontains",
-                       "authors__user__first_name__icontains", "authors__user__last_name__icontains"),
-        "artwork": ("title__icontains", "production_date__year__icontains", "authors__nickname__icontains",
-                    "authors__user__first_name__icontains", "authors__user__last_name__icontains"),
-        "film": ("title__icontains", "production_date__year__icontains", "authors__nickname__icontains",
-                 "authors__user__first_name__icontains", "authors__user__last_name__icontains"),
-        "installation": ("title__icontains", "production_date__year__icontains", "authors__nickname__icontains",
-                         "authors__user__first_name__icontains", "authors__user__last_name__icontains"),
-        "performance": ("title__icontains", "production_date__year__icontains", "authors__nickname__icontains",
-                        "authors__user__first_name__icontains", "authors__user__last_name__icontains"),
-        "event": ("title__icontains", "starting_date__year__icontains",),
+        "production": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "artwork": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "film": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "installation": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "performance": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "event": (
+            "title__icontains",
+            "starting_date__year__icontains",
+        ),
         "task": ("label__icontains",),
         "stafftask": ("label__icontains",),
     },
@@ -225,12 +253,19 @@ GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
         "gallery": ("label__icontains", "description__icontains"),
     },
     "diffusion": {
-        "place": ("name__icontains", "description__icontains",
-                  "address__icontains", "city__icontains", "country__icontains"),
-        'award': ("meta_award__label__icontains",
-                  "artwork__title__icontains",
-                  "artist__nickname__icontains",
-                  "event__title__icontains"),
+        "place": (
+            "name__icontains",
+            "description__icontains",
+            "address__icontains",
+            "city__icontains",
+            "country__icontains",
+        ),
+        'award': (
+            "meta_award__label__icontains",
+            "artwork__title__icontains",
+            "artist__nickname__icontains",
+            "event__title__icontains",
+        ),
         'metaaward': ("label__icontains", "description__icontains", "event__title__icontains"),
-    }
+    },
 }
