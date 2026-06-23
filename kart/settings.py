@@ -37,7 +37,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'guardian',
     'pagedown',
-    'haystack',
     # 'elasticstack',
     'polymorphic',
     'taggit',

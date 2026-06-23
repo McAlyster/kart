@@ -3,30 +3,47 @@ from django.db.models import Prefetch
 from rest_framework import viewsets, permissions, pagination, filters as drf_filters
 from rest_framework.response import Response
 
-from drf_haystack.filters import HaystackAutocompleteFilter
-from drf_haystack.viewsets import HaystackViewSet
 
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import (Artwork, Film, Installation, Performance,
-                     FilmGenre, InstallationGenre, Event,
-                     Itinerary, ProductionStaffTask, ProductionOrganizationTask,
-                     OrganizationTask, StaffTask)
+from .models import (
+    Artwork,
+    Film,
+    Installation,
+    Performance,
+    FilmGenre,
+    InstallationGenre,
+    Event,
+    Itinerary,
+    ProductionStaffTask,
+    ProductionOrganizationTask,
+    OrganizationTask,
+    StaffTask,
+)
 
-from .serializers import (ArtworkPolymorphicSerializer, ArtworkAutocompleteSerializer,
-                          FilmSerializer, InstallationSerializer, KeywordsSerializer,
-                          PerformanceSerializer, FilmGenreSerializer,
-                          InstallationGenreSerializer, EventSerializer,
-                          ItinerarySerializer, ProductionStaffTaskSerializer,
-                          PartnerSerializer, OrganizationTaskSerializer, StaffTaskSerializer
-                          )
+from .serializers import (
+    ArtworkPolymorphicSerializer,
+    FilmSerializer,
+    InstallationSerializer,
+    KeywordsSerializer,
+    PerformanceSerializer,
+    FilmGenreSerializer,
+    InstallationGenreSerializer,
+    EventSerializer,
+    ItinerarySerializer,
+    ProductionStaffTaskSerializer,
+    PartnerSerializer,
+    OrganizationTaskSerializer,
+    StaffTaskSerializer,
+)
 
 
 class CustomPagination(pagination.PageNumberPagination):
     """
     Customize Pagination
     """
+
     # no limit when page_size not set
     page_size = 100000
     page_size_query_param = 'page_size'
@@ -59,8 +76,7 @@ class TypeFilter(filters.CharFilter):
         if value:
             value = value.lower()
             # find maching Artwok subclass
-            selected_type = [subclass for subclass in Artwork.__subclasses__()
-                             if value in subclass.__name__.lower()]
+            selected_type = [subclass for subclass in Artwork.__subclasses__() if value in subclass.__name__.lower()]
             if selected_type:
                 # update query
                 qs = qs.instance_of(*selected_type)
@@ -72,6 +88,7 @@ class ArtworkFilterSet(filters.FilterSet):
     """
     Customize Filters for Artwork
     """
+
     # transform date to year
     production_year = filters.NumberFilter(field_name="production_date", lookup_expr='year__exact')
     # filter by keywords
@@ -87,7 +104,9 @@ class ArtworkFilterSet(filters.FilterSet):
         }
 
 
-class ArtworkViewSet(viewsets.ModelViewSet,):
+class ArtworkViewSet(
+    viewsets.ModelViewSet,
+):
     queryset = Artwork.objects.all()
     serializer_class = ArtworkPolymorphicSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
@@ -95,7 +114,10 @@ class ArtworkViewSet(viewsets.ModelViewSet,):
     search_fields = ('title',)
     filterset_class = ArtworkFilterSet
     pagination_class = CustomPagination
-    ordering_fields = ('title', "production_year", )
+    ordering_fields = (
+        'title',
+        "production_year",
+    )
 
 
 class ArtworkFilter(filters.FilterSet):
@@ -104,14 +126,6 @@ class ArtworkFilter(filters.FilterSet):
     class Meta:
         model = Film
         fields = ['genres', 'keywords']
-
-
-class ArtworkAutocompleteSearchViewSet(HaystackViewSet):
-    index_models = [Film, Installation, Performance]
-    serializer_class = ArtworkAutocompleteSerializer
-    filter_backends = [HaystackAutocompleteFilter]
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    pagination_class = CustomPagination
 
 
 class FilmViewSet(viewsets.ModelViewSet):
@@ -140,13 +154,18 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('installations__authors', 'films__authors', 'performances__authors',)
+    filterset_fields = (
+        'installations__authors',
+        'films__authors',
+        'performances__authors',
+    )
 
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     #  the order of artworks in itinerary must be certain
     queryset = Itinerary.objects.all().prefetch_related(
-                    Prefetch('artworks', queryset=Artwork.objects.all().order_by('itineraryartwork__order')))
+        Prefetch('artworks', queryset=Artwork.objects.all().order_by('itineraryartwork__order'))
+    )
     serializer_class = ItinerarySerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend,)

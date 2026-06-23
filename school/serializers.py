@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from drf_haystack.serializers import HaystackSerializerMixin
 from dj_rest_auth.serializers import PasswordResetSerializer
 
 from django.contrib.auth.forms import PasswordResetForm
@@ -18,7 +17,6 @@ from .models import (
     StudentApplicationSetup,
     AdminStudentApplication,
 )
-from .search_indexes import StudentIndex
 from .utils import candidature_close
 
 
@@ -67,24 +65,6 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Promotion
         fields = "__all__"
-
-
-class StudentAutocompleteSerializer(HaystackSerializerMixin, StudentSerializer):
-    class Meta(StudentSerializer.Meta):
-        index_classes = [StudentIndex]
-        search_fields = ("content_auto",)
-        fields = [
-            "url",
-            "number",
-            "graduate",
-            "promotion",
-            "artist",
-            "user",
-        ]
-        field_aliases = {"q": "content_auto"}
-        depth = 1
-
-    user = PublicUserSerializer()
 
 
 class StudentApplicationSerializer(serializers.HyperlinkedModelSerializer):

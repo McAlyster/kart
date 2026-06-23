@@ -1,11 +1,9 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from drf_haystack.serializers import HaystackSerializerMixin
 
 from django_countries.serializer_fields import CountryField
 
 from .models import Artist, Staff, Organization, FresnoyProfile
-from .search_indexes import ArtistIndex
 
 
 class FresnoyProfileSerializer(serializers.ModelSerializer):
@@ -195,19 +193,6 @@ class ArtistUserSerializer(serializers.HyperlinkedModelSerializer):
             'websites',
         )
     user = UserSerializer()
-
-
-class ArtistAutocompleteSerializer(HaystackSerializerMixin, ArtistSerializer):
-    class Meta(ArtistSerializer.Meta):
-        index_classes = [ArtistIndex]
-        search_fields = ("text", "content_auto", "nationality")
-        fields = ["nickname", "user", "artworks", "url", "student", ]
-        field_aliases = {
-            "q": "content_auto"
-        }
-        depth = 1
-
-    user = PublicUserSerializer()
 
 
 class StaffSimpleSerializer(serializers.ModelSerializer):

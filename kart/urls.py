@@ -20,20 +20,20 @@ from diffusion.api import PlaceResource, AwardResource, MetaAwardResource
 from school.api import PromotionResource, StudentResource, StudentApplicationResource
 
 from people.views import (
-    ArtistViewSet, ArtistAutocompleteSearchViewSet,
+    ArtistViewSet,
     UserViewSet, FresnoyProfileViewSet,
     StaffViewSet, OrganizationViewSet,
 )
 from people import views as people_views
 from school.views import (UserPasswordResetView, PromotionViewSet, StudentViewSet, PhdStudentViewSet,
-                          VisitingStudentViewSet, ScienceStudentViewSet, StudentAutocompleteSearchViewSet,
+                          VisitingStudentViewSet, ScienceStudentViewSet,
                           TeachingArtistViewSet, StudentApplicationViewSet, StudentApplicationSetupViewSet,
                           AdminStudentApplicationViewSet,
                           )
 
 from school import views as school_views
 from production.views import (
-    ArtworkViewSet, ArtworkAutocompleteSearchViewSet,
+    ArtworkViewSet,
     FilmViewSet, InstallationViewSet,
     PerformanceViewSet, FilmGenreViewSet,
     InstallationGenreViewSet, EventViewSet,
@@ -83,8 +83,6 @@ v2_api = routers.DefaultRouter(trailing_slash=False)
 v2_api.register(r'people/user', UserViewSet)
 v2_api.register(r'people/userprofile', FresnoyProfileViewSet)
 v2_api.register(r'people/artist', ArtistViewSet)
-v2_api.register(r'people/artist-search',
-                ArtistAutocompleteSearchViewSet, basename="people-artist-search")
 v2_api.register(r'school/artist-teacher', TeachingArtistViewSet)
 v2_api.register(r'people/staff', StaffViewSet)
 v2_api.register(r'people/organization', OrganizationViewSet)
@@ -98,13 +96,9 @@ v2_api.register(r'school/student-application', StudentApplicationViewSet)
 v2_api.register(r'school/student-application-setup',
                 StudentApplicationSetupViewSet)
 v2_api.register(r'school/admin-student-application', AdminStudentApplicationViewSet)
-v2_api.register(r'school/student-search',
-                StudentAutocompleteSearchViewSet, basename="school-student-search")
 v2_api.register(r'production/artwork', ArtworkViewSet)
 v2_api.register(r'production/artwork-keywords',
                 ArtworkKeywordsViewSet, basename="artwork-keywords")
-v2_api.register(r'production/artwork-search',
-                ArtworkAutocompleteSearchViewSet, basename="production-artwork-search")
 v2_api.register(r'production/film', FilmViewSet)
 v2_api.register(r'production/film-keywords', FilmKeywordsViewSet)
 v2_api.register(r'production/event', EventViewSet)

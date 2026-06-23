@@ -232,9 +232,6 @@ class ArtworkType(ProductionType):
     def resolve_keywords(parent, info):
         return parent.keywords.all()
 
-    def resolve_diffusions(parent, info):
-        return Diffusion.objects.all().filter(artwork=parent)
-
     # Artworks by the same authors
     relArtworks = graphene.List(graphene.Int, aw_context=graphene.String())
 

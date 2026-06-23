@@ -40,17 +40,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-# HAYSTACK
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        # 'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-        # 'ENGINE': 'elasticstack.backends.ConfigurableElasticSearchEngine',
-        'ENGINE': 'kart.elasticsearch-config.Elasticsearch71SearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'example',
-    },
-}
-
 
 FROM_EMAIL = ''
 

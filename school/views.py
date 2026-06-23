@@ -13,9 +13,6 @@ from rest_framework.decorators import action
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from drf_haystack.filters import HaystackAutocompleteFilter
-from drf_haystack.viewsets import HaystackViewSet
-
 from dj_rest_auth.views import PasswordResetView
 
 from guardian.shortcuts import assign_perm
@@ -44,7 +41,6 @@ from .serializers import (
     ScienceStudentSerializer,
     TeachingArtistSerializer,
     VisitingStudentSerializer,
-    StudentAutocompleteSerializer,
     PublicStudentApplicationSerializer,
     StudentApplicationSerializer,
     StudentApplicationSetupSerializer,
@@ -184,13 +180,6 @@ class VisitingStudentViewSet(viewsets.ModelViewSet):
         "user",
         "promotion",
     )
-
-
-class StudentAutocompleteSearchViewSet(HaystackViewSet):
-    index_models = [Student]
-    serializer_class = StudentAutocompleteSerializer
-    filter_backends = [HaystackAutocompleteFilter]
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class StudentApplicationSetupViewSet(viewsets.ModelViewSet):

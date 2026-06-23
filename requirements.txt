@@ -8,7 +8,6 @@ django-extensions==4.1
 django-filter==25.1
 django-grappelli==4.0.3
 django-guardian==3.3.0
-django-haystack==3.3.0
 # django-language-field==0.0.3
 # git+https://github.com/dellsystem/django-language-field
 # git+https://github.com/vporton/django-language-field
@@ -30,9 +29,6 @@ django-unused-media==0.2.2
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.5.1
 drf-jwt==1.19.2
-# drf-haystack==1.8.13
-git+https://github.com/ulgens/drf-haystack.git
-elasticsearch==7.15.1
 geopy==2.4.1
 Pillow==12.1.1
 pytz==2026.1.post1
