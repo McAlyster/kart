@@ -140,6 +140,9 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
+# TAGGIT
+TAGGIT_CASE_INSENSITIVE = True
+
 
 # TASTYPIE/API
 CORS_ORIGIN_ALLOW_ALL = True

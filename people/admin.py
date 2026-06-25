@@ -113,7 +113,7 @@ class FresnoyProfileAdmin(UserAdmin):
 
     def preferred_name(self, obj):
         if hasattr(obj, 'profile') and (obj.profile.preferred_first_name or obj.profile.preferred_last_name):
-            return "{} {}".format(obj.profile.preferred_first_name, obj.profile.preferred_last_name)
+            return "{} {}".format(obj.profile.preferred_first_name or "", obj.profile.preferred_last_name or "")
         return ""
 
     # describe 'preferred_name'

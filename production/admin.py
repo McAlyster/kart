@@ -222,3 +222,4 @@ class StaffTaskAdmin(admin.ModelAdmin):
         models.TextField: {'widget': AdminPagedownWidget},
     }
     ordering = ('label',)
+    search_fields = ['label',]

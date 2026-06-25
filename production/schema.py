@@ -541,7 +541,11 @@ class Query(graphene.ObjectType):
                 | Q(subtitle__unaccent__icontains=title)
             )
         if hasKeywordName and hasKeywordName[0] != "":
-            artworks = artworks.filter(keywords__name__in=hasKeywordName)
+            # filter without accent and case insensitive (Amour = amour)
+            keyword_queries = Q()
+            for name in hasKeywordName:
+                keyword_queries &= Q(keywords__name__unaccent__icontains=name)
+            artworks = artworks.filter(keyword_queries).distinct()
         if belongProductionYear:
             artworks = artworks.filter(production_date__year=belongProductionYear)
         if hasType:
@@ -574,7 +578,9 @@ class Query(graphene.ObjectType):
             )
 
         if hasKeywordName and hasKeywordName[0] != "":
-            artworks_pagination = artworks_pagination.filter(keywords__name__in=hasKeywordName)
+            for name in hasKeywordName:
+                artworks_pagination = artworks_pagination.filter(keywords__name__unaccent__icontains=name)
+            artworks_pagination = artworks_pagination.distinct()
         if belongProductionYear:
             artworks_pagination = artworks_pagination.filter(production_date__year=belongProductionYear)
         if hasType:
