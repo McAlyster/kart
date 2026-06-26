@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from pagedown.widgets import AdminPagedownWidget
-from polymorphic.admin import PolymorphicChildModelAdmin
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 
 from .models import (
     Production,
@@ -41,25 +41,8 @@ class ProductionChildAdmin(PolymorphicChildModelAdmin):
     base_model = Production
 
 
-class ArtworkChildAdmin(ProductionChildAdmin):
-    base_model = Artwork
-    list_display = ProductionChildAdmin.list_display + ('production_date',)
-
-
-class FilmChildAdmin(ArtworkChildAdmin, admin.ModelAdmin):
-    pass
-
-
-class PerformanceChildAdmin(ArtworkChildAdmin):
-    pass
-
-
-class InstallationChildAdmin(ArtworkChildAdmin):
-    pass
-
-
 @admin.register(Production)
-class ProductionParentAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
+class ProductionParentAdmin(PolymorphicParentModelAdmin):
     list_display = (
         'title',
         'subtitle',
@@ -72,14 +55,18 @@ class ProductionParentAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
 
     base_model = Production
     child_models = (
-        (Film, FilmChildAdmin),
-        (Installation, InstallationChildAdmin),
-        (Performance, PerformanceChildAdmin),
+        Film,
+        Installation,
+        Performance,
+        Event,
     )
 
 
-@admin.register(Artwork)
-class ArtworkAdmin(admin.ModelAdmin):
+class ArtworkAdmin(ProductionChildAdmin):
+
+    base_model = Production
+    show_in_index = True
+
     list_display = ('title', 'get_authors', 'get_diffusions', 'get_awards')
     search_fields = [
         'title',
@@ -140,12 +127,11 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 @admin.register(Installation)
 class InstallationAdmin(ArtworkAdmin):
-    base_model = Installation
+    pass
 
 
 @admin.register(Film)
 class FilmAdmin(ArtworkAdmin):
-    base_model = Film
     # filter_vertical = ('shooting_place', )
     raw_id_fields = ArtworkAdmin.raw_id_fields + ('shooting_place',)
     autocomplete_lookup_fields = {
@@ -155,13 +141,13 @@ class FilmAdmin(ArtworkAdmin):
 
 @admin.register(Performance)
 class PerformanceAdmin(ArtworkAdmin):
-    base_model = Performance
+    pass
 
 
 @admin.register(Event)
 class EventAdmin(ProductionChildAdmin):
     show_in_index = True
-    list_display = ProductionChildAdmin.list_display + ('starting_date', 'type', 'main_event')
+    list_display = ('title', 'starting_date', 'type', 'main_event')
     search_fields = ['title', 'parent_event__title']
     inlines = (CollaboratorsInline, PartnersInline)
     filter_vertical = ('subevents', "films", "installations", "performances")
