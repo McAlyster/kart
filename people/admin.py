@@ -40,9 +40,6 @@ class ArtistAdmin(admin.ModelAdmin):
         'facebook_profile',
         'websites',
     )
-    # raw_id_fields = ('user', 'collectives', 'websites')
-    # autocomplete_lookup_fields = {'fk': ['user'], 'm2m': ['collectives', 'websites']}
-
     autocomplete_fields = ('user', 'collectives', 'websites')
 
     def nick(self, obj):
