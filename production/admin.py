@@ -61,7 +61,7 @@ class ProductionParentAdmin(PolymorphicParentModelAdmin):
         Event,
     )
 
-
+@admin.register(Artwork)
 class ArtworkAdmin(ProductionChildAdmin):
 
     base_model = Production

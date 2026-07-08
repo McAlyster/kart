@@ -9,7 +9,7 @@ from people.models import Artist, FresnoyProfile, Staff, Organization
 
 from guardian.admin import GuardedModelAdmin
 
-
+@admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
     """Admin model for Artist."""
 
@@ -40,8 +40,10 @@ class ArtistAdmin(admin.ModelAdmin):
         'facebook_profile',
         'websites',
     )
-    raw_id_fields = ('user', 'collectives', 'websites')
-    autocomplete_lookup_fields = {'fk': ['user'], 'm2m': ['collectives', 'websites']}
+    # raw_id_fields = ('user', 'collectives', 'websites')
+    # autocomplete_lookup_fields = {'fk': ['user'], 'm2m': ['collectives', 'websites']}
+
+    autocomplete_fields = ('user', 'collectives', 'websites')
 
     def nick(self, obj):
         # user can be None
@@ -68,7 +70,6 @@ class ArtistAdmin(admin.ModelAdmin):
     def artist_photo_picture(self, obj):
         return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(obj.artist_photo.url))
 
-
 class FresnoyProfileInline(admin.StackedInline):
     """StackedInline admin for FresnoyProfile."""
 
@@ -80,6 +81,8 @@ class FresnoyProfileInline(admin.StackedInline):
     )
 
 
+admin.site.unregister(User)
+@admin.register(User)
 class FresnoyProfileAdmin(UserAdmin):
     """Admin for Use and additionnal profile fields."""
 
@@ -157,8 +160,5 @@ def user_unicode(self):
 
 User.__str__ = user_unicode
 
-admin.site.unregister(User)
-admin.site.register(User, FresnoyProfileAdmin)
-admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Staff, StaffAdmin)
 admin.site.register(Organization, OrganizationAdmin)

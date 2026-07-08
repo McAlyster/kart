@@ -97,13 +97,7 @@ class DiffusionAdmin(admin.ModelAdmin):
     ordering = [
         'artwork',
     ]
-    raw_id_fields = (
-        'artwork',
-        'event',
-    )
-    autocomplete_lookup_fields = {
-        'fk': ['artwork', 'event'],
-    }
+    autocomplete_fields = ('artwork', 'event')
 
 
 admin.site.register(Place, PlaceAdmin)
