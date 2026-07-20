@@ -103,10 +103,12 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
 
                 art_l.append(u)
 
-    # sometimes nobody know that an name is a pseudo
-    if not pseudo and not art_l:
-        pseudo = f'{firstname} {lastname}'
 
+    # sometimes nobody know that an name is a pseudo
+    # if not pseudo and not art_l:
+    if not pseudo:
+        pseudo = f'{firstname} {lastname}'
+    
     # PSEUDO
     if pseudo:
         guessArtNN = (
