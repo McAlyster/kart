@@ -38,29 +38,8 @@ services:
       kart_net:
         ipv4_address: ${KART_NGINX_IPV4}
   
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
-    container_name: kart_elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - bootstrap.memory_lock=true
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    networks:
-      kart_net:
-        ipv4_address: ${KART_ELASTICSEARCH_IPV4}
-
 
 volumes:
-  esdata:
   static_volume:
 
 
