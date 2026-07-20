@@ -1,10 +1,13 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.converter import convert_django_field
+from graphene_django.filter import DjangoFilterConnectionField
+import django_filters
 
 from django.db.models import Q
 
 from taggit.managers import TaggableManager
+from taggit.models import Tag
 from itertools import chain
 
 from .models import (
@@ -81,6 +84,7 @@ class ProductionInterface(graphene.Interface):
     subtitle = graphene.String()
     updated_on = graphene.Date()
     picture = graphene.String()
+    picture_copyright = graphene.String()
     websites = graphene.List(WebsiteType)
     collaborators = graphene.List(ProductionStaffTaskType)
     description_short_fr = graphene.String()
@@ -88,6 +92,7 @@ class ProductionInterface(graphene.Interface):
     description_fr = graphene.String()
     description_en = graphene.String()
     partners = graphene.List(PartnerType)
+    production_date = graphene.Date()
 
     @classmethod
     def resolve_type(cls, instance, info):
@@ -116,6 +121,7 @@ class ArtworkInterface(ProductionInterface):
     authors = graphene.List(ArtistType)
     diffusions = graphene.List(DiffusionType)
     mentoring = graphene.List("school.schema.TeachingArtistType")
+    keywords = graphene.List("production.schema.KeywordType")
 
     # The type of artwork (Film, Performance, ...)
     type = graphene.String()
@@ -159,6 +165,8 @@ class ArtworkType(ProductionType):
         interfaces = (graphene.relay.Node, ProductionInterface)
 
     authors = graphene.List(ArtistType)
+
+    keywords = graphene.List(KeywordType)
 
     # The type of artwork (Film, Performance, ...)
     type = graphene.String()
@@ -304,6 +312,12 @@ class ArtworkType(ProductionType):
         return diffusion.distinct()
 
 
+class ArtworkPagination(django_filters.FilterSet):
+    class Meta:
+        model = Artwork
+        fields = []
+
+
 class ArtworkPanoType(ArtworkType):
     class Meta:
         model = Artwork
@@ -338,6 +352,10 @@ def order(aws, orderby):
         # if orderby == "author":
         #     art = x.authors.all().order_by('user__last_name').first().user.last_name
         if orderby == "author":
+            if x.authors.count() == 0:
+                # if no author, return ZZZ : last in the list
+                return "ZZZ"
+            # if more than one author, take the first one
             first_auth = x.authors.first()
             # default
             art = first_auth.__str__()
@@ -512,8 +530,10 @@ class Query(graphene.ObjectType):
         return None
 
     # Artwork
-    def resolve_artworks(root, info, **kwargs):
+    def resolve_artworks(root, info, hasKeywordName=None, belongProductionYear=None, hasType=None, **kwargs):
         title = kwargs.get('title')
+        artworks = Artwork.objects.all()
+
         if title:
             artworks = artworks.filter(
                 Q(title__unaccent__icontains=title)

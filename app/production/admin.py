@@ -5,21 +5,39 @@ from pagedown.widgets import AdminPagedownWidget
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 
 from .models import (
-    Production, Artwork, FilmGenre, Film,
-    InstallationGenre, Installation, Performance,
-    StaffTask, OrganizationTask, Event, Itinerary)
+    Production,
+    Artwork,
+    FilmGenre,
+    Film,
+    InstallationGenre,
+    Installation,
+    Performance,
+    StaffTask,
+    OrganizationTask,
+    Event,
+    Itinerary,
+)
 
 
 class CollaboratorsInline(admin.TabularInline):
     model = Production.collaborators.through
+    raw_id_fields = ('staff', 'task')
+    autocomplete_lookup_fields = {
+        'fk': ['staff', 'task'],
+    }
 
 
 class PartnersInline(admin.TabularInline):
     model = Production.partners.through
+    raw_id_fields = ('organization',)
+    autocomplete_lookup_fields = {
+        'fk': ['organization'],
+    }
 
 
 class ProductionChildAdmin(PolymorphicChildModelAdmin):
-    """ Base admin class for all child models """
+    """Base admin class for all child models"""
+
     base_model = Production
 
 
@@ -50,25 +68,59 @@ class ArtworkAdmin(ProductionChildAdmin):
     show_in_index = True
 
     list_display = ('title', 'get_authors', 'get_diffusions', 'get_awards')
-    search_fields = ['title', ]
+    search_fields = [
+        'title',
+    ]
     inlines = (CollaboratorsInline, PartnersInline)
-    filter_vertical = ('authors', 'beacons',)
+    filter_vertical = (
+        'authors',
+        'beacons',
+    )
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
+    }
+    raw_id_fields = (
+        'authors',
+        'process_galleries',
+        'mediation_galleries',
+        'in_situ_galleries',
+        'press_galleries',
+        'teaser_galleries',
+        'websites',
+    )
+    autocomplete_lookup_fields = {
+        'm2m': [
+            'authors',
+            'process_galleries',
+            'mediation_galleries',
+            'in_situ_galleries',
+            'press_galleries',
+            'teaser_galleries',
+            'websites',
+        ]
     }
 
     def get_authors(self, obj):
         return ", ".join([author.__str__() for author in obj.authors.all()])
+
     get_authors.short_description = "Artist(s)"
 
     def get_diffusions(self, obj):
-        return ", ".join([event.__str__() for event in obj.events.all()])
+        if hasattr(obj, 'events'):
+            return ", ".join([event.__str__() for event in obj.events.all()])
+        return ""
+
     get_diffusions.short_description = "Diffusion(s)"
     get_diffusions.admin_order_field = 'events'
 
     def get_awards(self, obj):
-        return ", ".join(['{0} {1} ({2})'.format(award.meta_award.label, award.date.year, award.meta_award.event.title)
-                         for award in obj.award.all()])
+        return ", ".join(
+            [
+                '{0} {1} ({2})'.format(award.meta_award.label, award.date.year, award.meta_award.event.title)
+                for award in obj.award.all()
+            ]
+        )
+
     get_awards.short_description = "Award(s)"
     get_awards.admin_order_field = 'award'
 
@@ -99,6 +151,10 @@ class EventAdmin(ProductionChildAdmin):
     search_fields = ['title', 'parent_event__title']
     inlines = (CollaboratorsInline, PartnersInline)
     filter_vertical = ('subevents', "films", "installations", "performances")
+    raw_id_fields = ('subevents', 'installations', 'performances', 'films', "websites")
+    autocomplete_lookup_fields = {
+        'm2m': ['subevents', 'installations', 'performances', 'films', "websites"],
+    }
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},

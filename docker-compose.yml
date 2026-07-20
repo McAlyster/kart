@@ -17,8 +17,6 @@ services:
       - .env
     ports:
       - "8002:8000"
-    depends_on:
-      - elasticsearch
     networks:
       kart_net:
         ipv4_address: ${KART_WEB_IPV4}

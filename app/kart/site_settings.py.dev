@@ -19,12 +19,12 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(" ")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(" ")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-SETTINGS_SECRET_KEY = "change me!"
+DEBUG = os.getenv("DEBUG")
+SETTINGS_SECRET_KEY = os.getenv("SETTINGS_SECRET_KEY")
 
 if not DEBUG:
   SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -39,8 +39,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 
-FROM_EMAIL = ''
+FROM_EMAIL = os.getenv("DJANGO_FROM_EMAIL")
 
-GRAPPELLI_ADMIN_TITLE = ''
+GRAPPELLI_ADMIN_TITLE = os.getenv("DJANGO_GRAPPELLI_ADMIN_TITLE")
 
 SITE_ID = 2

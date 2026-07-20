@@ -72,14 +72,10 @@ class MetaAwardAdmin(admin.ModelAdmin):
 class DiffusionAdmin(admin.ModelAdmin):
     list_display = ('artwork', 'event', 'first', 'on_competition')
     search_fields = ['artwork__title', 'event__title']
-<<<<<<< HEAD
-    ordering = ['artwork', ]
-=======
     ordering = [
         'artwork',
     ]
     autocomplete_fields = ('artwork', 'event')
->>>>>>> origin/main
 
 
 admin.site.register(Place, PlaceAdmin)

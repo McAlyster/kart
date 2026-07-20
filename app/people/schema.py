@@ -1,6 +1,8 @@
 import re
 import graphene
 from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+import django_filters
 
 from django.db.models import F, Q, Value
 from django.db.models.functions import Concat
@@ -330,6 +332,7 @@ class ArtistType(UserType):
 
     nickname = graphene.String(resolver=DynNameResolver())
     artist_photo = graphene.String(resolver=DynNameResolver())
+    artist_photo_copyright = graphene.String(resolver=DynNameResolver())
     collectives = graphene.List("people.schema.ArtistType", resolver=DynNameResolver())
     members = graphene.List("people.schema.ArtistType", resolver=DynNameResolver())
     bioShortFr = graphene.String(resolver=DynNameResolver())
@@ -344,6 +347,7 @@ class ArtistType(UserType):
 
     # Display Name
     displayName = graphene.String()
+    displayPhoto = graphene.String()
 
     def resolve_displayName(parent, info):
         '''Return nickname if exists, first + last name otherwise'''
@@ -366,6 +370,13 @@ class ArtistType(UserType):
     #     artists = Artist.objects.filter(id__in=parent.collectives)
     #     print (parent.collectives)
     #     return artists
+
+
+# Dedicated to pagination, copy some elements in order to separate logic
+class ArtistPagination(django_filters.FilterSet):
+    class Meta:
+        model = Artist
+        fields = []
 
 
 class StaffType(UserType):
