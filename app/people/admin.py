@@ -9,25 +9,47 @@ from people.models import Artist, FresnoyProfile, Staff, Organization
 
 from guardian.admin import GuardedModelAdmin
 
-
+@admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
     """ Admin model for Artist.
     """
     list_display = ('nick',)
-    search_fields = ['user__first_name', 'user__last_name', 'nickname', ]
-    filter_horizontal = ('websites', 'collectives')
+    search_fields = [
+        'user__first_name',
+        'user__last_name',
+        'user__profile__preferred_last_name',
+        'user__profile__preferred_first_name',
+        'nickname',
+    ]
+    # filter_horizontal = ('websites', 'collectives')
     readonly_fields = ('artist_photo_picture',)
     # list fields order the picture after artist_photo
-    fields = ('user', 'collectives', 'nickname', 'alphabetical_order', 'artist_photo', 'artist_photo_picture',
-              'bio_short_fr', 'bio_short_en', 'bio_fr', 'bio_en', 'twitter_account', 'facebook_profile', 'websites')
+    fields = (
+        'user',
+        'collectives',
+        'nickname',
+        'alphabetical_order',
+        'artist_photo',
+        'artist_photo_picture',
+        'artist_photo_copyright',
+        'bio_short_fr',
+        'bio_short_en',
+        'bio_fr',
+        'bio_en',
+        'twitter_account',
+        'facebook_profile',
+        'websites',
+    )
+    autocomplete_fields = ('user', 'collectives', 'websites')
 
     def nick(self, obj):
         # user can be None
+        print(obj.user)
         if obj.user:
             if obj.nickname != "":
-                return "{} ({} {})".format(obj.nickname, obj.user.first_name, obj.user.last_name)
+                return "{} ({})".format(obj.nickname, obj.user.__str__())
             else:
-                return "{} {}".format(obj.user.first_name, obj.user.last_name)
+                return "{}".format(obj.user.__str__())
         # User None
         if obj.nickname != "":
             return obj.nickname
@@ -44,7 +66,6 @@ class ArtistAdmin(admin.ModelAdmin):
     def artist_photo_picture(self, obj):
         return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(obj.artist_photo.url))
 
-
 class FresnoyProfileInline(admin.StackedInline):
     """StackedInline admin for FresnoyProfile.
     """
@@ -52,14 +73,48 @@ class FresnoyProfileInline(admin.StackedInline):
     readonly_fields = ('is_artist', 'is_student', 'is_staff',)
 
 
+admin.site.unregister(User)
+@admin.register(User)
 class FresnoyProfileAdmin(UserAdmin):
     """ Admin for Use and additionnal profile fields.
     """
     inlines = (FresnoyProfileInline,)
-    list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff')
+    list_display = (
+        'username',
+        'first_name',
+        'last_name',
+        'preferred_name',
+        'email',
+        'is_staff',
+    )
+    ordering = ('first_name', 'last_name', 'profile__preferred_first_name')
+    search_fields = (
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'profile__preferred_first_name',
+        'profile__preferred_last_name',
+    )
     add_form = UserCreateForm
-    add_fieldsets = ((None, {'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email'), }), )
-    ordering = ('first_name',)
+    add_fieldsets = (
+        (
+            None,
+            {
+                'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email'),
+            },
+        ),
+    )
+
+    def preferred_name(self, obj):
+        if hasattr(obj, 'profile') and (obj.profile.preferred_first_name or obj.profile.preferred_last_name):
+            return "{} {}".format(obj.profile.preferred_first_name or "", obj.profile.preferred_last_name or "")
+        return ""
+
+    # describe 'preferred_name'
+    preferred_name.short_description = 'Nom d\'usage'
+    # order by preferred first name
+    preferred_name.admin_order_field = 'profile__preferred_first_name'
 
 
 class StaffAdmin(GuardedModelAdmin):
@@ -80,13 +135,15 @@ class OrganizationAdmin(GuardedModelAdmin):
 
 
 def user_unicode(self):
+    if hasattr(self, 'profile') and (self.profile.preferred_first_name or self.profile.preferred_last_name):
+        return '{0} {1}'.format(
+            self.profile.preferred_first_name.title() if self.profile.preferred_first_name else "",
+            self.profile.preferred_last_name.title() if self.profile.preferred_last_name else "",
+        )
     return '{0} {1}'.format(self.first_name.title(), self.last_name.title())
 
 
 User.__str__ = user_unicode
 
-admin.site.unregister(User)
-admin.site.register(User, FresnoyProfileAdmin)
-admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Staff, StaffAdmin)
 admin.site.register(Organization, OrganizationAdmin)

@@ -3,7 +3,6 @@ from rest_polymorphic.serializers import PolymorphicSerializer
 from taggit.serializers import (TagListSerializerField,
                                 TaggitSerializer)
 from taggit.models import Tag
-from drf_haystack.serializers import HaystackSerializerMixin
 
 from .models import (
     Film, FilmGenre, Installation,
@@ -12,7 +11,6 @@ from .models import (
     ProductionStaffTask, ProductionOrganizationTask,
     Artwork
 )
-from .search_indexes import InstallationIndex, PerformanceIndex, FilmIndex  # ArtworkIndex
 from people.serializers import StaffSimpleSerializer
 
 
@@ -127,43 +125,6 @@ class ArtworkPolymorphicSerializer(PolymorphicSerializer):
         Installation: InstallationSerializer,
         Performance: PerformanceSerializer
     }
-
-
-class ArtworkAutocompleteSerializer(HaystackSerializerMixin, ArtworkSerializer):
-
-    class Meta(ArtworkSerializer.Meta):
-        index_classes = [FilmIndex, InstallationIndex, PerformanceIndex]
-        search_fields = ("content_auto", 'type', 'genres', 'keywords', "shooting_place",)
-        field_aliases = {
-            "q": "content_auto",
-        }
-        depth = 1
-
-    type = serializers.SerializerMethodField()
-    genres = serializers.SerializerMethodField()
-    keywords = TagListSerializerField()
-    shooting_place = serializers.SerializerMethodField()
-    authors = serializers.SerializerMethodField()
-
-    def get_type(self, obj):
-        return obj.__class__.__name__
-
-    def get_genres(self, obj):
-        if obj.__class__.__name__ in {'Film', 'Installation'}:
-            return [genre.label for genre in obj.genres.all()]
-        return None
-
-    def get_shooting_place(self, obj):
-        if (obj.__class__.__name__ == "Film"):
-            # prevent circular import
-            from diffusion.serializers import PlaceSerializer
-            return [PlaceSerializer(place, context=self.context).data for place in obj.shooting_place.all()]
-        return None
-
-    def get_authors(self, obj):
-        # prevent circular import
-        from people.serializers import ArtistUserSerializer
-        return ArtistUserSerializer(obj.authors.all(), many=True, context=self.context).data
 
 
 class FilmGenreSerializer(serializers.HyperlinkedModelSerializer):

@@ -13,9 +13,6 @@ from rest_framework.decorators import action
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from drf_haystack.filters import HaystackAutocompleteFilter
-from drf_haystack.viewsets import HaystackViewSet
-
 from dj_rest_auth.views import PasswordResetView
 
 from guardian.shortcuts import assign_perm
@@ -43,7 +40,6 @@ from .serializers import (
     ScienceStudentSerializer,
     TeachingArtistSerializer,
     VisitingStudentSerializer,
-    StudentAutocompleteSerializer,
     PublicStudentApplicationSerializer,
     StudentApplicationSerializer,
     StudentApplicationSetupSerializer,
@@ -80,7 +76,11 @@ class StudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("user__username",)
+    search_fields = (
+        "user__username",
+        "=user__last_name",
+        "=user__profile__preferred_last_name",
+    )
     ordering_fields = ("user__last_name",)
     filterset_fields = (
         "artist",
@@ -98,7 +98,11 @@ class PhdStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("student__user__username",)
+    search_fields = (
+        "student__user__username",
+        "=student__user__last_name",
+        "=student__user__profile__preferred_last_name",
+    )
     ordering_fields = ("student__user__last_name",)
     filterset_fields = (
         "student__artist",
@@ -115,7 +119,11 @@ class ScienceStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("student__user__username",)
+    search_fields = (
+        "student__user__username",
+        "=student__user__last_name",
+        "=student__user__profile__preferred_last_name",
+    )
     ordering_fields = ("student__user__last_name",)
     filterset_fields = (
         "student__artist",
@@ -142,7 +150,11 @@ class TeachingArtistViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     )
-    search_fields = ("artist__user__username",)
+    search_fields = (
+        "artist__user__username",
+        "=artist__user__last_name",
+        "=artist__user__profile__preferred_last_name",
+    )
     ordering_fields = ("artist__user__last_name",)
     filterset_class = TeachingArtistFilterSet
 
@@ -156,20 +168,17 @@ class VisitingStudentViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter,
     )
-    search_fields = ("user__username",)
+    search_fields = (
+        "user__username",
+        "user__last_name",
+        "=user__profile__preferred_last_name",
+    )
     ordering_fields = ("user__last_name",)
     filterset_fields = (
         "artist",
         "user",
         "promotion",
     )
-
-
-class StudentAutocompleteSearchViewSet(HaystackViewSet):
-    index_models = [Student]
-    serializer_class = StudentAutocompleteSerializer
-    filter_backends = [HaystackAutocompleteFilter]
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class StudentApplicationSetupViewSet(viewsets.ModelViewSet):
@@ -185,8 +194,16 @@ class AdminStudentApplicationViewSet(viewsets.ModelViewSet):
     queryset = AdminStudentApplication.objects.all()
     serializer_class = AdminStudentApplicationSerializer
     permission_classes = (permissions.IsAdminUser,)
-    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
-    search_fields = ("=application__artist__user__username", "application__artist__user__last_name")
+    filter_backends = (
+        filters.SearchFilter,
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    )
+    search_fields = (
+        "=application__artist__user__username",
+        "=application__artist__user__last_name",
+        "=applucation__artist__user__profile__preferred_last_name",
+    )
     filterset_fields = (
         "application__application_completed",
         "application_complete",
@@ -210,7 +227,10 @@ class AdminStudentApplicationViewSet(viewsets.ModelViewSet):
         """
         Update by staff user only, see permissions
         """
-        admin_app = self.get_object()
+        serializer = self.get_serializer(self.get_object(), data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        admin_app = serializer.save()
 
         # send email to candidat when candidature is complete (admin valid infos)
         if request.data.get("application_complete"):
@@ -244,8 +264,16 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
     queryset = StudentApplication.objects.all()
     # serializer_class = StudentApplicationSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
-    search_fields = ("=artist__user__username", "artist__user__last_name")
+    filter_backends = (
+        filters.SearchFilter,
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    )
+    search_fields = (
+        "=artist__user__username",
+        "=artist__user__last_name",
+        "=artist__user__profile__preferred_last_name",
+    )
     filterset_fields = (
         "application_completed",
         "remote_interview",
@@ -296,8 +324,8 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
         (and write some db info like pasts applications for user)
         """
         user = self.request.user
-        # first of all test current campaign
-        if candidature_close() and not user.is_staff:
+        # first of all test current campaign (not one hour graced for create)
+        if candidature_close(one_hour_grace=False) and not user.is_staff:
             errors = {"candidature": "expired"}
             return Response(errors, status=status.HTTP_403_FORBIDDEN)
         campaign = StudentApplicationSetup.objects.filter(is_current_setup=True).first()
@@ -350,7 +378,7 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
             errors = {"Error": "Must update one info at once"}
             return Response(errors, status=status.HTTP_403_FORBIDDEN)
         # candidate can't update candidature when expired, admin can !
-        if candidature_close() and not user.is_staff:
+        if candidature_close(one_hour_grace=True) and not user.is_staff:
             errors = {"candidature": "expired"}
             return Response(errors, status=status.HTTP_403_FORBIDDEN)
 
@@ -451,7 +479,11 @@ def user_activate(request, uidb64, token):
         if user.is_active:
             activation_already_ok = render_to_string(
                 "emails/account/activation_already_ok.html",
-                {"username": user.username, "email": user.email, "link_change_password": change_password_link},
+                {
+                    "username": user.username,
+                    "email": user.email,
+                    "link_change_password": change_password_link,
+                },
             )
             return HttpResponse(activation_already_ok)
 

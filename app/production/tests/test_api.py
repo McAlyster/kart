@@ -4,7 +4,6 @@ from diffusion.tests.conftest import *  # noqa
 from utils.tests.conftest import *  # noqa
 from utils.tests.utils import (
     FilterModelRessourceMixin,
-    HaystackSearchModelRessourceMixin,
     HelpTestForReadOnlyModelRessource,
     parametrize_user_roles,
 )
@@ -29,7 +28,6 @@ class TestStaffTaskRessource(HelpTestForReadOnlyModelRessource):
 
 @pytest.mark.django_db
 class TestArtworkRessource(
-    HaystackSearchModelRessourceMixin,
     FilterModelRessourceMixin,
     HelpTestForReadOnlyModelRessource,
 ):

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import locale
 import pytz
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from django.utils.http import int_to_base36
 from django.contrib.auth.tokens import default_token_generator
@@ -52,14 +51,22 @@ def send_account_information_email(user):
     # Send email
     msg_plain = render_to_string(
         "emails/account/account_infos.txt",
-        {"user": user, "recover_password_url": recover_password_url, "authentification_url": authentification_url},
+        {
+            "user": user,
+            "recover_password_url": recover_password_url,
+            "authentification_url": authentification_url,
+        },
     )
     msg_html = render_to_string(
         "emails/account/account_infos.html",
-        {"user": user, "recover_password_url": recover_password_url, "authentification_url": authentification_url},
+        {
+            "user": user,
+            "recover_password_url": recover_password_url,
+            "authentification_url": authentification_url,
+        },
     )
     mail_sent = send_mail(
-        "Résumé de votre compte / Account information",
+        "Données d'identification de votre compte / Account information",
         msg_plain,
         settings.FROM_EMAIL,
         [user.email],
@@ -73,13 +80,15 @@ def send_candidature_completed_email_to_user(request, application_admin):
     name = artist.__str__()
     # Send email
     msg_plain = render_to_string(
-        "emails/send_candidature_completed_to_user.txt", {"name": name, "application": application_admin.application}
+        "emails/send_candidature_completed_to_user.txt",
+        {"name": name, "application": application_admin.application},
     )
     msg_html = render_to_string(
-        "emails/send_candidature_completed_to_user.html", {"name": name, "application": application_admin.application}
+        "emails/send_candidature_completed_to_user.html",
+        {"name": name, "application": application_admin.application},
     )
     mail_sent = send_mail(
-        "Réception de votre candidature / Application Received",
+        "Accusé réception / Application Received",
         msg_plain,
         settings.FROM_EMAIL,
         [artist.user.email],
@@ -98,11 +107,21 @@ def send_candidature_completed_email_to_admin(request, application_admin):
     # Send email
     msg_plain = render_to_string(
         "emails/send_candidature_completed_to_admin.txt",
-        {"user": artist.user, "name": name, "url": url, "application": application_admin.application},
+        {
+            "user": artist.user,
+            "name": name,
+            "url": url,
+            "application": application_admin.application,
+        },
     )
     msg_html = render_to_string(
         "emails/send_candidature_completed_to_admin.html",
-        {"user": artist.user, "name": name, "url": url, "application": application_admin.application},
+        {
+            "user": artist.user,
+            "name": name,
+            "url": url,
+            "application": application_admin.application,
+        },
     )
     mail_sent = send_mail(
         "Envoi d'une candidature",
@@ -115,15 +134,6 @@ def send_candidature_completed_email_to_admin(request, application_admin):
     return mail_sent
 
 
-def setLocale(str):
-    # windows translation
-    dict = {"fr_FR.utf8": "french", "en_US.utf8": "english"}
-    try:
-        locale.setlocale(locale.LC_ALL, str)
-    except Exception:
-        locale.setlocale(locale.LC_ALL, dict[str])
-
-
 def send_candidature_complete_email_to_candidat(request, application_admin):
     setup = StudentApplicationSetup.objects.filter(is_current_setup=True).first()
     artist = application_admin.application.artist
@@ -131,15 +141,17 @@ def send_candidature_complete_email_to_candidat(request, application_admin):
     # set locale  interviews date
     interviews_dates = {"fr": "", "en": ""}
     # having name of day/month in rigth language
-    setLocale("fr_FR.utf8")
-    interviews_dates["fr"] = "entre le {0} et le {1}".format(
-        setup.interviews_start_date.strftime("%A %d %B"), setup.interviews_end_date.strftime("%A %d %B %Y")
-    )
-    setLocale("en_US.utf8")
-    interviews_dates["en"] = "from {0} to {1}".format(
-        setup.interviews_start_date.strftime("%A %d %B"), setup.interviews_end_date.strftime("%A %d %B %Y")
-    )
-    setLocale("fr_FR.utf8")
+    with translation.override("fr"):
+        interviews_dates["fr"] = "entre le {0} et le {1}".format(
+            setup.interviews_start_date.strftime("%A %d %B"),
+            setup.interviews_end_date.strftime("%A %d %B %Y"),
+        )
+
+    with translation.override("en"):
+        interviews_dates["en"] = "from {0} to {1}".format(
+            setup.interviews_start_date.strftime("%A %d %B"),
+            setup.interviews_end_date.strftime("%A %d %B %Y"),
+        )
     # Send email
     msg_plain = render_to_string(
         "emails/send_candidature_complete_to_candidat.txt",
@@ -156,7 +168,7 @@ def send_candidature_complete_email_to_candidat(request, application_admin):
         },
     )
     mail_sent = send_mail(
-        "Votre candidature est complète / Candidature is complete",
+        "Validation de votre candidature / Validation of your application",
         msg_plain,
         settings.FROM_EMAIL,
         [artist.user.email],
@@ -173,17 +185,20 @@ def send_interview_selection_email_to_candidat(request, application_admin):
     interview_date = {"fr": "", "en": ""}
     # set locale interviews date
     # having name of day/month in rigth language
-    setLocale("fr_FR.utf8")
     # convert utc to PARIS's time
     tz = pytz.timezone("Europe/Paris")
     interview_date_paris = application_admin.interview_date.astimezone(tz)
     # get French string date : lundi 01 juillet 2019 à 13h30
-    interview_date["fr"] = "Le {0} à {1}".format(
-        interview_date_paris.strftime("%A %d %B %Y"), interview_date_paris.strftime("%Hh%M")
-    )
-    setLocale("en_US.utf8")
-    # get English string date : monday 01 july 2019 à 01h30 PM
-    interview_date["en"] = "{0}".format(interview_date_paris.strftime("%A %d %B %Y at %I.%M %p"))
+    with translation.override("fr"):
+        # On utilise strftime manuellement si on veut un format très spécifique
+        # %A = Jour, %d = jour chiffre, %B = Mois, %Y = Année
+        interview_date["fr"] = "Le {0} à {1}".format(
+            interview_date_paris.strftime("%A %d %B %Y"),
+            interview_date_paris.strftime("%Hh%M"),
+        )
+    with translation.override("en"):
+        # get English string date : monday 01 july 2019 à 01h30 PM
+        interview_date["en"] = "{0}".format(interview_date_paris.strftime("%A %d %B %Y at %I.%M %p"))
     # Send email
     msg_plain = render_to_string(
         "emails/send_interview_selection_to_user.txt",
@@ -200,7 +215,7 @@ def send_interview_selection_email_to_candidat(request, application_admin):
         },
     )
     mail_sent = send_mail(
-        "Candidature présélectionnée / Shortlisted application",
+        "Résultats de la présélection / Shortlisted results",
         msg_plain,
         settings.FROM_EMAIL,
         [artist.user.email],
@@ -216,26 +231,37 @@ def send_interview_selection_on_waitlist_email_to_candidat(request, application_
     # set locale  interviews date
     interviews_dates = {"fr": "", "en": ""}
     # having name of day/month in rigth language
-    setLocale("fr_FR.utf8")
     setup = application_admin.application.campaign
-    interviews_dates["fr"] = "entre le {0} au {1}".format(
-        setup.interviews_start_date.strftime("%A %d %B"), setup.interviews_end_date.strftime("%A %d %B %Y")
-    )
-    setLocale("en_US.utf8")
-    interviews_dates["en"] = "from {0} to {1}".format(
-        setup.interviews_start_date.strftime("%A %d %B"), setup.interviews_end_date.strftime("%A %d %B %Y")
-    )
+    with translation.override("fr"):
+        interviews_dates["fr"] = "entre le {0} et le {1}".format(
+            setup.interviews_start_date.strftime("%A %d %B"),
+            setup.interviews_end_date.strftime("%A %d %B %Y"),
+        )
+
+    with translation.override("fr"):
+        interviews_dates["en"] = "from {0} to {1}".format(
+            setup.interviews_start_date.strftime("%A %d %B"),
+            setup.interviews_end_date.strftime("%A %d %B %Y"),
+        )
 
     # Send email : PRESELECTION : ON WAITLIST
     msg_plain = render_to_string(
         "emails/send_on_waitlist_for_interview_to_candidat.txt",
-        {"application_admin": application_admin, "name": name, "interviews_dates": interviews_dates},
+        {
+            "application_admin": application_admin,
+            "name": name,
+            "interviews_dates": interviews_dates,
+        },
     )
     msg_html = render_to_string(
         "emails/send_on_waitlist_for_interview_to_candidat.html",
-        {"application_admin": application_admin, "name": name, "interviews_dates": interviews_dates},
+        {
+            "application_admin": application_admin,
+            "name": name,
+            "interviews_dates": interviews_dates,
+        },
     )
-    subject = "Candidature en liste d'attente pour l'entretien / Application on waiting list for interview"
+    subject = "Résultats de la présélection / Shortlisted results"
     mail_sent = send_mail(
         subject,
         msg_plain,
@@ -262,7 +288,7 @@ def send_selected_candidature_email_to_candidat(request, application_admin):
             "name": name,
         },
     )
-    subject = "Candidature Sélectionnée / Application selected"
+    subject = "Résultats de la sélection / Selection results"
 
     mail_sent = send_mail(
         subject,
@@ -292,7 +318,7 @@ def send_selected_on_waitlist_candidature_email_to_candidat(request, application
             "name": name,
         },
     )
-    subject = "Candidature en liste d'attente / Application on waiting list"
+    subject = "Résultats de la sélection / Selection results"
 
     mail_sent = send_mail(
         subject,
@@ -322,7 +348,7 @@ def send_not_selected_candidature_email_to_candidat(request, application_admin):
             "name": name,
         },
     )
-    subject = "Candidature non sélectionée / Application not selected"
+    subject = "Résultats de la sélection / Selection results"
 
     mail_sent = send_mail(
         subject,
@@ -338,25 +364,29 @@ def send_candidature_not_finalized_to_candidats(request, application_setup, list
 
     # set locale  interviews date
     application_end = {"fr": "", "en": ""}
-    # having name of day/month in rigth language
-    setLocale("fr_FR.utf8")
     tz = pytz.timezone("Europe/Paris")
     candidature_date_end = application_setup.candidature_date_end.astimezone(tz)
 
-    application_end["fr"] = "{0} à {1}".format(
-        candidature_date_end.strftime("%A %d %B %Y"), candidature_date_end.strftime("%Hh%M")
-    )
-    setLocale("en_US.utf8")
-    application_end["en"] = candidature_date_end.strftime("on %A %d %B %Y, %-I %P (Paris time)")
+    # having name of day/month in rigth language
+    with translation.override("fr"):
+        application_end["fr"] = "{0} à {1}".format(
+            candidature_date_end.strftime("%A %d %B %Y"),
+            candidature_date_end.strftime("%Hh%M"),
+        )
+
+    with translation.override("en"):
+        application_end["en"] = candidature_date_end.strftime("on %A %d %B %Y, %-I %P (Paris time)")
     # Send email : NOT SELECTED
     msg_plain = render_to_string(
-        "emails/send_candidature_not_finalized_to_candidat.txt", {"application_end": application_end}
+        "emails/send_candidature_not_finalized_to_candidat.txt",
+        {"application_end": application_end},
     )
     msg_html = render_to_string(
-        "emails/send_candidature_not_finalized_to_candidat.html", {"application_end": application_end}
+        "emails/send_candidature_not_finalized_to_candidat.html",
+        {"application_end": application_end},
     )
     mail = EmailMultiAlternatives(
-        "Finalisez votre candidature / Finalize your application ",
+        "Encore quelques semaines pour candidater / Only a few weeks left to apply",
         msg_plain,
         settings.FROM_EMAIL,
         [
@@ -370,7 +400,48 @@ def send_candidature_not_finalized_to_candidats(request, application_setup, list
     return mail_sent
 
 
-def candidature_close(campaign=None):
+def send_candidature_not_finalized_to_candidats_after_date_end(request, application_setup, list_candidats):
+
+    # set locale  interviews date
+    application_end = {"fr": "", "en": ""}
+
+    tz = pytz.timezone("Europe/Paris")
+    candidature_date_end = application_setup.candidature_date_end.astimezone(tz)
+
+    # having name of day/month in rigth language
+    with translation.override("fr"):
+        application_end["fr"] = "{0} à {1}".format(
+            candidature_date_end.strftime("%A %d %B %Y"),
+            candidature_date_end.strftime("%Hh%M"),
+        )
+
+    with translation.override("en"):
+        application_end["en"] = candidature_date_end.strftime("on %A %d %B %Y, %-I %P (Paris time)")
+    # Send email : NOT SELECTED
+    msg_plain = render_to_string(
+        "emails/send_candidature_not_finalized_to_candidat_after_date_end.txt",
+        {"application_end": application_end},
+    )
+    msg_html = render_to_string(
+        "emails/send_candidature_not_finalized_to_candidat_after_date_end.html",
+        {"application_end": application_end},
+    )
+    mail = EmailMultiAlternatives(
+        "",
+        msg_plain,
+        settings.FROM_EMAIL,
+        [
+            "selection@lefresnoy.net",
+        ],
+        bcc=list_candidats,  # bcc
+        reply_to=["selection@lefresnoy.net"],
+    )
+    mail.attach_alternative(msg_html, "text/html")
+    mail_sent = mail.send()
+    return mail_sent
+
+
+def candidature_close(campaign=None, one_hour_grace=True):
     """
     Test if a candidature is closed
     """
@@ -382,7 +453,12 @@ def candidature_close(campaign=None):
 
     # is candidature on time
     now = timezone.localtime(timezone.now())
-    if now < campaign.candidature_date_start or now > campaign.candidature_date_end:
+    end = campaign.candidature_date_end
+    # candidature_date_end is 1 hours after the date
+    if one_hour_grace:
+        end = end + timezone.timedelta(hours=1)
+    # if now is before start or after end
+    if now < campaign.candidature_date_start or now > end:
         return True
 
     return False

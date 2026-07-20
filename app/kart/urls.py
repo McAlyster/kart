@@ -20,20 +20,20 @@ from diffusion.api import PlaceResource, AwardResource, MetaAwardResource
 from school.api import PromotionResource, StudentResource, StudentApplicationResource
 
 from people.views import (
-    ArtistViewSet, ArtistAutocompleteSearchViewSet,
+    ArtistViewSet,
     UserViewSet, FresnoyProfileViewSet,
     StaffViewSet, OrganizationViewSet,
 )
 from people import views as people_views
 from school.views import (UserPasswordResetView, PromotionViewSet, StudentViewSet, PhdStudentViewSet,
-                          VisitingStudentViewSet, ScienceStudentViewSet, StudentAutocompleteSearchViewSet,
+                          VisitingStudentViewSet, ScienceStudentViewSet,
                           TeachingArtistViewSet, StudentApplicationViewSet, StudentApplicationSetupViewSet,
                           AdminStudentApplicationViewSet,
                           )
 
 from school import views as school_views
 from production.views import (
-    ArtworkViewSet, ArtworkAutocompleteSearchViewSet,
+    ArtworkViewSet,
     FilmViewSet, InstallationViewSet,
     PerformanceViewSet, FilmGenreViewSet,
     InstallationGenreViewSet, EventViewSet,
@@ -51,7 +51,10 @@ from assets import views as assets_views
 from school.schema_views import (PromotionViewGQL, StudentViewGQL, TeachinArtistListViewGQL,
                                  TeachingArtistGQL, CandidatureResultsGQL,)
 from production.schema_views import Artworks25ViewGQL
+
+from kart.graphql_views import SecureGraphQLView
 from graphene_django.views import GraphQLView
+
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -90,8 +93,6 @@ v2_api = routers.DefaultRouter(trailing_slash=False)
 v2_api.register(r'people/user', UserViewSet)
 v2_api.register(r'people/userprofile', FresnoyProfileViewSet)
 v2_api.register(r'people/artist', ArtistViewSet)
-v2_api.register(r'people/artist-search',
-                ArtistAutocompleteSearchViewSet, basename="people-artist-search")
 v2_api.register(r'school/artist-teacher', TeachingArtistViewSet)
 v2_api.register(r'people/staff', StaffViewSet)
 v2_api.register(r'people/organization', OrganizationViewSet)
@@ -105,13 +106,9 @@ v2_api.register(r'school/student-application', StudentApplicationViewSet)
 v2_api.register(r'school/student-application-setup',
                 StudentApplicationSetupViewSet)
 v2_api.register(r'school/admin-student-application', AdminStudentApplicationViewSet)
-v2_api.register(r'school/student-search',
-                StudentAutocompleteSearchViewSet, basename="school-student-search")
 v2_api.register(r'production/artwork', ArtworkViewSet)
 v2_api.register(r'production/artwork-keywords',
                 ArtworkKeywordsViewSet, basename="artwork-keywords")
-v2_api.register(r'production/artwork-search',
-                ArtworkAutocompleteSearchViewSet, basename="production-artwork-search")
 v2_api.register(r'production/film', FilmViewSet)
 v2_api.register(r'production/film-keywords', FilmKeywordsViewSet)
 v2_api.register(r'production/event', EventViewSet)
@@ -132,6 +129,13 @@ v2_api.register(r'common/beacon', BTBeaconViewSet)
 v2_api.register(r'common/website', WebsiteViewSet)
 v2_api.register(r'assets/gallery', GalleryViewSet)
 v2_api.register(r'assets/medium', MediumViewSet)
+
+
+# Sélection des vues en fonction de l'environnement (DEBUG)
+if settings.DEBUG:
+    graphql_view = GraphQLView.as_view(graphiql=True)
+else:
+    graphql_view = SecureGraphQLView.as_view(graphiql=False)
 
 
 urlpatterns = [
@@ -199,7 +203,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Graphene
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
+    path("graphql", csrf_exempt(graphql_view), name="graphql"),
 
     path("page/promotionGQL/<int:id>", csrf_exempt(PromotionViewGQL.as_view()),
          name='promotionGQL'),

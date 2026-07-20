@@ -62,6 +62,8 @@ class MetaEventAdmin(admin.ModelAdmin):
 
 
 class MetaAwardAdmin(admin.ModelAdmin):
+    search_fields = ['label', 'description', 'event__title']
+    list_display = ('label', 'event', 'type', 'task')
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
     }
@@ -70,7 +72,14 @@ class MetaAwardAdmin(admin.ModelAdmin):
 class DiffusionAdmin(admin.ModelAdmin):
     list_display = ('artwork', 'event', 'first', 'on_competition')
     search_fields = ['artwork__title', 'event__title']
+<<<<<<< HEAD
     ordering = ['artwork', ]
+=======
+    ordering = [
+        'artwork',
+    ]
+    autocomplete_fields = ('artwork', 'event')
+>>>>>>> origin/main
 
 
 admin.site.register(Place, PlaceAdmin)

@@ -10,15 +10,11 @@ from rest_framework import viewsets, permissions, status, filters, pagination
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from drf_haystack.filters import HaystackAutocompleteFilter
-from drf_haystack.viewsets import HaystackViewSet
-
 from school.models import StudentApplication
 
 from .models import Artist, User, FresnoyProfile, Staff, Organization
 from .serializers import (
     ArtistSerializer,
-    ArtistAutocompleteSerializer,
     UserSerializer,
     PublicUserSerializer,
     FresnoyProfileSerializer,
@@ -208,14 +204,6 @@ class ArtistViewSet(viewsets.ModelViewSet):
         "user__last_name",
         "user__profile__nationality",
     )
-
-
-class ArtistAutocompleteSearchViewSet(HaystackViewSet):
-    index_models = [Artist]
-    serializer_class = ArtistAutocompleteSerializer
-    filter_backends = [HaystackAutocompleteFilter]
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    pagination_class = CustomPagination
 
 
 class StaffViewSet(viewsets.ModelViewSet):

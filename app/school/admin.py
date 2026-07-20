@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.contrib import admin
 from django.db import models
+from django.db.models import Min
 
 from pagedown.widgets import AdminPagedownWidget
 
@@ -24,6 +25,9 @@ class StudentAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {"widget": AdminPagedownWidget},
     }
+
+    raw_id_fields = ('artist', 'user', 'promotion')
+    autocomplete_lookup_fields = {'fk': ['artist', 'user', 'promotion']}
 
 
 class StudentApplicationAdmin(admin.ModelAdmin):
@@ -59,7 +63,44 @@ class StudentApplicationSetupAdmin(admin.ModelAdmin):
 
 @admin.register(TeachingArtist)
 class TeachingArtistAdmin(admin.ModelAdmin):
-    filter_vertical = ("artworks_supervision",)
+    search_fields = [
+        "artist__user__first_name",
+        "artist__user__last_name",
+        "artist__nickname",
+    ]
+    list_display = (
+        "artist",
+        "years",
+    )
+    # filter_vertical = ("artworks_supervision",)
+    raw_id_fields = ('artist', 'pictures_gallery', 'artworks_supervision')
+    autocomplete_lookup_fields = {
+        'fk': [
+            'artist',
+            'pictures_gallery',
+        ],
+        'm2m': [
+            'artworks_supervision',
+        ],
+    }
+
+    def years(self, obj):
+        # return the years of the supervision in a string separated by comma
+        # get years of artwork supervisions
+        years = obj.artworks_supervision.values_list('production_date__year', flat=True).distinct()
+        # avoid duplicates and sort years
+        years = sorted(set(years))
+        return ", ".join(str(year - 1) + " - " + str(year) for year in years)
+
+    years.short_description = 'Années de supervision'
+    # sort by years of artwork supervisions
+    years.admin_order_field = 'min_supervision_year'
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # sort by the minimum year of artwork supervisions to avoid duplicates when sorting by years of supervision
+        queryset = queryset.annotate(min_supervision_year=Min("artworks_supervision__production_date__year"))
+        return queryset
 
 
 @admin.register(AdminStudentApplication)
@@ -89,21 +130,69 @@ class AdminStudentApplicationAdmin(admin.ModelAdmin):
 
 
 class PhdStudentAdmin(admin.ModelAdmin):
+    # search without accents and case insensitive
+    search_fields = [
+        "student__artist__user__first_name__unaccent__icontains",
+        "student__artist__user__last_name__unaccent__icontains",
+        "student__artist__nickname__unaccent__icontains",
+        "directors__first_name__unaccent__icontains",
+        "directors__last_name__unaccent__icontains",
+    ]
     list_display = (
         "__str__",
+        "direction",
+        "university",
         "defended",
     )
     ordering = ("student",)
+    raw_id_fields = ('directors',)
+    autocomplete_lookup_fields = {
+        'm2m': [
+            'directors',
+        ]
+    }
+
+    admin.display(boolean=True)
+
+    def direction(self, obj):
+        return ", ".join([str(director) for director in obj.directors.all()])
 
     @admin.display(boolean=True)
     def defended(self, obj):
         return obj.thesis_file.name != ""
 
 
-admin.site.register(Promotion)
+@admin.register(Promotion)
+class PromotionAdmin(admin.ModelAdmin):
+    search_fields = ['starting_year', 'name']
+    list_display = (
+        'years',
+        'name',
+    )
+    list_display_links = ["name"]
+    ordering = ('starting_year',)
+
+    def years(self, obj):
+        return "{0} - {1}".format(obj.starting_year, obj.ending_year)
+
+    years.short_description = 'Années'
+
+
+@admin.register(VisitingStudent)
+class VisitingStudentAdmin(admin.ModelAdmin):
+    search_fields = [
+        "artist__user__first_name",
+        "artist__user__last_name",
+        "artist__nickname",
+    ]
+    list_display = (
+        "artist",
+        "reason",
+    )
+
+
 admin.site.register(StudentApplication, StudentApplicationAdmin)
 admin.site.register(StudentApplicationSetup, StudentApplicationSetupAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(PhdStudent, PhdStudentAdmin)
 admin.site.register(ScienceStudent)
-admin.site.register(VisitingStudent)

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 from kart.site_settings import *  # NOQA
-from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR, FROM_EMAIL
+from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR, FROM_EMAIL, SETTINGS_SECRET_KEY
 import datetime
 import os
 
@@ -19,6 +19,8 @@ import os
 PASSWORD_TOKEN = (
     r"(?P<uidb64>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,40})"
 )
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = SETTINGS_SECRET_KEY
 
 DEFAULT_FROM_EMAIL = FROM_EMAIL or ""
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -26,17 +28,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Application definition
 
 INSTALLED_APPS = (
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.postgres",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.sites",
-    "django_extensions",
-    "guardian",
-    "pagedown",
-    "haystack",
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.postgres',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_extensions',
+    'guardian',
+    'pagedown',
     # 'elasticstack',
     "polymorphic",
     "taggit",
@@ -149,6 +150,9 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
 )
 
+# TAGGIT
+TAGGIT_CASE_INSENSITIVE = True
+
 
 # TASTYPIE/API
 CORS_ORIGIN_ALLOW_ALL = True
@@ -171,9 +175,19 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
+    # JSON
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
     # DOC
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    
 }
+# add DRF HTML renderer on DEBUG
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    )
 
 
 SIMPLE_JWT = {
@@ -190,6 +204,89 @@ GRAPHENE = {
     "MIDDLEWARE": [
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
+}
+
+
+# Grappelli
+GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
+    "auth": {
+        "user": ("username__icontains", "first_name__icontains", "last_name__icontains", "email__icontains"),
+    },
+    "people": {
+        "artist": (
+            "nickname__icontains",
+            "user__first_name__icontains",
+            "user__last_name__icontains",
+        ),
+        "organization": ("name__icontains",),
+        "staff": (
+            "user__first_name__icontains",
+            "user__last_name__icontains",
+        ),
+    },
+    "common": {"website": ("title_fr__icontains", "title_en__icontains", "url__icontains")},
+    "production": {
+        "production": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "artwork": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "film": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "installation": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "performance": (
+            "title__icontains",
+            "production_date__year__icontains",
+            "authors__nickname__icontains",
+            "authors__user__first_name__icontains",
+            "authors__user__last_name__icontains",
+        ),
+        "event": (
+            "title__icontains",
+            "starting_date__year__icontains",
+        ),
+        "task": ("label__icontains",),
+        "stafftask": ("label__icontains",),
+    },
+    "assets": {
+        "gallery": ("label__icontains", "description__icontains"),
+    },
+    "diffusion": {
+        "place": (
+            "name__icontains",
+            "description__icontains",
+            "address__icontains",
+            "city__icontains",
+            "country__icontains",
+        ),
+        'award': (
+            "meta_award__label__icontains",
+            "artwork__title__icontains",
+            "artist__nickname__icontains",
+            "event__title__icontains",
+        ),
+        'metaaward': ("label__icontains", "description__icontains", "event__title__icontains"),
+    },
 }
 
 # DOC

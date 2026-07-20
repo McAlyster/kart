@@ -1,0 +1,8 @@
+[tool.ruff]
+line-length = 120
+extend-exclude = ["migrations"]
+force-exclude = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "kart.settings"
+addopts = "-p no:warnings"

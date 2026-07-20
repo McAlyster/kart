@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from pagedown.widgets import AdminPagedownWidget
-from polymorphic.admin import PolymorphicChildModelAdmin
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 
 from .models import (
     Production, Artwork, FilmGenre, Film,
@@ -23,26 +23,12 @@ class ProductionChildAdmin(PolymorphicChildModelAdmin):
     base_model = Production
 
 
-class ArtworkChildAdmin(ProductionChildAdmin):
-    base_model = Artwork
-    list_display = (ProductionChildAdmin.list_display + ('production_date',))
-
-
-class FilmChildAdmin(ArtworkChildAdmin, admin.ModelAdmin):
-    pass
-
-
-class PerformanceChildAdmin(ArtworkChildAdmin):
-    pass
-
-
-class InstallationChildAdmin(ArtworkChildAdmin):
-    pass
-
-
 @admin.register(Production)
-class ProductionParentAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
-    list_display = ('title', 'subtitle',)
+class ProductionParentAdmin(PolymorphicParentModelAdmin):
+    list_display = (
+        'title',
+        'subtitle',
+    )
     search_fields = ['title']
     inlines = (CollaboratorsInline, PartnersInline)
     formfield_overrides = {
@@ -51,13 +37,18 @@ class ProductionParentAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
 
     base_model = Production
     child_models = (
-        (Film, FilmChildAdmin),
-        (Installation, InstallationChildAdmin),
-        (Performance, PerformanceChildAdmin),
+        Film,
+        Installation,
+        Performance,
+        Event,
     )
 
+@admin.register(Artwork)
+class ArtworkAdmin(ProductionChildAdmin):
 
-class ArtworkAdmin(admin.ModelAdmin):
+    base_model = Production
+    show_in_index = True
+
     list_display = ('title', 'get_authors', 'get_diffusions', 'get_awards')
     search_fields = ['title', ]
     inlines = (CollaboratorsInline, PartnersInline)
@@ -84,24 +75,27 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 @admin.register(Installation)
 class InstallationAdmin(ArtworkAdmin):
-    base_model = Installation
+    pass
 
 
 @admin.register(Film)
 class FilmAdmin(ArtworkAdmin):
-    base_model = Film
-    filter_vertical = ('shooting_place', )
+    # filter_vertical = ('shooting_place', )
+    raw_id_fields = ArtworkAdmin.raw_id_fields + ('shooting_place',)
+    autocomplete_lookup_fields = {
+        'm2m': ArtworkAdmin.autocomplete_lookup_fields.get('m2m', []) + ['shooting_place'],
+    }
 
 
 @admin.register(Performance)
 class PerformanceAdmin(ArtworkAdmin):
-    base_model = Performance
+    pass
 
 
 @admin.register(Event)
 class EventAdmin(ProductionChildAdmin):
     show_in_index = True
-    list_display = (ProductionChildAdmin.list_display + ('starting_date', 'type', 'main_event'))
+    list_display = ('title', 'starting_date', 'type', 'main_event')
     search_fields = ['title', 'parent_event__title']
     inlines = (CollaboratorsInline, PartnersInline)
     filter_vertical = ('subevents', "films", "installations", "performances")
@@ -130,16 +124,20 @@ class ItineraryAdmin(admin.ModelAdmin):
 
 @admin.register(FilmGenre)
 class FilmGenreAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['label']
+    list_display = ('label',)
 
 
 @admin.register(InstallationGenre)
 class InstallationGenreAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['label']
+    list_display = ('label',)
 
 
 @admin.register(OrganizationTask)
 class OrganizationTaskAdmin(admin.ModelAdmin):
+    search_fields = ['label', 'description']
+    list_display = ('label',)
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
     }
@@ -148,7 +146,10 @@ class OrganizationTaskAdmin(admin.ModelAdmin):
 
 @admin.register(StaffTask)
 class StaffTaskAdmin(admin.ModelAdmin):
+    search_fields = ['label', 'description']
+    list_display = ('label',)
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget},
     }
     ordering = ('label',)
+    search_fields = ['label',]

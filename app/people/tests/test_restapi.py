@@ -44,12 +44,17 @@ class UserEndPoint(TestCase):
         Test user register link
         """
         url = reverse('rest_register')
-        user_registration = {'username': 'newuser', 'email': 'newuser@ac.art',
-                             'password1': 'zc7h88', 'password2': 'zc7h88'}
+        user_registration = {
+            'username': 'newuser',
+            'email': 'newuser@ac.art',
+            'password1': 'zc7h88',
+            'password2': 'zc7h88',
+        }
         response = self.client.post(url, user_registration)
         self.assertEqual(response.status_code, 201)
-        user_on_base = User.objects.get(email=user_registration.get('email'),
-                                        username=user_registration.get('username'))
+        user_on_base = User.objects.get(
+            email=user_registration.get('email'), username=user_registration.get('username')
+        )
         assert user_on_base.pk > 0
 
     def test_user_exist(self):
@@ -158,6 +163,7 @@ class ArtistEndPoint(TestCase):
     """
     Tests Artist's endpoint
     """
+
     def setUp(self):
         self.artist = ArtistFactory()
         self.response = None
@@ -290,23 +296,3 @@ class ArtistEndPoint(TestCase):
         response = client_auth.get(url)
         # test info maj
         self.assertEqual(response.data['nickname'], "")
-
-
-class ArtistSearchEndPoint(TestCase):
-    """
-    Tests Artist Search endpoint
-    TODO: Dont find how test with elasticseach/drf-haystack <-> test env
-          => elasticsearch doesnt have acces to the env test
-    """
-    def test_pagination(self):
-        """
-        Paging improves result response time
-        """
-        pass
-
-    def test_result_fields(self):
-        """
-        Test field by artist search endpoint
-        Must have "nickname", "user", "artworks", "url", "student"
-        """
-        pass

@@ -1,6 +1,5 @@
 import pytest
 
-from django.core.management import call_command
 from django.db.models.constants import LOOKUP_SEP
 from django.test import Client
 from django.urls import reverse
@@ -44,10 +43,12 @@ def parametrize_user_roles(metafunc):
     ):
         if None in metafunc.cls._user_roles:
             # avoid parametrizing auth method when user is anonymous
-            parametrization = [(None, None)] + list(zip(
-                [r for r in metafunc.cls._user_roles if r is not None],
-                metafunc.cls._auth_methods,
-            ))
+            parametrization = [(None, None)] + list(
+                zip(
+                    [r for r in metafunc.cls._user_roles if r is not None],
+                    metafunc.cls._auth_methods,
+                )
+            )
         else:
             parametrization = zip(metafunc.cls._user_roles, metafunc.cls._auth_methods)
 
@@ -65,10 +66,7 @@ class AbstractHelpTestForAPI:
 
     fixtures = []
 
-    methods_behavior = {
-        method: 200
-        for method in ['list', 'get', 'patch', 'put', 'post', 'delete']
-    }
+    methods_behavior = {method: 200 for method in ['list', 'get', 'patch', 'put', 'post', 'delete']}
 
     mutate_fields = []
     hyperlinked_fields = {}
@@ -216,6 +214,7 @@ class HelpTestForModelViewSet(AbstractHelpTestForAPI):
     """
     Help to test interfaces to ModelViewSet (DRF)
     """
+
     url_prefix = "/v2"
 
     methods_behavior = {
@@ -314,6 +313,7 @@ class HelpTestForModelRessource(AbstractHelpTestForAPI):
     """
     Help to test interfaces to ModelResource (tastypie)
     """
+
     url_prefix = "/v1"
 
     @property
@@ -334,11 +334,7 @@ class HelpTestForModelRessource(AbstractHelpTestForAPI):
     def reverse_hyperlink(self, field):
         resource_name = self.hyperlinked_fields[field]
         key = 'username' if resource_name == 'people/user' else 'pk'
-        kwargs = {
-            'api_name': 'v1',
-            'resource_name': resource_name,
-            key: getattr(getattr(self.target(), field), key)
-        }
+        kwargs = {'api_name': 'v1', 'resource_name': resource_name, key: getattr(getattr(self.target(), field), key)}
         return reverse('api_dispatch_detail', kwargs=kwargs)
 
 
@@ -376,36 +372,3 @@ class FilterModelRessourceMixin:
         assert len(answer["objects"]) == 1
 
         self.check_expected_fields(answer["objects"][0])
-
-
-class HaystackSearchModelRessourceMixin:
-
-    search_suffix = '/search'
-    search_param = 'q'
-    search_field = None
-
-    def test_haystack_search(self, client, user_role, auth_method, request):
-        self.setup_fixtures(request)
-        call_command('rebuild_index', verbosity=0, interactive=False)
-
-        data = {self.search_param: getattr(self.target(), self.search_field)}
-        kwargs = self.prepare_request(client, user_role, auth_method, data, json=False)
-        response = client.get(self.base_url + self.search_suffix, **kwargs)
-        if self.thats_all_folk('list', response, user_role):
-            return
-
-        answer = response.json()
-
-        print(data)
-        print(answer)
-
-        assert "objects" in answer
-        assert len(answer["objects"]) == 1
-
-        kwargs['data']['page'] = '-1'
-        response = client.get(self.base_url + self.search_suffix, **kwargs)
-        assert response.status_code == 404
-
-        kwargs['data']['page'] = 'none'
-        response = client.get(self.base_url + self.search_suffix, **kwargs)
-        assert response.status_code == 400
