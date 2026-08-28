@@ -78,6 +78,12 @@ INSTALLED_APPS = (
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
+    # corsheaders doit etre place le plus haut possible, avant tout
+    # middleware susceptible de generer une reponse lui-meme (Common, Csrf,
+    # Auth...). Sinon un rejet CSRF/auth part sans jamais passer par
+    # CorsMiddleware, donc sans en-tetes CORS, et le navigateur bloque la
+    # requete cote client (voir doc officielle django-cors-headers).
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,7 +91,6 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 )
 
 TEMPLATES = [
