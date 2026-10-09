@@ -57,16 +57,6 @@ from graphene_django.views import GraphQLView
 
 from django.views.decorators.csrf import csrf_exempt
 
-
-# Documentation
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-    SpectacularRedocView,
-)
-
-
-
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
@@ -225,11 +215,6 @@ urlpatterns = [
     # Candidature
     path("page/candidatureResultsList", csrf_exempt((CandidatureResultsGQL.as_view())),
          name='candidatureResultsList_gql'),
-    
-    # Documentation
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 
 ] \
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

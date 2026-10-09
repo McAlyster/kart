@@ -1,36 +1,38 @@
 import os
-import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECRET_KEY = os.getenv("SECRET_KEY")
-SETTINGS_SECRET_KEY = os.getenv("SETTINGS_SECRET_KEY")
-
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True,
-    ),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST': {
+            'MIRROR': 'test'
+        }
+    },
     'test': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "test.db.pg",
     }
 }
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(" ")
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(" ")
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = True
+SETTINGS_SECRET_KEY = "change me!"
 
-if not DEBUG:
-  SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-  CSRF_COOKIE_SECURE = True
-  SESSION_COOKIE_SECURE = True
-  USE_X_FORWARDED_HOST = True
+TEMPLATES = [
+    {
+        'OPTIONS': {
+            'debug': DEBUG,
+        },
+    },
+]
+
+ALLOWED_HOSTS = []
+
 
 # MEDIA & STATIC
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -39,8 +41,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 
-FROM_EMAIL = os.getenv("DJANGO_FROM_EMAIL")
+FROM_EMAIL = ''
 
-GRAPPELLI_ADMIN_TITLE = os.getenv("DJANGO_GRAPPELLI_ADMIN_TITLE")
+GRAPPELLI_ADMIN_TITLE = ''
 
 SITE_ID = 2

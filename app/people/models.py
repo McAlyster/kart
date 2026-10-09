@@ -40,6 +40,8 @@ class FresnoyProfile(models.Model):
     deathplace = models.CharField(max_length=255, null=True, blank=True)
     deathplace_country = CountryField(null=True, default="", blank=True)
 
+    deathdate = models.DateField(null=True, blank=True)
+
     homeland_address = models.TextField(blank=True)
     homeland_zipcode = models.CharField(max_length=10, blank=True)
     homeland_town = models.CharField(max_length=50, blank=True)
@@ -103,6 +105,7 @@ class Artist(models.Model):
     )
 
     artist_photo = models.ImageField(upload_to=make_filepath, blank=True, null=True)
+    artist_photo_copyright = models.CharField(max_length=255, blank=True)
 
     bio_short_fr = models.TextField(blank=True)
     bio_short_en = models.TextField(blank=True)
@@ -121,6 +124,8 @@ class Artist(models.Model):
             raise ValidationError("No user is defined, set the nickname if you want to create an artist collective")
 
     def __str__(self):
+        if self.nickname != "":
+            return '{}'.format(self.nickname)
         if self.user:
             if hasattr(self.user, 'profile') and (
                 self.user.profile.preferred_first_name or self.user.profile.preferred_last_name

@@ -11,8 +11,8 @@ from guardian.admin import GuardedModelAdmin
 
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
-    """ Admin model for Artist.
-    """
+    """Admin model for Artist."""
+
     list_display = ('nick',)
     search_fields = [
         'user__first_name',
@@ -54,6 +54,7 @@ class ArtistAdmin(admin.ModelAdmin):
         if obj.nickname != "":
             return obj.nickname
         return "???"
+
     # describe 'nick'
     nick.short_description = 'Nick name (real name if any) or real name'
 
@@ -67,17 +68,21 @@ class ArtistAdmin(admin.ModelAdmin):
         return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(obj.artist_photo.url))
 
 class FresnoyProfileInline(admin.StackedInline):
-    """StackedInline admin for FresnoyProfile.
-    """
+    """StackedInline admin for FresnoyProfile."""
+
     model = FresnoyProfile
-    readonly_fields = ('is_artist', 'is_student', 'is_staff',)
+    readonly_fields = (
+        'is_artist',
+        'is_student',
+        'is_staff',
+    )
 
 
 admin.site.unregister(User)
 @admin.register(User)
 class FresnoyProfileAdmin(UserAdmin):
-    """ Admin for Use and additionnal profile fields.
-    """
+    """Admin for Use and additionnal profile fields."""
+
     inlines = (FresnoyProfileInline,)
     list_display = (
         'username',
@@ -119,7 +124,14 @@ class FresnoyProfileAdmin(UserAdmin):
 
 class StaffAdmin(GuardedModelAdmin):
     search_fields = ['user__username', 'user__last_name', 'user__first_name', 'user__artist__nickname']
-    list_display = ("name", "artist",)
+    list_display = (
+        "name",
+        "artist",
+    )
+    raw_id_fields = ('user',)
+    autocomplete_lookup_fields = {
+        'fk': ['user'],
+    }
 
     def artist(self, obj):
         return obj.user.profile.is_artist

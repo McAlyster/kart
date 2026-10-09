@@ -54,6 +54,8 @@ class StudentType(DjangoObjectType):
 
     id = graphene.ID(required=True, source="pk")
     artworks = graphene.List(ArtworkType)
+    photo = graphene.String()
+    displayPhoto = graphene.String()
 
     # Retrieve the student's artworks
     def resolve_artworks(parent, info):
@@ -192,9 +194,10 @@ class TeachingArtistsItemType(DjangoObjectType):
 class ScienceStudentType(DjangoObjectType):
     class Meta:
         model = ScienceStudent
-        interfaces = (StudentEmbeddedInterface,)
+        # interfaces = (StudentEmbeddedInterface,)
 
     id = graphene.ID(required=True, source="pk")
+    student = graphene.Field(StudentType)
 
 
 class PhdStudentType(DjangoObjectType):

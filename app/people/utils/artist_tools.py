@@ -56,7 +56,7 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
 
     # If data not string
     # print([x for x in [firstname,lastname,pseudo]])
-    if not all([type(x) == str for x in [firstname, lastname, pseudo]]):
+    if not all([type(x) is str for x in [firstname, lastname, pseudo]]):
         logger.info("\n** getArtistByNames **\nfirstname,lastname,pseudo must be strings")
         return False
 
@@ -85,7 +85,13 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
 
     # SEARCH WITH LASTNAME then FIRSTNAME
     users = getUserByNames(firstname, lastname, listing)
-    if users and users['user'] and users['user'].artist_set.count() > 0:
+    # no artist user found
+    if users and not listing and users['user'] and users['user'].artist_set.count() == 0:
+        users_listed = getUserByNames(firstname, lastname, True)
+        # take one artist in the list of results
+        users = next((u for u in users_listed if u['user'].artist_set.count() > 0), None)
+    #
+    if users and not listing and users['user'] and users['user'].artist_set.count() > 0:
         # only one
         users['artist'] = users['user'].artist_set.first()
         art_l.append(users)
@@ -112,6 +118,7 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
             .filter(similarity_pseudo__gt=0.3)
             .order_by('-similarity_pseudo')
         )
+        print(pseudo, guessArtNN)
 
         if guessArtNN:
             for artist_kart in guessArtNN:
@@ -134,7 +141,7 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
                         f"""Pseudo globally match {pseudo} but not in pseudo correspondences:
                     Kart pseudo: {kart_nickname} : {pseudo}"""
                     )
-                    # art_l.append({"artist": artist_kart, 'dist': dist_full})
+                    art_l.append({"artist": artist_kart, 'dist': dist_full})
 
     if art_l:
         # Take the highest distance score
@@ -148,6 +155,8 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
             search_cache[fullkey] = [art_l[0]]
             return art_l[0]
     else:
+        # LAST TRY
+
         # research failed
         search_cache[fullkey] = False
 
