@@ -8,6 +8,7 @@ from assets.models import Gallery
 from common.utils import make_filepath
 from people.models import Artist, Organization
 from production.models import Artwork
+from school.choices import StudyProgram
 
 
 class Promotion(models.Model):
@@ -37,6 +38,9 @@ class Student(models.Model):
 
     number = models.CharField(max_length=50, null=True, blank=True)
     promotion = models.ForeignKey(Promotion, null=True, on_delete=models.SET_NULL)
+    program = models.CharField(
+        max_length=50, choices=StudyProgram.choices, null=True, blank=True, verbose_name=_("Filière d'étude"), help_text=_("Requested study program for the application"),
+    )
     graduate = models.BooleanField(default=False)
     diploma_mention = models.CharField(max_length=255, null=True, blank=True, help_text="Diploma mention")
     diploma_file = models.FileField(upload_to=make_filepath, null=True, blank=True, help_text="Diploma file")
@@ -258,6 +262,16 @@ class StudentApplication(models.Model):
         upload_to=make_filepath, null=True, blank=True, help_text="Reference / Recommendation letter"
     )
     free_document = models.FileField(upload_to=make_filepath, null=True, blank=True, help_text="Free document")
+    # candidate for specific school program
+    requested_program = models.CharField(
+        max_length=50,
+        choices=StudyProgram.choices,
+        null=True,
+        blank=True,
+        verbose_name=_("Filière souhaitée"),
+        help_text=_("Requested study program for the application"),
+    )
+
     # candidature duo
     binomial_application = models.BooleanField(default=False, help_text="Candidature with another artist")
     binomial_application_with = models.CharField(

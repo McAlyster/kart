@@ -89,6 +89,8 @@ class StudentApplicationSerializer(serializers.HyperlinkedModelSerializer):
             "cursus_justifications",
             "curriculum_vitae",
             "justification_letter",
+            "reference_letter",
+            "requested_program",
             "binomial_application",
             "binomial_application_with",
             "considered_project_1",

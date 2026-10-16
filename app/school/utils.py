@@ -97,7 +97,7 @@ def send_candidature_completed_email_to_admin(request, application_admin):
     artist = application_admin.application.artist
     name = artist.__str__()
     setup = application_admin.application.campaign
-    url = f"{setup.candidatures_url}{application_admin.id}"
+    url = f"{setup.candidatures_url}{application_admin.application.id}"
     # Send email
     msg_plain = render_to_string(
         "emails/send_candidature_completed_to_admin.txt",

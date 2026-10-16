@@ -185,6 +185,7 @@ SIMPLE_JWT = {
 REST_AUTH = {
     'USE_JWT': True,
     'JWT_TOKEN_CLAIMS_SERIALIZER': 'kart.utils.CustomTokenObtainPairSerializer',
+    'LOGIN_SERIALIZER': 'utils.serializers.EmailOrUsernameLoginSerializer',
 }
 # Graphene
 GRAPHENE = {
