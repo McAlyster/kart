@@ -9,8 +9,11 @@
 # Prérequis : un worktree de main à côté de ce dépôt
 #   git worktree add ../kart-main main
 #
-# Usage : ./sync-from-main.sh            (pull de main puis synchro)
-#         ./sync-from-main.sh --no-pull  (synchro sur le main local tel quel)
+# Usage : ./sync-from-main.sh                     (pull de main puis synchro)
+#         ./sync-from-main.sh --no-pull           (synchro sur le main local tel quel)
+#         ./sync-from-main.sh --from ../kart-c27  (synchro depuis un autre worktree,
+#              ex. une feature pas encore fusionnée : à faire sur une branche locale
+#              temporaire, jamais sur feature/docKART)
 #
 # Le script ne commite pas : il affiche ce qui a changé et la commande de commit.
 # A supprimer quand feature/docKART deviendra main.
@@ -19,11 +22,20 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 MAIN_DIR="${MAIN_DIR:-../kart-main}"
+PULL=1
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --no-pull) PULL=0 ;;
+    --from) MAIN_DIR="$2"; shift ;;
+    *) echo "Option inconnue : $1" >&2; exit 1 ;;
+  esac
+  shift
+done
 
 # --- garde-fous
 branch=$(git branch --show-current)
-if [ "$branch" != "feature/docKART" ]; then
-  echo "Erreur : à lancer sur feature/docKART (branche actuelle : $branch)." >&2; exit 1
+if [ "$branch" = "main" ] || [ -z "$branch" ]; then
+  echo "Erreur : à lancer sur feature/docKART ou une branche dérivée (branche actuelle : ${branch:-aucune})." >&2; exit 1
 fi
 if [ -n "$(git status --porcelain -- app requirements.txt requirements-dev.txt)" ]; then
   echo "Erreur : modifications non commitées dans app/ ou requirements*. Commite ou range-les d'abord." >&2
@@ -32,12 +44,14 @@ fi
 if ! git -C "$MAIN_DIR" rev-parse --git-dir >/dev/null 2>&1; then
   echo "Erreur : $MAIN_DIR introuvable. Crée-le avec : git worktree add $MAIN_DIR main" >&2; exit 1
 fi
-if [ "$(git -C "$MAIN_DIR" branch --show-current)" != "main" ]; then
-  echo "Erreur : $MAIN_DIR n'est pas sur main." >&2; exit 1
+src_branch=$(git -C "$MAIN_DIR" branch --show-current)
+if [ "$src_branch" != "main" ] && [ "$branch" = "feature/docKART" ]; then
+  echo "Erreur : feature/docKART ne doit suivre que main (source : $src_branch)." >&2
+  echo "  Crée une branche locale temporaire : git switch -c docKART-${src_branch##*/}" >&2; exit 1
 fi
 
 # --- mise à jour de main
-if [ "${1:-}" != "--no-pull" ]; then
+if [ "$PULL" = 1 ]; then
   git -C "$MAIN_DIR" pull --ff-only
 fi
 main_sha=$(git -C "$MAIN_DIR" rev-parse --short HEAD)
@@ -68,7 +82,7 @@ block = ("    # CorsMiddleware doit passer avant les middlewares qui generent la
          "    " + cors + "\n")
 s = s[:m.end()] + block + s[m.end():]
 open(path, 'w', encoding='utf-8').write(s)
-print("settings.py : version de main, CorsMiddleware remonté en tête.")
+print("settings.py : version de la source, CorsMiddleware remonté en tête.")
 PY
 
 # --- requirements : versions de main reportées dans ceux de la racine (ajouts Docker conservés)
@@ -103,10 +117,10 @@ done
 # --- bilan
 echo
 if [ -z "$(git status --porcelain -- app requirements.txt requirements-dev.txt)" ]; then
-  echo "Déjà à jour avec main ($main_sha). Rien à commiter."
+  echo "Déjà à jour avec $src_branch ($main_sha). Rien à commiter."
 else
   git status --short -- app requirements.txt requirements-dev.txt
   echo
   echo "Vérifie (git diff), puis :"
-  echo "  git add -A app requirements.txt requirements-dev.txt && git commit -m \"chore: sync app/ with main ($main_sha)\""
+  echo "  git add -A app requirements.txt requirements-dev.txt && git commit -m \"chore: sync app/ with $src_branch ($main_sha)\""
 fi
