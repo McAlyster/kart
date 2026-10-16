@@ -1,11 +1,10 @@
 import factory
 import factory.fuzzy
-
 from django.utils import timezone
 from taggit.models import Tag
 
 from diffusion.tests.factories_alt import PlaceFactory
-from people.tests.factories import StaffFactory, OrganizationFactory
+from people.tests.factories import OrganizationFactory, StaffFactory
 from utils.tests.utils import first
 
 from .. import models
@@ -15,8 +14,8 @@ class TaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Task
 
-    label = factory.Faker('sentence')
-    description = factory.Faker('paragraph')
+    label = factory.Faker("sentence")
+    description = factory.Faker("paragraph")
 
 
 class StaffTaskFactory(TaskFactory):
@@ -33,7 +32,7 @@ class ProductionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Production
 
-    title = factory.Faker('sentence')
+    title = factory.Faker("sentence")
 
 
 class ProductionStaffTaskFactory(factory.django.DjangoModelFactory):
@@ -58,7 +57,7 @@ class ArtworkFactory(ProductionFactory):
     class Meta:
         model = models.Artwork
 
-    production_date = factory.Faker('date_time_this_month', tzinfo=timezone.utc)
+    production_date = factory.Faker("date_time_this_month", tzinfo=timezone.utc)
 
     @factory.post_generation
     def authors(self, create, extracted, **kwargs):
@@ -72,23 +71,23 @@ class TagFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Tag
 
-    name = factory.Faker('word')
-    slug = factory.Faker('slug')
+    name = factory.Faker("word")
+    slug = factory.Faker("slug")
 
 
 class KeywordFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Tag
 
-    name = factory.Faker('word')
-    slug = factory.Faker('slug')
+    name = factory.Faker("word")
+    slug = factory.Faker("slug")
 
 
 class FilmGenreFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FilmGenre
 
-    label = factory.Faker('sentence')
+    label = factory.Faker("sentence")
 
 
 class FilmFactory(ArtworkFactory):
@@ -100,7 +99,7 @@ class InstallationGenreFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InstallationGenre
 
-    label = factory.Faker('sentence')
+    label = factory.Faker("sentence")
 
 
 class InstallationFactory(ArtworkFactory):
@@ -118,7 +117,7 @@ class EventFactory(ProductionFactory):
         model = models.Event
 
     type = factory.fuzzy.FuzzyChoice(models.Event.TYPE_CHOICES, getter=first)
-    starting_date = factory.Faker('date_time_this_month', tzinfo=timezone.utc)
+    starting_date = factory.Faker("date_time_this_month", tzinfo=timezone.utc)
     place = factory.SubFactory(PlaceFactory)
 
     @factory.post_generation
@@ -133,12 +132,12 @@ class ItineraryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Itinerary
 
-    label_fr = factory.Faker('sentence')
-    label_en = factory.Faker('sentence')
-    description_fr = factory.Faker('paragraph')
-    description_en = factory.Faker('paragraph')
+    label_fr = factory.Faker("sentence")
+    label_en = factory.Faker("sentence")
+    description_fr = factory.Faker("paragraph")
+    description_en = factory.Faker("paragraph")
 
-    event = factory.SubFactory(EventFactory, type='EXHIB')
+    event = factory.SubFactory(EventFactory, type="EXHIB")
 
 
 class ItineraryArtworkFactory(factory.django.DjangoModelFactory):
@@ -147,4 +146,4 @@ class ItineraryArtworkFactory(factory.django.DjangoModelFactory):
 
     itinerary = factory.SubFactory(ItineraryFactory)
     artwork = factory.SubFactory(ArtworkFactory)
-    order = factory.Faker('random_int', max=5)
+    order = factory.Faker("random_int", max=5)

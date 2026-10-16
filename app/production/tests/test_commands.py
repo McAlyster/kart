@@ -1,16 +1,11 @@
+import pytest
 from django.contrib.auth.models import User
+from django.core.management import call_command
 
 from people.tests.factories import ArtistFactory
-import pytest
-
-from django.core.management import call_command
-from django.db import connection
-
 from production.tests.factories import (
     ArtworkFactory,
 )
-
-from production.management.commands.set_artwork_credits import setArtworkCredits
 
 
 @pytest.mark.django_db
@@ -19,7 +14,7 @@ def test_import_catalog(monkeypatch):
 
     # remove 'clear' terminal
     monkeypatch.setattr("os.system", lambda cmd: 0)  # neutralise juste clear
-    result = call_command('import_catalog', "--path_to_csv", "coucou.csv")
+    result = call_command("import_catalog", "--path_to_csv", "coucou.csv")
     # not really tested
     assert result is None
 
@@ -29,31 +24,30 @@ def test_import_catalog(monkeypatch):
 def test_set_artwork_credits(monkeypatch):
     "simple TEST Command: set_artwork_credits"
 
-    artist = ArtistFactory(nickname="Michel Serrault",
-                           user=User.objects.get_or_create(first_name="Michel", last_name="Serrault")[0])
+    artist = ArtistFactory(
+        nickname="Francesco Massaro", user=User.objects.get_or_create(first_name="Francesco", last_name="Massaro")[0]
+    )
     artist.save()
 
-    artwork = ArtworkFactory(title="Le Coucou")
+    artwork = ArtworkFactory(title="Le Coucou", authors=[artist])
     artwork.save()
 
-    fake_input_str = 'Michel Serrault: Actor\nMichel Serrault: Actor\n\nLe Coucou\n0\nn\n'
-    # fake_input_io = io.StringIO(fake_input_str)
+    # put Michel Serrault in the credits of the artwork
+    responses = iter(
+        [
+            "Michel Serrault: Actor",  # Ligne 1 du texte de crédits
+            "",  # Ligne vide -> valide la fin de multiline_input()
+            "Le Coucou",  # Recherche dans searchArtwork() -> input("L'œuvre : ")
+            "0",  # Sélection de l'index dans input_choices()
+            "n",  # Validation finale ou confirmation (question : Créer un autre ? )
+        ]
+    )
 
-    # # Remplacer sys.stdin par notre fausse entrée
-    # monkeypatch.setattr(sys, "stdin", fake_input_io)
+    # Interception de la fonction builtin input()
+    monkeypatch.setattr("builtins.input", lambda *args: next(responses))
 
-    # unaccent test bug
-    if connection.vendor == "postgresql":
-        with connection.cursor() as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS unaccent;")
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+    # call the command
+    call_command("set_artwork_credits")
+    artwork.refresh_from_db()
 
-    # Lancer la commande
-    # result = call_command('set_artwork_credits')
-    # assert result is None
-    # not really tested
-    # assert result is None
-
-    setArtworkCredits(artwork, fake_input_str)
-    print(artwork.collaborators.count())
-    assert artwork.collaborators.count() >= 0
+    assert artwork.collaborators.count() > 0

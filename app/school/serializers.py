@@ -1,21 +1,21 @@
-from rest_framework import serializers
 from dj_rest_auth.serializers import PasswordResetSerializer
-
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
+from rest_framework import serializers
 
+from utils.serializers import StaffOnlyFileField
 from people.serializers import PublicUserSerializer
 
 from .models import (
-    Promotion,
-    Student,
+    AdminStudentApplication,
     PhdStudent,
+    Promotion,
     ScienceStudent,
-    TeachingArtist,
-    VisitingStudent,
+    Student,
     StudentApplication,
     StudentApplicationSetup,
-    AdminStudentApplication,
+    TeachingArtist,
+    VisitingStudent,
 )
 from .utils import candidature_close
 
@@ -53,6 +53,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     user = serializers.HyperlinkedRelatedField(view_name="user-detail", queryset=User.objects.all(), write_only=True)
+    diploma_file = StaffOnlyFileField(required=False, allow_null=True)
 
 
 class TeachingArtistSerializer(serializers.HyperlinkedModelSerializer):
@@ -165,7 +166,6 @@ class StudentApplicationSetupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StudentPasswordResetSerializer(PasswordResetSerializer):
-
     @property
     def password_reset_form_class(self):
         return PasswordResetForm

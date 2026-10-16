@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
 import pytz
-
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMultiAlternatives, send_mail
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone, translation
-
 from django.utils.http import int_to_base36
-from django.contrib.auth.tokens import default_token_generator
-
-from django.core.mail import send_mail, EmailMultiAlternatives
-from django.template.loader import render_to_string
 
 from school.models import StudentApplicationSetup
 
@@ -100,10 +96,8 @@ def send_candidature_completed_email_to_user(request, application_admin):
 def send_candidature_completed_email_to_admin(request, application_admin):
     artist = application_admin.application.artist
     name = artist.__str__()
-    #
     setup = application_admin.application.campaign
-    #
-    url = "{0}{1}".format(setup.candidatures_url, application_admin.id)
+    url = f"{setup.candidatures_url}{application_admin.id}"
     # Send email
     msg_plain = render_to_string(
         "emails/send_candidature_completed_to_admin.txt",

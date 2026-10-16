@@ -1,29 +1,26 @@
 import datetime
-from django.test.client import RequestFactory
-from django.utils import timezone
-
-from school.models import StudentApplication, StudentApplicationSetup, Promotion, AdminStudentApplication
 
 from django.test import TestCase
+from django.test.client import RequestFactory
 from django.urls import reverse
-
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from people.tests.factories import ArtistFactory
-from utils.tests.factories import UserFactory
-
+from school.models import AdminStudentApplication, Promotion, StudentApplication, StudentApplicationSetup
 from school.utils import (
-    send_activation_email,
     send_account_information_email,
-    send_candidature_completed_email_to_user,
-    send_candidature_completed_email_to_admin,
+    send_activation_email,
     send_candidature_complete_email_to_candidat,
+    send_candidature_completed_email_to_admin,
+    send_candidature_completed_email_to_user,
     send_interview_selection_email_to_candidat,
     send_interview_selection_on_waitlist_email_to_candidat,
-    send_selected_on_waitlist_candidature_email_to_candidat,
-    send_selected_candidature_email_to_candidat,
     send_not_selected_candidature_email_to_candidat,
+    send_selected_candidature_email_to_candidat,
+    send_selected_on_waitlist_candidature_email_to_candidat,
 )
+from utils.tests.factories import UserFactory
 
 
 class TestSendAccountEmail(TestCase):
@@ -104,7 +101,6 @@ class TestSendEmail(TestCase):
             interview_date=timezone.now() + datetime.timedelta(days=2, hours=3),
         )
         self.admin_application.save()
-        #
         self.studentapplication_detail_url = reverse("studentapplication-detail", kwargs={"pk": self.application.pk})
 
     def tearDown(self):

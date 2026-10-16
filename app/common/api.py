@@ -1,6 +1,6 @@
 from tastypie.resources import ModelResource
 
-from .models import Website, BTBeacon
+from .models import BTBeacon, Website
 
 
 class BTBeaconResource(ModelResource):

@@ -33,7 +33,7 @@ class TestMetaAward:
     def test_str(self, meta_award):
         meta_award_str = str(meta_award)
         assert meta_award.label in meta_award_str
-        assert '(main event)' not in meta_award_str
+        assert "(main event)" not in meta_award_str
         assert meta_award.event.title in meta_award_str
         assert str(meta_award.task) in meta_award_str
 
@@ -42,14 +42,14 @@ class TestMetaAward:
         meta_award.save()
         meta_award_str = str(meta_award)
         assert str(meta_award.task) in meta_award_str
-        assert 'cat.' in meta_award_str
+        assert "cat." in meta_award_str
 
     def test_str_no_task(self, meta_award):
         meta_award.task = None
         meta_award.save()
         meta_award_str = str(meta_award)
         assert meta_award.event.title in meta_award_str
-        assert 'cat.' not in meta_award_str
+        assert "cat." not in meta_award_str
 
 
 @pytest.mark.django_db

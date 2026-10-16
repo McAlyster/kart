@@ -1,23 +1,23 @@
 import json
+
 import graphene
-
-from django.test import TestCase
+from graphene_django.utils.testing import GraphQLTestCase
 from django.urls import reverse
-
-from rest_framework.authtoken.models import Token
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 
+from kart.schema import Query
+from school.tests.factories import (
+    ScienceStudentFactory,
+    StudentApplicationFactory,
+    StudentFactory,
+    TeachingArtistFactory,
+)
 from utils.tests.factories import UserFactory
 from utils.tests.utils import obtain_jwt_token
 
-from kart.schema import Query
-from school.tests.factories import (StudentFactory,
-                                    TeachingArtistFactory,
-                                    StudentApplicationFactory,
-                                    ScienceStudentFactory)
 
-
-class TestGQLPages(TestCase):
+class TestGQLPages(GraphQLTestCase):
     """
     TODO: do tests
     """
@@ -57,7 +57,7 @@ class TestGQLPages(TestCase):
         token.save()
         # get infos
         candidature_results_list_url = reverse("candidatureResultsList_gql")
-        response = self.client.get(candidature_results_list_url, HTTP_AUTHORIZATION="TOKEN {}".format(token))
+        response = self.client.get(candidature_results_list_url, HTTP_AUTHORIZATION=f"TOKEN {token}")
 
         results = json.loads(response.content)
         self.assertFalse(hasattr(results, "errors"))
@@ -85,9 +85,11 @@ class TestGQLPages(TestCase):
         self.assertIsNone(result.errors)
 
     def test_query_studentx(self):
-        self.student = StudentFactory()
+        self.student = StudentFactory(diploma_mention="Mention", diploma_file="path/to/diploma.pdf")
         query = "query StudentX($etudiantID: Int) {\
                     student(id: $etudiantID) {\
+                        diplomaMention\
+                        diplomaFile\
                         displayName\
                         photo\
                         gender\
@@ -128,12 +130,35 @@ class TestGQLPages(TestCase):
                 }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query, variables={"etudiantID": self.student.id})
-        self.assertIsNone(result.errors)
+        self.assertIsNotNone(result.errors)
+        self.assertEqual(result.data["student"]["diplomaMention"], self.student.diploma_mention)
+        self.assertEqual(result.data["student"]["diplomaFile"], None)
+
+    def test_query_studentx_with_staff_auth(self):
+        student = StudentFactory(diploma_mention="Mention", diploma_file="path/to/diploma.pdf")
+        user_staff = UserFactory(is_staff=True)
+
+        # Authentifie directement le client de test
+        self.client.force_login(user_staff)
+
+        query = """
+            query StudentX($etudiantID: Int!) {
+                student(id: $etudiantID) {
+                    diplomaMention
+                    diplomaFile
+                }
+            }
+        """
+
+        response = self.query(query, variables={"etudiantID": student.id})
+
+        content = response.json()
+        self.assertNotIn("errors", content)
+        self.assertEqual(content["data"]["student"]["diplomaMention"], student.diploma_mention)
 
     def test_page_teaching_artists_list(self):
         # create value
         TeachingArtistFactory()
-        #
         teaching_artists_list_url = reverse("teachingArtistsList_gql")
         response = self.client.get(teaching_artists_list_url)
 

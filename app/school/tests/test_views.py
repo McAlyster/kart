@@ -1,15 +1,14 @@
 import re
-import pytest
 
+import pytest
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from django.utils.http import int_to_base36
 from pytest_django.asserts import assertContains
 
-from utils.tests.utils import validate_jwt_token
-from school.tests.conftest import *  # noqa
-
 from people.models import User
+from school.tests.conftest import *  # NOQA
+from utils.tests.utils import validate_jwt_token
 
 
 @pytest.mark.django_db

@@ -1,10 +1,9 @@
-# -*- encoding: utf-8 -*-
+from datetime import date, datetime
+
 from django.core.management.base import BaseCommand
 
-from school.utils import candidature_close, send_candidature_not_finalized_to_candidats
 from school.models import StudentApplication, StudentApplicationSetup
-
-from datetime import datetime, date
+from school.utils import candidature_close, send_candidature_not_finalized_to_candidats
 
 # Can us with crontab
 # example : run every day at 15h00
@@ -31,7 +30,7 @@ class Command(BaseCommand):
         novalidation = True if automatic_reminder else options["novalidation"]
 
         if automatic_reminder:
-            print("{}".format(datetime.now()))
+            print(f"{datetime.now()}")
 
         # is the campaign open
         candidatures_open = not candidature_close()
@@ -46,12 +45,17 @@ class Command(BaseCommand):
             return False
 
         # is one of the automatic send day (compare dates with != no 'is not')
-        if automatic_reminder and campaign.application_reminder_email_date != date.today() \
-           and campaign.application_reminder_email_date_2 != date.today():
+        if (
+            automatic_reminder
+            and campaign.application_reminder_email_date != date.today()
+            and campaign.application_reminder_email_date_2 != date.today()
+        ):
             print(
                 "{} : Ce n'est pas le jour ({}), aucun email de relance de candidature n'a été envoyé".format(
-                    date.today(), str(campaign.application_reminder_email_date) + " ou " +
-                    str(campaign.application_reminder_email_date_2)
+                    date.today(),
+                    str(campaign.application_reminder_email_date)
+                    + " ou "
+                    + str(campaign.application_reminder_email_date_2),
                 )
             )
             return False
@@ -65,8 +69,9 @@ class Command(BaseCommand):
         # convert QuerySet to list
         list_emails = list(query_applications_started__emails)
         # question
-        str_question = "Vous allez envoyer un email à {} candidats " "(pour {} candidatures au total)? (y/n)".format(
-            len(list_emails), all_applications
+        str_question = (
+            f"Vous allez envoyer un email à {len(list_emails)} candidats "
+            f"(pour {all_applications} candidatures au total)? (y/n)"
         )
         # ask or not
         confirm = "y" if novalidation else None
@@ -76,9 +81,8 @@ class Command(BaseCommand):
         if confirm != "y":
             print("Aucun email n'a été envoyé")
             return
-        #
         mail_sent = send_candidature_not_finalized_to_candidats(self, campaign, list_emails)
         if mail_sent:
-            print("{} Emails envoyés : {}".format(len(list_emails), list_emails))
+            print(f"{len(list_emails)} Emails envoyés : {list_emails}")
         else:
             print("Erreur email ")

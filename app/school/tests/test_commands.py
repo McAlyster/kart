@@ -1,14 +1,13 @@
-# -*- encoding: utf-8 -*-
 from datetime import timedelta
-from django.core.management import call_command
 from io import StringIO
-from django.test import TestCase
 
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-
-from school.tests.factories import StudentApplicationSetupFactory, AdminStudentApplicationFactory
+from django.core.management import call_command
+from django.test import TestCase
 from django.utils import timezone
+
+from school.tests.factories import AdminStudentApplicationFactory, StudentApplicationSetupFactory
 
 
 class CommandsTestCase(TestCase):
@@ -33,7 +32,7 @@ class CommandsTestCase(TestCase):
 
     def test_application_email_uncomplete_after_date_end(self):
         "Test app end send email after date end."
-        StudentApplicationSetupFactory(candidature_date_end=timezone.now()-timedelta(days=7))
+        StudentApplicationSetupFactory(candidature_date_end=timezone.now() - timedelta(days=7))
         call_command("application_email_uncomplete_after_date_end", automatic_reminder=True, stdout=self.out)
         self.assertTrue
 
@@ -52,8 +51,8 @@ class CommandsTestCase(TestCase):
     def test_import_applications(self):
         "Test import applications."
         with File(file=NamedTemporaryFile()) as csvfile:
-            csvfile.write(b'test')
-            csvfile.write(b'test')
+            csvfile.write(b"test")
+            csvfile.write(b"test")
             csvfile.flush()
             call_command("import_applications", input=csvfile.name, mediasurl="http://localhost:8000", stdout=self.out)
             self.assertTrue

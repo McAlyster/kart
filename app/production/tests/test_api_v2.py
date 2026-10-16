@@ -1,13 +1,13 @@
 import pytest
-
 from django.urls import reverse
-from common.tests.conftest import *  # noqa
-from diffusion.tests.conftest import *  # noqa
-from people.tests.conftest import *  # noqa
+
+from common.tests.conftest import *  # NOQA
+from diffusion.tests.conftest import *  # NOQA
+from people.tests.conftest import *  # NOQA
 from utils.tests.utils import (
+    HelpTestForModelViewSet,
     IsArtistOrReadOnlyModelViewSetMixin,
     ReadOnlyModelViewSetMixin,
-    HelpTestForModelViewSet,
     parametrize_user_roles,
 )
 
@@ -19,19 +19,19 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.django_db
 class TestArtworkViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/artwork'
+    viewset_name = "production/artwork"
 
-    fixtures = ['installation', 'film', 'award']
+    fixtures = ["installation", "film", "award"]
 
     expected_list_size = 2
-    expected_fields = ['production_date', 'authors', 'title', 'description_fr']
+    expected_fields = ["production_date", "authors", "title", "description_fr"]
 
-    mutate_fields = ['title']
-    put_fields = ['type', 'authors', 'genres', 'production_date', 'title']
+    mutate_fields = ["title"]
+    put_fields = ["type", "authors", "genres", "production_date", "title"]
     built_fields = {
-        'type': lambda x: 'Installation',
-        'authors': lambda x: [reverse('artist-detail', kwargs={'pk': x.authors.first().pk})],
-        'genres': lambda x: [],
+        "type": lambda x: "Installation",
+        "authors": lambda x: [reverse("artist-detail", kwargs={"pk": x.authors.first().pk})],
+        "genres": lambda x: [],
     }
 
     def target(self):
@@ -43,18 +43,18 @@ class TestArtworkViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
 
 @pytest.mark.django_db
 class TestFilmViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/film'
+    viewset_name = "production/film"
 
-    fixtures = ['film']
+    fixtures = ["film"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors', 'genres', 'aspect_ratio']
+    expected_fields = ["production_date", "authors", "genres", "aspect_ratio"]
 
-    mutate_fields = ['title']
-    put_fields = ['authors', 'genres', 'production_date', 'title']
+    mutate_fields = ["title"]
+    put_fields = ["authors", "genres", "production_date", "title"]
     built_fields = {
-        'authors': lambda x: [reverse('artist-detail', kwargs={'pk': x.authors.first().pk})],
-        'genres': lambda x: [],
+        "authors": lambda x: [reverse("artist-detail", kwargs={"pk": x.authors.first().pk})],
+        "genres": lambda x: [],
     }
 
     def target(self):
@@ -66,18 +66,18 @@ class TestFilmViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
 
 @pytest.mark.django_db
 class TestInstallationViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/installation'
+    viewset_name = "production/installation"
 
-    fixtures = ['installation']
+    fixtures = ["installation"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors', 'genres', 'technical_description']
+    expected_fields = ["production_date", "authors", "genres", "technical_description"]
 
-    mutate_fields = ['title']
-    put_fields = ['authors', 'genres', 'production_date', 'title']
+    mutate_fields = ["title"]
+    put_fields = ["authors", "genres", "production_date", "title"]
     built_fields = {
-        'authors': lambda x: [reverse('artist-detail', kwargs={'pk': x.authors.first().pk})],
-        'genres': lambda x: [],
+        "authors": lambda x: [reverse("artist-detail", kwargs={"pk": x.authors.first().pk})],
+        "genres": lambda x: [],
     }
 
     def target(self):
@@ -89,18 +89,18 @@ class TestInstallationViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet
 
 @pytest.mark.django_db
 class TestPerformanceViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/performance'
+    viewset_name = "production/performance"
 
-    fixtures = ['performance']
+    fixtures = ["performance"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors']
+    expected_fields = ["production_date", "authors"]
 
-    mutate_fields = ['title']
-    put_fields = ['authors', 'genres', 'production_date', 'title']
+    mutate_fields = ["title"]
+    put_fields = ["authors", "genres", "production_date", "title"]
     built_fields = {
-        'authors': lambda x: [reverse('artist-detail', kwargs={'pk': x.authors.first().pk})],
-        'genres': lambda x: [],
+        "authors": lambda x: [reverse("artist-detail", kwargs={"pk": x.authors.first().pk})],
+        "genres": lambda x: [],
     }
 
     def target(self):
@@ -112,15 +112,15 @@ class TestPerformanceViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet)
 
 @pytest.mark.django_db
 class TestEventViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/event'
+    viewset_name = "production/event"
 
-    fixtures = ['user', 'event']
+    fixtures = ["user", "event"]
 
     expected_list_size = 1
-    expected_fields = ['type', 'place', 'installations', 'films', 'performances']
+    expected_fields = ["type", "place", "installations", "films", "performances"]
 
-    mutate_fields = ['title']
-    put_fields = ['starting_date', 'title', 'type']
+    mutate_fields = ["title"]
+    put_fields = ["starting_date", "title", "type"]
 
     def target(self):
         return self.event
@@ -128,22 +128,22 @@ class TestEventViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
 
 @pytest.mark.django_db
 class TestItineraryViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/itinerary'
+    viewset_name = "production/itinerary"
 
-    fixtures = ['user', 'itinerary']
+    fixtures = ["user", "itinerary"]
 
     expected_list_size = 1
-    expected_fields = ['label_fr', 'label_en', 'artworks']
+    expected_fields = ["label_fr", "label_en", "artworks"]
 
-    mutate_fields = ['label_fr']
+    mutate_fields = ["label_fr"]
     put_fields = [
-        'description_en',
-        'description_fr',
-        'event',
-        'label_en',
-        'label_fr',
+        "description_en",
+        "description_fr",
+        "event",
+        "label_en",
+        "label_fr",
     ]
-    hyperlinked_fields = {'event': 'event'}
+    hyperlinked_fields = {"event": "event"}
 
     def target(self):
         return self.itinerary
@@ -151,26 +151,26 @@ class TestItineraryViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
 
 @pytest.mark.django_db
 class TestFilmGenreViewSet(IsArtistOrReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/film-genre'
+    viewset_name = "production/film-genre"
 
-    fixtures = ['film_genre', 'artist', 'user']
+    fixtures = ["film_genre", "artist", "user"]
 
     expected_list_size = 1
-    expected_fields = ['label']
+    expected_fields = ["label"]
 
-    mutate_fields = ['label']
+    mutate_fields = ["label"]
 
 
 @pytest.mark.django_db
 class TestInstallationGenreViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/installation-genre'
+    viewset_name = "production/installation-genre"
 
-    fixtures = ['installation_genre', 'user']
+    fixtures = ["installation_genre", "user"]
 
     expected_list_size = 1
-    expected_fields = ['label']
+    expected_fields = ["label"]
 
-    mutate_fields = ['label']
+    mutate_fields = ["label"]
 
     def target(self):
         return self.installation_genre
@@ -178,19 +178,17 @@ class TestInstallationGenreViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelVi
 
 @pytest.mark.django_db
 class TestCollaboratorViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/collaborator'
+    viewset_name = "production/collaborator"
 
-    fixtures = ['production_staff_task']
+    fixtures = ["production_staff_task"]
 
     expected_list_size = 1
-    expected_fields = ['staff', 'task']
+    expected_fields = ["staff", "task"]
 
-    mutate_fields = ['staff']
-    put_fields = ['staff', 'task']
-    hyperlinked_fields = {'staff': 'staff'}
-    built_fields = {
-        'task': lambda x: {'label': x.task.label, 'description': x.task.description}
-    }
+    mutate_fields = ["staff"]
+    put_fields = ["staff", "task"]
+    hyperlinked_fields = {"staff": "staff"}
+    built_fields = {"task": lambda x: {"label": x.task.label, "description": x.task.description}}
 
     def target(self):
         return self.production_staff_task
@@ -201,19 +199,17 @@ class TestCollaboratorViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet
 
 @pytest.mark.django_db
 class TestPartnerViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/partner'
+    viewset_name = "production/partner"
 
-    fixtures = ['production_organization_task', 'user']
+    fixtures = ["production_organization_task", "user"]
 
     expected_list_size = 1
-    expected_fields = ['organization', 'task']
+    expected_fields = ["organization", "task"]
 
-    mutate_fields = ['organization']
-    put_fields = ['organization', 'task']
-    hyperlinked_fields = {'organization': 'organization'}
-    built_fields = {
-        'task': lambda x: {'label': x.task.label, 'description': x.task.description}
-    }
+    mutate_fields = ["organization"]
+    put_fields = ["organization", "task"]
+    hyperlinked_fields = {"organization": "organization"}
+    built_fields = {"task": lambda x: {"label": x.task.label, "description": x.task.description}}
 
     def target(self):
         return self.production_organization_task
@@ -222,15 +218,15 @@ class TestPartnerViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
 @pytest.mark.django_db
 class TestOrganizationTaskViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
     # FIXME people?
-    viewset_name = 'people/organization-staff'
+    viewset_name = "people/organization-staff"
 
-    fixtures = ['organization_task', 'user']
+    fixtures = ["organization_task", "user"]
 
     expected_list_size = 1
-    expected_fields = ['label', 'description']
+    expected_fields = ["label", "description"]
 
-    mutate_fields = ['label']
-    put_fields = ['label', 'description']
+    mutate_fields = ["label"]
+    put_fields = ["label", "description"]
 
     def target(self):
         return self.organization_task
@@ -238,15 +234,15 @@ class TestOrganizationTaskViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelVie
 
 @pytest.mark.django_db
 class TestFilmKeywordsViewSet(ReadOnlyModelViewSetMixin, HelpTestForModelViewSet):
-    viewset_name = 'production/film-keywords'
+    viewset_name = "production/film-keywords"
 
-    fixtures = ['film_keyword', 'user']
+    fixtures = ["film_keyword", "user"]
 
     expected_list_size = 1
-    expected_fields = ['name', 'slug']
+    expected_fields = ["name", "slug"]
 
-    mutate_fields = ['name']
-    put_fields = ['name', 'slug']
+    mutate_fields = ["name"]
+    put_fields = ["name", "slug"]
 
     def target(self):
         return self.film_keyword

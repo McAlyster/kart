@@ -7,7 +7,7 @@ class GroupData(TestCase):
     Tests concernants les donnees des groupes
     """
 
-    fixtures = ['people/fixtures/groups.json']
+    fixtures = ["people/fixtures/groups.json"]
 
     def setUp(self):
         pass
@@ -19,5 +19,5 @@ class GroupData(TestCase):
         """
         Test list of user
         """
-        group = Group.objects.get(name='School Application')
+        group = Group.objects.get(name="School Application")
         assert group.pk > 0

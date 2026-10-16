@@ -1,21 +1,21 @@
 """
 
-    Transform valid Canditature to Student in promo
+Transform valid Canditature to Student in promo
 
 """
 
 import sys
 
 from django.core.management.base import BaseCommand
-from diffusion.management.commands.create_diffusion import input_choices
-from school.models import StudentApplication, StudentApplicationSetup, Student
 
+from diffusion.management.commands.create_diffusion import input_choices
 from people.models import Artist
 from people.utils.artist_tools import getArtistByNames
+from school.models import Student, StudentApplication, StudentApplicationSetup
 
 
 class Command(BaseCommand):
-    help = 'Transform valid Candidature to Student in promo'
+    help = "Transform valid Candidature to Student in promo"
 
     def handle(self, *args, **options):
 
@@ -24,16 +24,14 @@ class Command(BaseCommand):
         promo = campaign.promotion
 
         # valid promotion
-        str_question = "Les étudiants serons ajoutés à la promo  : {}   ? [y/n]  -  ".format(promo.name)
+        str_question = f"Les étudiants serons ajoutés à la promo  : {promo.name}   ? [y/n]  -  "
         valid = input(str_question)
 
         if valid != "y":
             sys.exit()
 
         # valid campaign
-        str_question = "La campagne de selection est  : {}  ( {} )  ? [y/n]  -  ".format(
-            campaign.candidature_date_end.year, campaign.promotion.name
-        )
+        str_question = f"La campagne de selection est  : {campaign.candidature_date_end.year}  ( {campaign.promotion.name} )  ? [y/n]  -  "
         valid = input(str_question)
 
         if valid != "y":
@@ -45,32 +43,32 @@ class Command(BaseCommand):
         for candidat in candidatures:
             # Skip if artist is already processed
             if candidat.artist in student_artists:
-                print("Candidature de {} déjà traitée, passage à la suivante".format(candidat.artist))
+                print(f"Candidature de {candidat.artist} déjà traitée, passage à la suivante")
                 continue
             # Process binomial application
             if candidat.binomial_application:
                 artist1 = candidat.artist
 
-                print("{} candidate en Binome avec {}".format(artist1, candidat.binomial_application_with))
+                print(f"{artist1} candidate en Binome avec {candidat.binomial_application_with}")
 
-                artist2_firstname = candidat.binomial_application_with.split(' ', 1)[0]
-                artist2_lastname = candidat.binomial_application_with.split(' ', 1)[1]
+                artist2_firstname = candidat.binomial_application_with.split(" ", 1)[0]
+                artist2_lastname = candidat.binomial_application_with.split(" ", 1)[1]
 
                 print("Recherche du binome")
 
                 list_artist = getArtistByNames(firstname=artist2_firstname, lastname=artist2_lastname, listing=True)
                 artist2_choice = input_choices(list_artist)
 
-                if (artist2_choice):
+                if artist2_choice:
                     artist2 = artist2_choice["artist"]
                     app = artist2.student_application.filter(campaign=campaign).first()
                     if not app:
-                        print("Aucune candidature trouvée pour {}".format(artist2))
+                        print(f"Aucune candidature trouvée pour {artist2}")
                         break
                     else:
-                        print("Candidature trouvée pour {} : {}".format(artist2, app))
+                        print(f"Candidature trouvée pour {artist2} : {app}")
                 else:
-                    print("Aucun artiste trouvé pour {}".format(candidat.binomial_application_with))
+                    print(f"Aucun artiste trouvé pour {candidat.binomial_application_with}")
                     break
 
                 # create a collective artist
@@ -86,7 +84,7 @@ class Command(BaseCommand):
                     artist.collectives.add(artist2)
                     artist.save()
                 else:
-                    print("L'artiste {} existe déjà, continuer ?".format(artist))
+                    print(f"L'artiste {artist} existe déjà, continuer ?")
                     continue_choice = input_choices([False, True])
                     if not continue_choice:
                         break

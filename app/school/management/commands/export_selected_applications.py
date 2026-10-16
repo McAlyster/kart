@@ -1,12 +1,10 @@
 import pandas as pd
-
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-
 from django.db.models import Q
 
-from django.contrib.auth.models import User
-from school.models import AdminStudentApplication, StudentApplication, StudentApplicationSetup, Promotion
 from people.models import Artist, FresnoyProfile
+from school.models import AdminStudentApplication, Promotion, StudentApplication, StudentApplicationSetup
 
 
 class Command(BaseCommand):
@@ -47,7 +45,7 @@ class Command(BaseCommand):
         # Query values with all headers cols. Have to drop duplicates i don't know why
         csv_data = (
             pd.DataFrame(data=admins_sa.values_list(*all_rows, named=True), columns=all_rows)
-            .drop_duplicates('id')
+            .drop_duplicates("id")
             .to_csv(index=False, header=False)
         )
 
@@ -56,9 +54,9 @@ class Command(BaseCommand):
             print("Nothing was written")
             return
         # open / write csv
-        f = open("applications.csv", 'w', encoding='utf-8')
+        f = open("applications.csv", "w", encoding="utf-8")
         f.write(csv_head)
         f.write(csv_data)
         f.close()
 
-        print('Data written to applications.csv')
+        print("Data written to applications.csv")

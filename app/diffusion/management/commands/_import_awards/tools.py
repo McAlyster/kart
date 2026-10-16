@@ -1,36 +1,33 @@
 #! /usr/bin/env python
-# -*- coding=utf8 -*-
 
 
-import sys
+import logging
 import os
-from difflib import SequenceMatcher
 
 # import matplotlib.pyplot as plt
 import pathlib
-import logging
-import pandas as pd
-import pytz
-from datetime import datetime
-from django.db.utils import IntegrityError
-from django_countries import countries
-from django.db.models.functions import Concat, Lower
-from django.db.models import CharField, Value
-from django.contrib.postgres.search import TrigramSimilarity
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-
 import re
-import unidecode
-
-from django.apps import apps
+import sys
 import warnings
+from datetime import datetime
+from difflib import SequenceMatcher
 
 # Uncomment paragraph for standalone mode
 import django
+import pandas as pd
+import pytz
+import unidecode
+from django.apps import apps
+from django.contrib.postgres.search import TrigramSimilarity
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.db.models import CharField, Value
+from django.db.models.functions import Concat, Lower
+from django.db.utils import IntegrityError
+from django_countries import countries
 
-from production.models import Artwork, Event
-from people.models import Artist
 from diffusion.models import Award, MetaAward, Place
+from people.models import Artist
+from production.models import Artwork, Event
 
 ppp = pathlib.Path(__file__).parent.parent.parent.parent.parent.absolute()
 sys.path.append(str(ppp))
@@ -154,9 +151,7 @@ def eventCleaning():
                 for i in range(nbGuess):
                     kart_title = guess[i].title
                     if guess[i].title == csv_title:
-                        logger.info(
-                            f"\n\nTitle found in Kart\nBoth titles are the same {csv_title} = {kart_title}\n"
-                        )
+                        logger.info(f"\n\nTitle found in Kart\nBoth titles are the same {csv_title} = {kart_title}\n")
                         def_titles.append(csv_title)
                         kart_titles.append(kart_title)
                         identical = True
@@ -173,12 +168,10 @@ def eventCleaning():
                 for i in range(nbGuess):
                     # Distance btw the title from csv and the one found in Kart
                     dist = round(
-                        SequenceMatcher(
-                            None, str(guess[i].title).lower(), csv_title.lower()
-                        ).ratio(),
+                        SequenceMatcher(None, str(guess[i].title).lower(), csv_title.lower()).ratio(),
                         2,
                     )
-                    logger.info(f"({i+1}) Kart\t\t|{guess[i].title}|\t\t\t(dist:{dist})")
+                    logger.info(f"({i + 1}) Kart\t\t|{guess[i].title}|\t\t\t(dist:{dist})")
 
                 cont = input(
                     """
@@ -220,9 +213,7 @@ def eventCleaning():
                     pass
 
     # DF with the events names to validate
-    event_df = pd.DataFrame(
-        {"NomFichier": csv_titles, "NomKart": kart_titles, "NomDefinitif": def_titles}
-    )
+    event_df = pd.DataFrame({"NomFichier": csv_titles, "NomKart": kart_titles, "NomDefinitif": def_titles})
 
     # merge the cleaned data with awards csv
     merge_df = pd.merge(awards, event_df, how="left", left_on="event_title", right_on="NomFichier")
@@ -256,7 +247,6 @@ def artworkCleaning():
 
     # For each award of the csv file
     for ind, aw in aws.iterrows():
-
         # Variables init
         no_artwork = no_artist = False
 
@@ -296,9 +286,7 @@ def artworkCleaning():
                     },
                 }
                 if o2c not in obj2create:
-                    logger.warning(
-                        f"No artist can be found with {firstname} {lastname}: CREATE ARTIST ?\n\n"
-                    )
+                    logger.warning(f"No artist can be found with {firstname} {lastname}: CREATE ARTIST ?\n\n")
                     obj2create.append(o2c)
                 # Create the object in Kart # TODO
                 # input(f'Should I create the an artist with these data: {o2c} ')
@@ -306,9 +294,7 @@ def artworkCleaning():
 
             # Compare the artists found in CSV to the authors of the artwork in Kart
             # List of the artist that are BOTH in the authots in Kart and in the CSV
-            artist_in_authors = [
-                x["artist"] for x in _artist_l if x["artist"] in aw_kart.authors.all()
-            ]
+            artist_in_authors = [x["artist"] for x in _artist_l if x["artist"] in aw_kart.authors.all()]
 
             # If no match between potential artists and authors: integrity issue of the csv
             if not len(artist_in_authors):
@@ -327,9 +313,7 @@ def artworkCleaning():
 
         # If no id and no title provided, skip
         if not aw_id and aw_title == "":
-            logger.info(
-                "No data about artwork in the csv file, only artist will be specified in the award."
-            )
+            logger.info("No data about artwork in the csv file, only artist will be specified in the award.")
             no_artwork = True
 
         # If partial to no artist data in the csv
@@ -341,9 +325,7 @@ def artworkCleaning():
                 logger.info("Partial data about artist ...")
 
         if all([no_artwork, no_artist]):
-            logger.warning(
-                f"{aw_title} No info about the artwork nor the artists: SKIPPING\n{aw}\n\n"
-            )
+            logger.warning(f"{aw_title} No info about the artwork nor the artists: SKIPPING\n{aw}\n\n")
             continue
 
         # IF NO ID ARTWORK
@@ -473,7 +455,6 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
     if guessArtLN:
         # TODO: Optimize by checking a same artist does not get tested several times
         for artist_kart in guessArtLN:
-
             # Clear accents (store a version with accents for further accents issue detection)
             kart_lastname_accent = artist_kart.user.last_name
             kart_lastname = unidecode.unidecode(kart_lastname_accent).lower()
@@ -494,7 +475,6 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
                     continue
                 # Check if Kart and candidate names are exactly the same
                 elif kart_lastname != lastname or kart_firstname != firstname:
-
                     logger.warning(
                         f"""Fullnames globally match {fullname} but not in first and last name correspondences:
                     Kart       first: {kart_firstname} last: {kart_lastname}
@@ -544,7 +524,6 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
 
             # if artist whose lastname is the candidate's with similar firstname names are found
             if guessArtFN:
-
                 # Check artists with same lastname than candidate and approaching firstname
                 for artistfn_kart in guessArtFN:
                     kart_firstname = unidecode.unidecode(artistfn_kart.user.first_name)
@@ -559,9 +538,7 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
                     )
 
                     # Distance evaluation with both first and last name at the same time
-                    dist_name = dist2(
-                        f"{kart_firstname} {kart_lastname}", f"{firstname} {lastname}"
-                    )
+                    dist_name = dist2(f"{kart_firstname} {kart_lastname}", f"{firstname} {lastname}")
                     # Add the candidate in potential matches add double the name_dist (to score on 2)
                     art_l.append({"artist": artistfn_kart, "dist": dist_name * 2})
 
@@ -598,9 +575,7 @@ def infoCSVeventTitles():
         # If a title already exist with different case
         exact = Event.objects.filter(title__iexact=evt_title)
         if exact:
-            logger.warning(
-                f"Event already exist with same name (but not same case) for {evt_title}:\n{exact}\n"
-            )
+            logger.warning(f"Event already exist with same name (but not same case) for {evt_title}:\n{exact}\n")
 
         # If a title already contains with different case
         contains = Event.objects.filter(title__icontains=evt_title)
@@ -831,9 +806,7 @@ def createPlaces(source_df=None):
             # parameter simili=True triggers a search by similarity btw `country` and django countries entries
             codeCountryCSV = getISOname(country, simili=True)
             if codeCountryCSV:
-                logger.info(
-                    f"Looked for the country code of {country} and obtained {codeCountryCSV}"
-                )
+                logger.info(f"Looked for the country code of {country} and obtained {codeCountryCSV}")
             else:
                 # Check for Kosovo:
                 # Although Kosovo has no ISO 3166-1 code either, it is generally accepted to be XK temporarily;
@@ -1152,7 +1125,7 @@ def createAwards(awards_df=None):
 
 def custom_formatwarning(msg, *args, **kwargs):
     # ignore everything except the message
-    return f"...{args[1][-50:]} line {args[2]} - warning : {str(msg)} \n"
+    return f"...{args[1][-50:]} line {args[2]} - warning : {msg!s} \n"
 
 
 warnings.formatwarning = custom_formatwarning
@@ -1218,7 +1191,6 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False):
 
     # Iterate models and countings
     for k, v in sum1.items():
-
         # If the model is not in both summaries, no comp is possible
         if k not in sum2.keys():
             warnings.warn(f"Model {k} not in both summaries")
@@ -1228,10 +1200,7 @@ def compareSummaries(sum1=None, sum2=None, restrict=None, force_display=False):
         diff = sum2[k] - v
 
         # If diff and model is in the restricted list, show it
-        if fakediff or (
-            diff and ((restrict and (k in restrict and k in sum2.keys())) or not restrict)
-        ):
-
+        if fakediff or (diff and ((restrict and (k in restrict and k in sum2.keys())) or not restrict)):
             sign = "-" if diff < 0 else "+"
             print(f"{k} model count was {v}, is now {sum2[k]} ({sign} {diff})")
             diff_d[k] = f"{sign} {diff}"
@@ -1248,15 +1217,14 @@ def geoloc_all_cities(save=False, debug=False):
 
     From
     """
-    from geopy.geocoders import Nominatim
     from geopy.extra.rate_limiter import RateLimiter
+    from geopy.geocoders import Nominatim
 
     geolocator = Nominatim(user_agent="Kart_location")
     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2)
 
     # List cities and store their geolocalisation coordinates
     for place in Place.objects.all():
-
         # Get the city
         city = place.city
 
@@ -1268,7 +1236,6 @@ def geoloc_all_cities(save=False, debug=False):
                 print(city)
             # if the place has no lat or long
             if not (place.latitude and place.longitude):
-
                 if country:
                     search_request = f"{city}, {country}"
                 else:

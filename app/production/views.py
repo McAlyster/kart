@@ -1,40 +1,37 @@
 from django.db.models import Prefetch
-
-from rest_framework import viewsets, permissions, pagination, filters as drf_filters
-from rest_framework.response import Response
-
-
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters as drf_filters
+from rest_framework import pagination, permissions, viewsets
+from rest_framework.response import Response
 
 from .models import (
     Artwork,
-    Film,
-    Installation,
-    Performance,
-    FilmGenre,
-    InstallationGenre,
     Event,
+    Film,
+    FilmGenre,
+    Installation,
+    InstallationGenre,
     Itinerary,
-    ProductionStaffTask,
-    ProductionOrganizationTask,
     OrganizationTask,
+    Performance,
+    ProductionOrganizationTask,
+    ProductionStaffTask,
     StaffTask,
 )
-
 from .serializers import (
     ArtworkPolymorphicSerializer,
-    FilmSerializer,
-    InstallationSerializer,
-    KeywordsSerializer,
-    PerformanceSerializer,
-    FilmGenreSerializer,
-    InstallationGenreSerializer,
     EventSerializer,
+    FilmGenreSerializer,
+    FilmSerializer,
+    InstallationGenreSerializer,
+    InstallationSerializer,
     ItinerarySerializer,
-    ProductionStaffTaskSerializer,
-    PartnerSerializer,
+    KeywordsSerializer,
     OrganizationTaskSerializer,
+    PartnerSerializer,
+    PerformanceSerializer,
+    ProductionStaffTaskSerializer,
     StaffTaskSerializer,
 )
 
@@ -46,32 +43,30 @@ class CustomPagination(pagination.PageNumberPagination):
 
     # no limit when page_size not set
     page_size = 100000
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
     max_page_size = 20
-    page_query_param = 'page'
+    page_query_param = "page"
 
     def get_paginated_response(self, data):
         response = Response(data)
         # pagination on headers
-        response['count'] = self.page.paginator.count
-        response['next'] = self.get_next_link()
-        response['previous'] = self.get_previous_link()
+        response["count"] = self.page.paginator.count
+        response["next"] = self.get_next_link()
+        response["previous"] = self.get_previous_link()
         return response
 
 
 class TagsFilter(filters.CharFilter):
-
     def filter(self, qs, value):
         if value:
             lookup_field = self.field_name + "__name__in"
-            tags = [tag.strip() for tag in value.split(',')]
+            tags = [tag.strip() for tag in value.split(",")]
             qs = qs.filter(**{lookup_field: tags}).distinct()
 
         return qs
 
 
 class TypeFilter(filters.CharFilter):
-
     def filter(self, qs, value):
         if value:
             value = value.lower()
@@ -90,7 +85,7 @@ class ArtworkFilterSet(filters.FilterSet):
     """
 
     # transform date to year
-    production_year = filters.NumberFilter(field_name="production_date", lookup_expr='year__exact')
+    production_year = filters.NumberFilter(field_name="production_date", lookup_expr="year__exact")
     # filter by keywords
     keywords = TagsFilter(field_name="keywords")
     # filter by Artwork type (ex: Film, Installation, ...)
@@ -111,11 +106,11 @@ class ArtworkViewSet(
     serializer_class = ArtworkPolymorphicSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend, drf_filters.SearchFilter, drf_filters.OrderingFilter)
-    search_fields = ('title',)
+    search_fields = ("title",)
     filterset_class = ArtworkFilterSet
     pagination_class = CustomPagination
     ordering_fields = (
-        'title',
+        "title",
         "production_year",
     )
 
@@ -125,7 +120,7 @@ class ArtworkFilter(filters.FilterSet):
 
     class Meta:
         model = Film
-        fields = ['genres', 'keywords']
+        fields = ["genres", "keywords"]
 
 
 class FilmViewSet(viewsets.ModelViewSet):
@@ -140,7 +135,7 @@ class InstallationViewSet(viewsets.ModelViewSet):
     queryset = Installation.objects.all()
     serializer_class = InstallationSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    search_fields = ('genres',)
+    search_fields = ("genres",)
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
@@ -155,21 +150,21 @@ class EventViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = (
-        'installations__authors',
-        'films__authors',
-        'performances__authors',
+        "installations__authors",
+        "films__authors",
+        "performances__authors",
     )
 
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     #  the order of artworks in itinerary must be certain
     queryset = Itinerary.objects.all().prefetch_related(
-        Prefetch('artworks', queryset=Artwork.objects.all().order_by('itineraryartwork__order'))
+        Prefetch("artworks", queryset=Artwork.objects.all().order_by("itineraryartwork__order"))
     )
     serializer_class = ItinerarySerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('event',)
+    filterset_fields = ("event",)
 
 
 class FilmGenreViewSet(viewsets.ModelViewSet):

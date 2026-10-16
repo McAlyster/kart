@@ -1,19 +1,20 @@
-# -*- coding: utf-8 -*-
+import pytz
 from django.db import models
-from django.db.models import Q
+from django.contrib.postgres.fields import ArrayField
 
+from django.db.models import Q
 from polymorphic.models import PolymorphicModel
 from sortedm2m.fields import SortedManyToManyField
-
-import pytz
-
 from taggit.managers import TaggableManager
 
 from assets.models import Gallery
-from common.models import Website, BTBeacon
+from common.models import BTBeacon, Website
 from common.utils import make_filepath
 from diffusion.models import Place
-from people.models import Artist, Staff, Organization
+from people.models import Artist, Organization, Staff
+from people.choices import CUSTOM_LANGUAGES as LANGUAGES
+
+from .choices import SHOOTING_FORMAT_CHOICES, ASPECT_RATIO_CHOICES, PROCESS_CHOICES, AUDIO_FEATURE_CHOICES
 
 
 class Task(models.Model):
@@ -37,28 +38,28 @@ class OrganizationTask(Task):
 
 class ProductionStaffTask(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    production = models.ForeignKey('Production', related_name="staff_tasks", on_delete=models.CASCADE)
+    production = models.ForeignKey("Production", related_name="staff_tasks", on_delete=models.CASCADE)
     task = models.ForeignKey(StaffTask, on_delete=models.PROTECT)
 
     def __str__(self):
-        return '{0} ({1})'.format(self.task.label, self.production.title)
+        return f"{self.task.label} ({self.production.title})"
 
     class Meta:
-        ordering = ['pk']
+        ordering = ["pk"]
 
 
 class ProductionOrganizationTask(models.Model):
     organization = models.ForeignKey(Organization, null=True, on_delete=models.SET_NULL)
-    production = models.ForeignKey('Production', related_name="organization_tasks", on_delete=models.PROTECT)
+    production = models.ForeignKey("Production", related_name="organization_tasks", on_delete=models.PROTECT)
     task = models.ForeignKey(OrganizationTask, on_delete=models.PROTECT)
 
     class Meta:
-        ordering = ['pk']
+        ordering = ["pk"]
 
 
 class Production(PolymorphicModel):
     class Meta:
-        ordering = ['title']
+        ordering = ["title"]
 
     title = models.CharField(max_length=255)
     former_title = models.CharField(max_length=255, null=True, blank=True)
@@ -82,11 +83,14 @@ class Production(PolymorphicModel):
     description_en = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return '{0}'.format(self.title)
+        return f"{self.title}"
 
 
 class Artwork(Production):
     production_date = models.DateField()
+
+    partners_fr = models.TextField(blank=True, null=True)
+    partners_en = models.TextField(blank=True, null=True)
 
     credits_fr = models.TextField(blank=True, null=True)
     credits_en = models.TextField(blank=True, null=True)
@@ -97,15 +101,17 @@ class Artwork(Production):
     copyright_fr = models.TextField(blank=True, null=True)
     copyright_en = models.TextField(blank=True, null=True)
 
-    process_galleries = SortedManyToManyField(Gallery, blank=True, related_name='artworks_process')
-    mediation_galleries = SortedManyToManyField(Gallery, blank=True, related_name='artworks_mediation')
-    in_situ_galleries = SortedManyToManyField(Gallery, blank=True, related_name='artworks_insitu')
-    press_galleries = SortedManyToManyField(Gallery, blank=True, related_name='artworks_press')
-    teaser_galleries = SortedManyToManyField(Gallery, blank=True, related_name='artworks_teaser')
+    process_galleries = SortedManyToManyField(Gallery, blank=True, related_name="artworks_process")
+    mediation_galleries = SortedManyToManyField(Gallery, blank=True, related_name="artworks_mediation")
+    in_situ_galleries = SortedManyToManyField(Gallery, blank=True, related_name="artworks_insitu")
+    press_galleries = SortedManyToManyField(Gallery, blank=True, related_name="artworks_press")
+    teaser_galleries = SortedManyToManyField(Gallery, blank=True, related_name="artworks_teaser")
 
     authors = models.ManyToManyField(Artist, related_name="%(class)ss")
 
     beacons = models.ManyToManyField(BTBeacon, related_name="%(class)ss", blank=True)
+
+    production_contract = models.FileField(upload_to=make_filepath, blank=True, null=True, help_text="Contrat de production")
 
     keywords = TaggableManager(
         blank=True,
@@ -113,9 +119,7 @@ class Artwork(Production):
 
     def __str__(self):
         authors = ", ".join([author.__str__() for author in self.authors.all()]) if self.authors.count() > 0 else "?"
-        return '{0} ({1}), {2} de {3}'.format(
-            self.title, self.production_date.year, self.polymorphic_ctype.name, authors
-        )
+        return f"{self.title} ({self.production_date.year}), {self.polymorphic_ctype.name} de {authors}"
 
 
 class FilmGenre(models.Model):
@@ -126,76 +130,48 @@ class FilmGenre(models.Model):
 
 
 class Film(Artwork):
-    SHOOTING_FORMAT_CHOICES = (
-        ('SUP8', 'Super 8'),
-        ('SUP16', 'Super 16'),
-        ('SUP35', 'Super 35'),
-        ('35MM', "35 MM"),
-        ('70MM', "70 MM"),
-        ('DV', "DV"),
-        ('DVCAM', "DVCAM"),
-        ('HD', "HD (Standard)"),
-        ('HDCAM', "HDCAM"),
-        ('HDCINE', "HD CINEMASCOPE"),
-        ('CREANUM', "Création Numérique (Générique)"),
-        ('BETASP', "BETA SP"),
-        ('BETANUM', "BETA Numérique"),
-        ('DIGICAM', "Appareil Photo Numérique"),
-        ('MOBILE', "Mobile"),
-        ('HI8', "HI8"),
-        ('AVCHD', "AVCHD"),
-        ('XDCAMEX', "XDCAM EX"),
-        ('3DREL', "Relief 3D"),
-        ('2K', "2K"),
-        ('4K', "4K"),
-        ('6K', "6K"),
-        ('8K', "8K"),
-        ('ARRICAM', "ARRI CAM (Numérique)"),
-        ('RED', "RED (Numérique)"),
-        ('SONYCINE', "SONY Cinéma (Numérique)"),
-        ('BLACKMAGIC', "Blackmagic (Numérique)"),
-    )
-
-    ASPECT_RATIO_CHOICES = (
-        ('1.33', "1.33 (4/3)"),
-        ('1.37', "1.37 (Académie)"),
-        ('1.50', "1.50 (3:2 / VistaVision)"),
-        ('1.66', "1.66 (Widescreen Européen)"),
-        ('1.77', "1.77 (16/9)"),
-        ('1.85', "1.85 (Flat)"),
-        ('1.89', "1.89 (DCI Native Aspect Ratio)"),
-        ('1.90', "1.90 (IMAX Numérique / DCI Full Container)"),
-        ('2.00', "2.00 (Univisium)"),
-        ('2.20', "2.20 (70mm)"),
-        ('2.39', "2.39 (Scope)"),
-        ('2.76', "2.76 (Ultra Panavision 70)"),
-    )
-
-    PROCESS_CHOICES = (
-        ('COLOR', "Couleur"),
-        ('BW', "Noir & Blanc"),
-        ('COLORBW', "Noir & Blanc & Couleur"),
-        ('SEPIA', "Sépia"),
-        ('COLORIZE', "Colorisation"),
-        ('MONOCHROME', "Monochrome (Teinte Spécifique)"),
-        ('VINTAGE', "Vintage / Vieilli"),
-        ('HDR', "HDR (High Dynamic Range)"),
-        ('LOG', "Log (Courbe Logarithmique)"),
-        ('RAW', "RAW (Brut)"),
-    )
-
     duration = models.DurationField(blank=True, null=True, help_text="Sous la forme HH:MM:SS")
-    # TODO: Manytomany for specs format/ratio/process
-    shooting_format = models.CharField(choices=SHOOTING_FORMAT_CHOICES, max_length=10, blank=True)
-    aspect_ratio = models.CharField(choices=ASPECT_RATIO_CHOICES, max_length=10, blank=True)
-    process = models.CharField(choices=PROCESS_CHOICES, max_length=10, blank=True)
+    shooting_format = ArrayField(
+        models.CharField(choices=SHOOTING_FORMAT_CHOICES, max_length=10, blank=True),
+        blank=True,
+        default=list,
+        help_text="Formats de tournage utilisés",
+    )
+
+    aspect_ratio = ArrayField(
+        models.CharField(choices=ASPECT_RATIO_CHOICES, max_length=10, blank=True),
+        blank=True,
+        default=list,
+        help_text="Ratios d'aspect de l'œuvre",
+    )
+
+    process = ArrayField(
+        models.CharField(choices=PROCESS_CHOICES, max_length=10, blank=True),
+        blank=True,
+        default=list,
+        help_text="Processus visuels (Couleur, N&B...)",
+    )
+
     genres = models.ManyToManyField(FilmGenre, blank=True)
     shooting_place = models.ManyToManyField(Place, blank=True)
 
-    # stockage des langues : es, it,
-    # Todo: make a Langage model and manytomany
-    languages_vo = models.CharField(max_length=24, blank=True)
-    languages_subtitles = models.CharField(max_length=24, blank=True)
+    languages_vo = ArrayField(models.CharField(max_length=7, choices=LANGUAGES), blank=True, default=list)
+    languages_subtitles = ArrayField(models.CharField(max_length=7, choices=LANGUAGES), blank=True, default=list)
+
+    # diffusion
+    languages_audio = ArrayField(
+        models.CharField(max_length=7, choices=LANGUAGES),
+        blank=True,
+        default=list,
+        help_text="Pistes audio et doublages disponibles pour l'export",
+    )
+
+    audio_features = ArrayField(
+        models.CharField(choices=AUDIO_FEATURE_CHOICES, max_length=15, blank=True),
+        blank=True,
+        default=list,
+        help_text="Caractéristiques sonores et composantes narratives",
+    )
 
 
 class InstallationGenre(models.Model):
@@ -215,21 +191,21 @@ class Performance(Artwork):
 
 
 def main_event_false_limit():
-    return {'pk__in': Event.objects.filter(Q(main_event=False)).values_list('id', flat=True)}
+    return {"pk__in": Event.objects.filter(Q(main_event=False)).values_list("id", flat=True)}
 
 
 class Event(Production):
     main_event = models.BooleanField(default=False, help_text="Meta Event")
 
     TYPE_CHOICES = (
-        ('FEST', 'Festival'),
-        ('COMP', 'Competition'),
-        ('PROJ', 'Projection'),
-        ('EXHIB', 'Exhibition'),
-        ('VARN', 'Varnishing'),
-        ('PARTY', 'Party'),
-        ('WORKSHOP', 'Workshop'),
-        ('EVENING', 'Evening'),
+        ("FEST", "Festival"),
+        ("COMP", "Competition"),
+        ("PROJ", "Projection"),
+        ("EXHIB", "Exhibition"),
+        ("VARN", "Varnishing"),
+        ("PARTY", "Party"),
+        ("WORKSHOP", "Workshop"),
+        ("EVENING", "Evening"),
     )
 
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
@@ -240,12 +216,12 @@ class Event(Production):
     place = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
 
     # artwork types
-    installations = models.ManyToManyField(Installation, blank=True, related_name='events')
-    films = models.ManyToManyField(Film, blank=True, related_name='events')
-    performances = models.ManyToManyField(Performance, blank=True, related_name='events')
+    installations = models.ManyToManyField(Installation, blank=True, related_name="events")
+    films = models.ManyToManyField(Film, blank=True, related_name="events")
+    performances = models.ManyToManyField(Performance, blank=True, related_name="events")
     # subevent can't be main event
     subevents = models.ManyToManyField(
-        'Event', limit_choices_to=main_event_false_limit, blank=True, related_name='parent_event'
+        "Event", limit_choices_to=main_event_false_limit, blank=True, related_name="parent_event"
     )
 
     def __str__(self):
@@ -255,7 +231,7 @@ class Event(Production):
         if not self.main_event:
             # Important to convert to Paris Timezone because a datetime 01/01/2015 00:00
             # returns the year 2014 in UTCtime (one hour before 2015) ..
-            starting_date = self.starting_date.astimezone(pytz.timezone('Europe/Paris'))
+            starting_date = self.starting_date.astimezone(pytz.timezone("Europe/Paris"))
             return f"{self.title} - {starting_date.year}"
         # Main events don't have a particular date
         else:
@@ -267,10 +243,10 @@ class Exhibition(Event):
 
 
 class Itinerary(models.Model):
-    '''An itinerary (ordered selection of artworks) throughout an exhibition.'''
+    """An itinerary (ordered selection of artworks) throughout an exhibition."""
 
     class Meta:
-        verbose_name_plural = 'itineraries'
+        verbose_name_plural = "itineraries"
 
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -279,19 +255,19 @@ class Itinerary(models.Model):
     description_fr = models.TextField()
     description_en = models.TextField()
     event = models.ForeignKey(
-        Event, limit_choices_to={'type': 'EXHIB'}, related_name='itineraries', on_delete=models.PROTECT
+        Event, limit_choices_to={"type": "EXHIB"}, related_name="itineraries", on_delete=models.PROTECT
     )
-    artworks = models.ManyToManyField(Artwork, through='ItineraryArtwork')
-    gallery = models.ManyToManyField(Gallery, blank=True, related_name='itineraries')
+    artworks = models.ManyToManyField(Artwork, through="ItineraryArtwork")
+    gallery = models.ManyToManyField(Gallery, blank=True, related_name="itineraries")
 
     def __str__(self):
-        return '{0} ({1})'.format(self.label_fr, self.event.title)
+        return f"{self.label_fr} ({self.event.title})"
 
 
 class ItineraryArtwork(models.Model):
     class Meta:
-        ordering = ('order',)
-        unique_together = (('itinerary', 'artwork'), ('itinerary', 'order'))
+        ordering = ("order",)
+        unique_together = (("itinerary", "artwork"), ("itinerary", "order"))
 
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE)
     artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE)

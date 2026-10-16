@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from ._import_awards.tools import geoloc_all_cities, compareSummaries, summary
+
+from ._import_awards.tools import compareSummaries, geoloc_all_cities, summary
 
 
 class Command(BaseCommand):

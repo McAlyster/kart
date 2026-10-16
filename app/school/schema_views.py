@@ -1,12 +1,12 @@
 from django.http import JsonResponse
-from kart.schema import schema
 from django.views import View
-from graphql_jwt.utils import get_user_by_payload, get_credentials, get_payload
+from graphql_jwt.utils import get_credentials, get_payload, get_user_by_payload
 from rest_framework.authtoken.models import Token
+
+from kart.schema import schema
 
 
 class PromotionViewGQL(View):
-
     def get(self, request, *args, **kwargs):
 
         # Promotion id
@@ -47,7 +47,6 @@ class PromotionViewGQL(View):
 
 
 class StudentViewGQL(View):
-
     def get(self, request, *args, **kwargs):
         # Student id
         id = kwargs.get("id")
@@ -137,7 +136,6 @@ class TeachinArtistListViewGQL(View):
 
 
 class TeachingArtistGQL(View):
-
     def get(self, request, *args, **kwargs):
         id = kwargs.get("id")
 
@@ -197,7 +195,6 @@ class TeachingArtistGQL(View):
 
 
 class CandidatureResultsGQL(View):
-
     def get(self, request, *args, **kwargs):
         query = """
             query {

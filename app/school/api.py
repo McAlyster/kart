@@ -1,22 +1,20 @@
-# -*- coding: utf-8 -*-
-
-from django.urls import re_path
 from django.db.models import Q
+from django.urls import re_path
 from tastypie import fields
-from tastypie.resources import ModelResource
-from tastypie.resources import ALL, ALL_WITH_RELATIONS
-from tastypie.utils import trailing_slash
-
-# from tastypie.authorization import DjangoAuthorization
-
-from people.api import ArtistResource
-from .models import Promotion, Student, StudentApplication
-
-from assets.api import GalleryResource
 
 # 03june26
 from tastypie.authorization import Authorization
 from tastypie.exceptions import Unauthorized
+from tastypie.resources import ALL, ALL_WITH_RELATIONS, ModelResource
+from tastypie.utils import trailing_slash
+
+from assets.api import GalleryResource
+
+# from tastypie.authorization import DjangoAuthorization
+from people.api import ArtistResource
+from utils.api import StaffOnlyFileField
+
+from .models import Promotion, Student, StudentApplication
 
 
 class PromotionResource(ModelResource):
@@ -50,20 +48,21 @@ class StudentResource(ArtistResource):
             "promotion": ALL,
         }
         # fields = ["id", "number", "promotion", "graduate", "user", "artist"]
-        fields = ["id", "number", "promotion", "graduate", "artist"]
+        fields = ["id", "number", "promotion", "graduate", "artist", "diploma_file"]
 
     promotion = fields.ForeignKey(PromotionResource, "promotion")
     artist = fields.ForeignKey(ArtistResource, "artist", full=True)
+    diploma_file = StaffOnlyFileField("diploma_file", null=True, blank=True)
 
     # BUG Error (why?) user__last_name__istartswith
     # "The 'last_name' field does not support relations"
     def build_filters(self, filters=None, ignore_bad_filters=False):
         # turn off error : ignore_bad_filters et True
-        return super(StudentResource, self).build_filters(filters, ignore_bad_filters=True)
+        return super().build_filters(filters, ignore_bad_filters=True)
 
     # override user__last_name__istartswith query
     def apply_filters(self, request, applicable_filters):
-        base_object_list = super(StudentResource, self).apply_filters(request, applicable_filters)
+        base_object_list = super().apply_filters(request, applicable_filters)
         # override
         query = request.GET.get("user__last_name__istartswith", None)
         if query:

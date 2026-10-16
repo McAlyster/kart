@@ -1,10 +1,10 @@
-from rest_framework import status, viewsets, permissions
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from .models import Gallery, Medium
 from school.models import StudentApplicationSetup
 
+from .models import Gallery, Medium
 from .serializers import GallerySerializer, MediumSerializer
 
 

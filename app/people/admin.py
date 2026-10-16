@@ -1,62 +1,61 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-
 from django.utils.html import format_html
+from guardian.admin import GuardedModelAdmin
 
 from people.forms import UserCreateForm
-from people.models import Artist, FresnoyProfile, Staff, Organization
+from people.models import Artist, FresnoyProfile, Organization, Staff
 
-from guardian.admin import GuardedModelAdmin
 
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
     """Admin model for Artist."""
 
-    list_display = ('nick',)
+    list_display = ("nick",)
     search_fields = [
-        'user__first_name',
-        'user__last_name',
-        'user__profile__preferred_last_name',
-        'user__profile__preferred_first_name',
-        'nickname',
+        "user__first_name",
+        "user__last_name",
+        "user__profile__preferred_last_name",
+        "user__profile__preferred_first_name",
+        "nickname",
     ]
     # filter_horizontal = ('websites', 'collectives')
-    readonly_fields = ('artist_photo_picture',)
+    readonly_fields = ("artist_photo_picture",)
     # list fields order the picture after artist_photo
     fields = (
-        'user',
-        'collectives',
-        'nickname',
-        'alphabetical_order',
-        'artist_photo',
-        'artist_photo_picture',
-        'artist_photo_copyright',
-        'bio_short_fr',
-        'bio_short_en',
-        'bio_fr',
-        'bio_en',
-        'twitter_account',
-        'facebook_profile',
-        'websites',
+        "user",
+        "collectives",
+        "nickname",
+        "alphabetical_order",
+        "artist_photo",
+        "artist_photo_picture",
+        "artist_photo_copyright",
+        "bio_short_fr",
+        "bio_short_en",
+        "bio_fr",
+        "bio_en",
+        "twitter_account",
+        "facebook_profile",
+        "websites",
     )
-    autocomplete_fields = ('user', 'collectives', 'websites')
+    autocomplete_fields = ("user", "collectives", "websites")
 
     def nick(self, obj):
         # user can be None
         print(obj.user)
         if obj.user:
             if obj.nickname != "":
-                return "{} ({})".format(obj.nickname, obj.user.__str__())
+                return f"{obj.nickname} ({obj.user.__str__()})"
             else:
-                return "{}".format(obj.user.__str__())
+                return f"{obj.user.__str__()}"
         # User None
         if obj.nickname != "":
             return obj.nickname
         return "???"
 
     # describe 'nick'
-    nick.short_description = 'Nick name (real name if any) or real name'
+    nick.short_description = "Nick name (real name if any) or real name"
 
     def firstname(self, obj):
         return obj.user.first_name
@@ -65,72 +64,75 @@ class ArtistAdmin(admin.ModelAdmin):
         return obj.user.last_name
 
     def artist_photo_picture(self, obj):
-        return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(obj.artist_photo.url))
+        return format_html(f'<img src="{obj.artist_photo.url}" style="max-width:200px; max-height:200px"/>')
+
 
 class FresnoyProfileInline(admin.StackedInline):
     """StackedInline admin for FresnoyProfile."""
 
     model = FresnoyProfile
     readonly_fields = (
-        'is_artist',
-        'is_student',
-        'is_staff',
+        "is_artist",
+        "is_student",
+        "is_staff",
     )
 
 
 admin.site.unregister(User)
+
+
 @admin.register(User)
 class FresnoyProfileAdmin(UserAdmin):
     """Admin for Use and additionnal profile fields."""
 
     inlines = (FresnoyProfileInline,)
     list_display = (
-        'username',
-        'first_name',
-        'last_name',
-        'preferred_name',
-        'email',
-        'is_staff',
+        "username",
+        "first_name",
+        "last_name",
+        "preferred_name",
+        "email",
+        "is_staff",
     )
-    ordering = ('first_name', 'last_name', 'profile__preferred_first_name')
+    ordering = ("first_name", "last_name", "profile__preferred_first_name")
     search_fields = (
-        'username',
-        'first_name',
-        'last_name',
-        'email',
-        'profile__preferred_first_name',
-        'profile__preferred_last_name',
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "profile__preferred_first_name",
+        "profile__preferred_last_name",
     )
     add_form = UserCreateForm
     add_fieldsets = (
         (
             None,
             {
-                'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email'),
+                "fields": ("username", "password1", "password2", "first_name", "last_name", "email"),
             },
         ),
     )
 
     def preferred_name(self, obj):
-        if hasattr(obj, 'profile') and (obj.profile.preferred_first_name or obj.profile.preferred_last_name):
+        if hasattr(obj, "profile") and (obj.profile.preferred_first_name or obj.profile.preferred_last_name):
             return "{} {}".format(obj.profile.preferred_first_name or "", obj.profile.preferred_last_name or "")
         return ""
 
     # describe 'preferred_name'
-    preferred_name.short_description = 'Nom d\'usage'
+    preferred_name.short_description = "Nom d'usage"
     # order by preferred first name
-    preferred_name.admin_order_field = 'profile__preferred_first_name'
+    preferred_name.admin_order_field = "profile__preferred_first_name"
 
 
 class StaffAdmin(GuardedModelAdmin):
-    search_fields = ['user__username', 'user__last_name', 'user__first_name', 'user__artist__nickname']
+    search_fields = ["user__username", "user__last_name", "user__first_name", "user__artist__nickname"]
     list_display = (
         "name",
         "artist",
     )
-    raw_id_fields = ('user',)
+    raw_id_fields = ("user",)
     autocomplete_lookup_fields = {
-        'fk': ['user'],
+        "fk": ["user"],
     }
 
     def artist(self, obj):
@@ -141,18 +143,18 @@ class StaffAdmin(GuardedModelAdmin):
 
 
 class OrganizationAdmin(GuardedModelAdmin):
-    search_fields = ['name']
-    list_display = ('name',)
-    ordering = ('name',)
+    search_fields = ["name"]
+    list_display = ("name",)
+    ordering = ("name",)
 
 
 def user_unicode(self):
-    if hasattr(self, 'profile') and (self.profile.preferred_first_name or self.profile.preferred_last_name):
-        return '{0} {1}'.format(
+    if hasattr(self, "profile") and (self.profile.preferred_first_name or self.profile.preferred_last_name):
+        return "{0} {1}".format(
             self.profile.preferred_first_name.title() if self.profile.preferred_first_name else "",
             self.profile.preferred_last_name.title() if self.profile.preferred_last_name else "",
         )
-    return '{0} {1}'.format(self.first_name.title(), self.last_name.title())
+    return f"{self.first_name.title()} {self.last_name.title()}"
 
 
 User.__str__ = user_unicode

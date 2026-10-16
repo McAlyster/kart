@@ -1,9 +1,10 @@
 from django.contrib import admin
+
 from .models import Gallery, Medium
 
 
 class MediumAdmin(admin.ModelAdmin):
-    list_display = ('label', 'description', 'picture', 'medium_url')
+    list_display = ("label", "description", "picture", "medium_url")
 
 
 class MediumInline(admin.TabularInline):
@@ -11,9 +12,9 @@ class MediumInline(admin.TabularInline):
 
 
 class GalleryAdmin(admin.ModelAdmin):
-    list_display = ('label', 'description')
-    search_fields = ['label', 'description']
-    exclude = ('media',)
+    list_display = ("label", "description")
+    search_fields = ["label", "description"]
+    exclude = ("media",)
     inlines = (MediumInline,)
 
 

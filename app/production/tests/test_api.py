@@ -1,7 +1,7 @@
 import pytest
 
-from diffusion.tests.conftest import *  # noqa
-from utils.tests.conftest import *  # noqa
+from diffusion.tests.conftest import *  # NOQA
+from utils.tests.conftest import *  # NOQA
 from utils.tests.utils import (
     FilterModelRessourceMixin,
     HelpTestForReadOnlyModelRessource,
@@ -20,10 +20,10 @@ def pytest_generate_tests(metafunc):
 class TestStaffTaskRessource(HelpTestForReadOnlyModelRessource):
     resource = api.StaffTaskResource
 
-    fixtures = ['staff_task', 'user']
+    fixtures = ["staff_task", "user"]
 
     expected_list_size = 1
-    expected_fields = ['label']
+    expected_fields = ["label"]
 
 
 @pytest.mark.django_db
@@ -33,69 +33,69 @@ class TestArtworkRessource(
 ):
     resource = api.ArtworkResource
 
-    fixtures = ['installation', 'film', 'award', 'user']
+    fixtures = ["installation", "film", "award", "user"]
 
     expected_list_size = 2
-    expected_fields = ['production_date', 'authors', 'events']
+    expected_fields = ["production_date", "authors", "events"]
 
-    search_field = 'title'
+    search_field = "title"
 
 
 @pytest.mark.django_db
 class TestInstallationResource(HelpTestForReadOnlyModelRessource):
     resource = api.InstallationResource
 
-    fixtures = ['installation', 'user']
+    fixtures = ["installation", "user"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors', 'events', 'genres', 'technical_description']
+    expected_fields = ["production_date", "authors", "events", "genres", "technical_description"]
 
 
 @pytest.mark.django_db
 class TestFilmResource(HelpTestForReadOnlyModelRessource):
     resource = api.FilmResource
 
-    fixtures = ['film', 'user']
+    fixtures = ["film", "user"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors', 'events', 'genres', 'aspect_ratio']
+    expected_fields = ["production_date", "authors", "events", "genres", "aspect_ratio"]
 
 
 @pytest.mark.django_db
 class TestPerformanceResource(HelpTestForReadOnlyModelRessource):
     resource = api.PerformanceResource
 
-    fixtures = ['performance', 'user']
+    fixtures = ["performance", "user"]
 
     expected_list_size = 1
-    expected_fields = ['production_date', 'authors', 'events']
+    expected_fields = ["production_date", "authors", "events"]
 
 
 @pytest.mark.django_db
 class TestEventResource(HelpTestForReadOnlyModelRessource):
     resource = api.EventResource
 
-    fixtures = ['event', 'user']
+    fixtures = ["event", "user"]
 
     expected_list_size = 1
-    expected_fields = ['type', 'place', 'installations', 'films', 'performances']
+    expected_fields = ["type", "place", "installations", "films", "performances"]
 
 
 @pytest.mark.django_db
 class TestItineraryResource(HelpTestForReadOnlyModelRessource):
     resource = api.ItineraryResource
 
-    fixtures = ['itinerary', 'user']
+    fixtures = ["itinerary", "user"]
 
     expected_list_size = 1
-    expected_fields = ['label_fr', 'label_en', 'artworks']
+    expected_fields = ["label_fr", "label_en", "artworks"]
 
 
 @pytest.mark.django_db
 class TestExhibitionResource(TestEventResource):
     resource = api.ExhibitionResource
 
-    fixtures = ['exhibition', 'user']
+    fixtures = ["exhibition", "user"]
 
     expected_list_size = 1
-    expected_fields = ['type', 'place', 'installations', 'films', 'performances', 'itineraries']
+    expected_fields = ["type", "place", "installations", "films", "performances", "itineraries"]

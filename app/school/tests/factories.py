@@ -1,5 +1,4 @@
 import factory
-
 from django.utils import timezone
 
 from people.tests.factories import ArtistFactory, OrganizationFactory
@@ -75,9 +74,7 @@ class StudentApplicationSetupFactory(factory.django.DjangoModelFactory):
 
     name = factory.Faker("name")
     promotion = factory.SubFactory(PromotionFactory)
-    candidature_date_start = factory.Faker(
-        "date_time_this_year", before_now=True, after_now=False, tzinfo=timezone.utc
-    )
+    candidature_date_start = factory.Faker("date_time_this_year", before_now=True, after_now=False, tzinfo=timezone.utc)
     candidature_date_end = factory.Faker("date_time_this_year", before_now=False, after_now=True, tzinfo=timezone.utc)
     date_of_birth_max = factory.Faker("date_of_birth", minimum_age=15, tzinfo=timezone.utc)
     interviews_start_date = factory.SelfAttribute("candidature_date_end")

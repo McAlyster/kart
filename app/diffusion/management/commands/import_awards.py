@@ -1,13 +1,14 @@
+import pandas as pd
 from django.core.management.base import BaseCommand
+
 from ._import_awards.tools import (
+    associateEventsPlaces,
+    compareSummaries,
+    createAwards,
     createEvents,
     createPlaces,
-    associateEventsPlaces,
-    createAwards,
     summary,
-    compareSummaries
 )
-import pandas as pd
 
 
 class Command(BaseCommand):
@@ -16,9 +17,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         # Add csv file argument
-        parser.add_argument(
-            "--csvfile", type=str, default="", help="an awards csv file"
-        )
+        parser.add_argument("--csvfile", type=str, default="", help="an awards csv file")
 
     def handle(self, *args, **options):
 

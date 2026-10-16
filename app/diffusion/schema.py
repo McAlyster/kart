@@ -1,13 +1,14 @@
-from graphene_django import DjangoObjectType
-from .models import Organization, Diffusion, Place, Award, MetaAward
 import graphene
+from graphene_django import DjangoObjectType
+
+from .models import Award, Diffusion, MetaAward, Organization, Place
 
 
 class OrganizationType(DjangoObjectType):
     class Meta:
         model = Organization
 
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
     places = graphene.List("diffusion.schema.PlaceType")
 
     def resolve_places(self, info):
@@ -18,21 +19,21 @@ class DiffusionType(DjangoObjectType):
     class Meta:
         model = Diffusion
 
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
 
 class AwardType(DjangoObjectType):
     class Meta:
         model = Award
 
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
 
 class MetaAwardType(DjangoObjectType):
     class Meta:
         model = MetaAward
 
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
 
 class PlaceType(DjangoObjectType):
@@ -41,7 +42,6 @@ class PlaceType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-
     organization = graphene.Field(OrganizationType, id=graphene.ID(required=True))
     organizations = graphene.List(OrganizationType)
 
@@ -70,7 +70,7 @@ class Query(graphene.ObjectType):
         return Organization.objects.all()
 
     def resolve_organization(root, info, **kwargs):
-        id = kwargs.get('id', None)
+        id = kwargs.get("id", None)
         return Organization.objects.get(pk=id)
 
     def resolve_diffusions(
@@ -83,7 +83,7 @@ class Query(graphene.ObjectType):
         artworkArtistNameStartWith=None,
         orderBy=None,
         limit=None,
-        **kwargs
+        **kwargs,
     ):
 
         diffusion = Diffusion.objects.all()
@@ -133,11 +133,11 @@ class Query(graphene.ObjectType):
         return diffusion
 
     def resolve_diffusion(root, info, **kwargs):
-        id = kwargs.get('id', None)
+        id = kwargs.get("id", None)
         return Diffusion.objects.get(pk=id)
 
     def resolve_places(root, info, **kwargs):
-        placeStartWith = kwargs.get('placeStartWith')
+        placeStartWith = kwargs.get("placeStartWith")
         if placeStartWith:
             return (
                 Place.objects.filter(
@@ -156,34 +156,34 @@ class Query(graphene.ObjectType):
         return Place.objects.all()
 
     def resolve_place(root, info, **kwargs):
-        id = kwargs.get('id', None)
+        id = kwargs.get("id", None)
         return Place.objects.get(pk=id)
 
     def resolve_awards(root, info, **kwargs):
         awards = Award.objects.all().order_by("-date__year")
         # year
-        year = kwargs.get('year')
+        year = kwargs.get("year")
         if year:
             awards = awards.filter(date__year=year)
         # search by name
-        name = kwargs.get('name')
+        name = kwargs.get("name")
         if name:
             awards = awards.filter(meta_award__label__icontains=name) | awards.filter(
                 meta_award__event__title__icontains=name
             )
         # limit
-        limit = kwargs.get('limit')
+        limit = kwargs.get("limit")
         if limit:
             awards = awards[:limit]
 
         return awards
 
     def resolve_award(root, info, **kwargs):
-        id = kwargs.get('id', None)
+        id = kwargs.get("id", None)
         return Award.objects.get(pk=id)
 
     def resolve_meta_awards(root, info, **kwargs):
-        name = kwargs.get('name')
+        name = kwargs.get("name")
         if name:
             return MetaAward.objects.filter(label__icontains=name) | MetaAward.objects.filter(
                 event__title__icontains=name
@@ -191,5 +191,5 @@ class Query(graphene.ObjectType):
         return MetaAward.objects.all()
 
     def resolve_meta_award(root, info, **kwargs):
-        id = kwargs.get('id', None)
+        id = kwargs.get("id", None)
         return MetaAward.objects.get(pk=id)

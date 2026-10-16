@@ -1,20 +1,18 @@
-# -*- encoding: utf-8 -*-
 from django.contrib import admin
 from django.db import models
 from django.db.models import Min
-
 from pagedown.widgets import AdminPagedownWidget
 
 from .models import (
+    AdminStudentApplication,
+    PhdStudent,
     Promotion,
+    ScienceStudent,
     Student,
     StudentApplication,
     StudentApplicationSetup,
-    AdminStudentApplication,
-    PhdStudent,
-    ScienceStudent,
-    VisitingStudent,
     TeachingArtist,
+    VisitingStudent,
 )
 
 
@@ -26,8 +24,8 @@ class StudentAdmin(admin.ModelAdmin):
         models.TextField: {"widget": AdminPagedownWidget},
     }
 
-    raw_id_fields = ('artist', 'user', 'promotion')
-    autocomplete_lookup_fields = {'fk': ['artist', 'user', 'promotion']}
+    raw_id_fields = ("artist", "user", "promotion")
+    autocomplete_lookup_fields = {"fk": ["artist", "user", "promotion"]}
 
 
 class StudentApplicationAdmin(admin.ModelAdmin):
@@ -51,7 +49,6 @@ class StudentApplicationAdmin(admin.ModelAdmin):
 
 
 class StudentApplicationSetupAdmin(admin.ModelAdmin):
-
     def _get_name(self, obj):
         return obj.artist.user.get_full_name()
 
@@ -73,28 +70,28 @@ class TeachingArtistAdmin(admin.ModelAdmin):
         "years",
     )
     # filter_vertical = ("artworks_supervision",)
-    raw_id_fields = ('artist', 'pictures_gallery', 'artworks_supervision')
+    raw_id_fields = ("artist", "pictures_gallery", "artworks_supervision")
     autocomplete_lookup_fields = {
-        'fk': [
-            'artist',
-            'pictures_gallery',
+        "fk": [
+            "artist",
+            "pictures_gallery",
         ],
-        'm2m': [
-            'artworks_supervision',
+        "m2m": [
+            "artworks_supervision",
         ],
     }
 
     def years(self, obj):
         # return the years of the supervision in a string separated by comma
         # get years of artwork supervisions
-        years = obj.artworks_supervision.values_list('production_date__year', flat=True).distinct()
+        years = obj.artworks_supervision.values_list("production_date__year", flat=True).distinct()
         # avoid duplicates and sort years
         years = sorted(set(years))
         return ", ".join(str(year - 1) + " - " + str(year) for year in years)
 
-    years.short_description = 'Années de supervision'
+    years.short_description = "Années de supervision"
     # sort by years of artwork supervisions
-    years.admin_order_field = 'min_supervision_year'
+    years.admin_order_field = "min_supervision_year"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -145,10 +142,10 @@ class PhdStudentAdmin(admin.ModelAdmin):
         "defended",
     )
     ordering = ("student",)
-    raw_id_fields = ('directors',)
+    raw_id_fields = ("directors",)
     autocomplete_lookup_fields = {
-        'm2m': [
-            'directors',
+        "m2m": [
+            "directors",
         ]
     }
 
@@ -164,18 +161,18 @@ class PhdStudentAdmin(admin.ModelAdmin):
 
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
-    search_fields = ['starting_year', 'name']
+    search_fields = ["starting_year", "name"]
     list_display = (
-        'years',
-        'name',
+        "years",
+        "name",
     )
     list_display_links = ["name"]
-    ordering = ('starting_year',)
+    ordering = ("starting_year",)
 
     def years(self, obj):
-        return "{0} - {1}".format(obj.starting_year, obj.ending_year)
+        return f"{obj.starting_year} - {obj.ending_year}"
 
-    years.short_description = 'Années'
+    years.short_description = "Années"
 
 
 @admin.register(VisitingStudent)

@@ -1,6 +1,6 @@
 import pytest
 
-from utils.tests.conftest import *  # noqa
+from utils.tests.conftest import *  # NOQA
 from utils.tests.utils import (
     HelpTestForReadOnlyModelRessource,
     parametrize_user_roles,
@@ -18,10 +18,10 @@ def pytest_generate_tests(metafunc):
 class TestPromotionRessource(HelpTestForReadOnlyModelRessource):
     resource = api.PromotionResource
 
-    fixtures = ['user', 'promotion']
+    fixtures = ["user", "promotion"]
 
     expected_list_size = 1
-    expected_fields = ['starting_year', 'ending_year']
+    expected_fields = ["starting_year", "ending_year"]
 
     def target(self):
         return self.promotion
@@ -31,15 +31,15 @@ class TestPromotionRessource(HelpTestForReadOnlyModelRessource):
 class TestStudentRessource(HelpTestForReadOnlyModelRessource):
     resource = api.StudentResource
 
-    fixtures = ['student']
+    fixtures = ["student"]
 
     expected_list_size = 1
-    expected_fields = ['number', 'promotion', 'artist']
+    expected_fields = ["number", "promotion", "artist"]
 
-    post_fields = ['user', 'artist']
-    hyperlinked_fields = {'user': 'people/user', 'artist': 'people/artist'}
+    post_fields = ["user", "artist"]
+    hyperlinked_fields = {"user": "people/user", "artist": "people/artist"}
 
-    search_field = 'artist'
+    search_field = "artist"
 
     def target(self):
         return self.student
@@ -50,11 +50,11 @@ class TestStudentRessource(HelpTestForReadOnlyModelRessource):
     def test_user__last_name__istartswith_search(self, client, user_role, auth_method, request):
         self.setup_fixtures(request)
 
-        data = {'user__last_name__istartswith': self.student.user.last_name[0]}
+        data = {"user__last_name__istartswith": self.student.user.last_name[0]}
         kwargs = self.prepare_request(client, user_role, auth_method, data)
         response = client.get(self.base_url, **kwargs)
 
-        if self.thats_all_folk('list', response, user_role):
+        if self.thats_all_folk("list", response, user_role):
             return
 
         answer = response.json()
@@ -68,18 +68,18 @@ class TestStudentRessource(HelpTestForReadOnlyModelRessource):
 class TestStudentApplicationRessource(HelpTestForReadOnlyModelRessource):
     resource = api.StudentApplicationResource
 
-    fixtures = ['student_application']
+    fixtures = ["student_application"]
 
     expected_list_size = 0
     expected_fields = []
 
     methods_behavior = {
-        'list': 200,
-        'get': 401,
-        'patch': 401,
-        'put': 401,
-        'post': 401,
-        'delete': 401,
+        "list": 200,
+        "get": 401,
+        "patch": 401,
+        "put": 401,
+        "post": 401,
+        "delete": 401,
     }
 
     def target(self):

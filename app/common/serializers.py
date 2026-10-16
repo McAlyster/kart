@@ -6,7 +6,7 @@ from .models import BTBeacon, Website
 class BTBeaconSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = BTBeacon
-        fields = '__all__'
+        fields = "__all__"
 
 
 class WebsiteSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,5 +20,6 @@ class WebsiteSerializer(serializers.HyperlinkedModelSerializer):
             "title_en",
             "language",
         )
+
     url = serializers.HyperlinkedIdentityField(view_name="website-detail")
-    link = serializers.URLField(source='url')
+    link = serializers.URLField(source="url")

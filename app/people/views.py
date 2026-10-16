@@ -1,27 +1,24 @@
 from datetime import datetime
-from django.conf import settings
 
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import viewsets, permissions, status, filters, pagination
-from rest_framework.response import Response
+from rest_framework import filters, pagination, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 
 from school.models import StudentApplication
 
-from .models import Artist, User, FresnoyProfile, Staff, Organization
+from .models import Artist, FresnoyProfile, Organization, Staff, User
 from .serializers import (
     ArtistSerializer,
-    UserSerializer,
-    PublicUserSerializer,
     FresnoyProfileSerializer,
-    StaffSerializer,
     OrganizationSerializer,
+    PublicUserSerializer,
+    StaffSerializer,
+    UserSerializer,
 )
-
 
 # django-guardian anonymous user
 try:
@@ -49,7 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # serializer_class = UserSerializer
     permission_classes = (IsOwnerOrReadOnly,)
     filter_backends = (filters.SearchFilter, DjangoFilterBackend)
-    filterset_fields = ('artist__student_application__campaign__is_current_setup',)
+    filterset_fields = ("artist__student_application__campaign__is_current_setup",)
     search_fields = ("=username", "=email")
 
     def get_serializer_class(self, *args, **kwargs):
@@ -78,9 +75,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 # compare date
                 if update_birthdate < min_birthdate:
                     # throw error
-                    errors = {
-                        "birthdate": ["{} : date of birth max reached ({})".format(update_birthdate, min_birthdate)]
-                    }
+                    errors = {"birthdate": [f"{update_birthdate} : date of birth max reached ({min_birthdate})"]}
                     return Response(errors, status=status.HTTP_403_FORBIDDEN)
 
         # basic update
@@ -126,7 +121,7 @@ def send_custom_emails(request, format=None):
         # get values
         for item in items_need_list:
             if not request.POST.get(item):
-                errors = {"error": "[{}:] var not found".format(item.upper())}
+                errors = {"error": f"[{item.upper()}:] var not found"}
                 return Response(errors, status=status.HTTP_406_NOT_ACCEPTABLE)
             # set item
             email[item] = request.POST.get(item)
@@ -135,7 +130,7 @@ def send_custom_emails(request, format=None):
             email[item] = email[item].split(";")
             email_in_db = verif_user_by_property(email[item], "email")
             if email_in_db is not True:
-                errors = {"error": "{} e-mail {} inconnu du system".format(item, email_in_db)}
+                errors = {"error": f"{item} e-mail {email_in_db} inconnu du system"}
                 return Response(errors, status=status.HTTP_403_FORBIDDEN)
         # transform messages with templates
         email["message_html"] = "<br />".join(email["message"].split("\n"))
@@ -156,7 +151,7 @@ def send_custom_emails(request, format=None):
             # FIXME: dead code: afaik msg.send() will except on errors
             return Response({"error": "Email(s) not sent"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
     else:
-        errors = {"error": "User : {} can't send email".format(user)}
+        errors = {"error": f"User : {user} can't send email"}
         return Response(errors, status=status.HTTP_401_UNAUTHORIZED)
 
 

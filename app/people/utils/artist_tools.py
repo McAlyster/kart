@@ -1,30 +1,29 @@
-from django.contrib.postgres.search import TrigramSimilarity
+import logging
 import os
+
+import pytz
 import unidecode
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import CharField
 
 # Load user model
 from django.db.models.functions import Lower
-from django.db.models import CharField
 
 # Import our models
 from people.models import Artist
-import logging
-import pytz
-
 from people.utils.user_tools import getUserByNames
 from utils.kart_tools import dist2
 
-
 # Logging
-logger = logging.getLogger('artist_utils')
+logger = logging.getLogger("artist_utils")
 logger.setLevel(logging.DEBUG)
 #####
 
 # Timezone
-tz = pytz.timezone('Europe/Paris')
+tz = pytz.timezone("Europe/Paris")
 
 # Clear terminal
-os.system('clear')
+os.system("clear")
 
 search_cache = {}
 
@@ -76,7 +75,7 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
     # fullname = f"{firstname} {lastname}"
 
     # Cache
-    fullkey = f'{firstname} {lastname} {pseudo}'
+    fullkey = f"{firstname} {lastname} {pseudo}"
     try:
         # logger.warning("cache", search_cache[fullkey])
         return search_cache[fullkey] if listing else search_cache[fullkey][0]
@@ -86,37 +85,35 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
     # SEARCH WITH LASTNAME then FIRSTNAME
     users = getUserByNames(firstname, lastname, listing)
     # no artist user found
-    if users and not listing and users['user'] and users['user'].artist_set.count() == 0:
+    if users and not listing and users["user"] and users["user"].artist_set.count() == 0:
         users_listed = getUserByNames(firstname, lastname, True)
         # take one artist in the list of results
-        users = next((u for u in users_listed if u['user'].artist_set.count() > 0), None)
-    #
-    if users and not listing and users['user'] and users['user'].artist_set.count() > 0:
+        users = next((u for u in users_listed if u["user"].artist_set.count() > 0), None)
+    if users and not listing and users["user"] and users["user"].artist_set.count() > 0:
         # only one
-        users['artist'] = users['user'].artist_set.first()
+        users["artist"] = users["user"].artist_set.first()
         art_l.append(users)
     if users and listing and len(users) > 0:
         # add ArtistObj in array
         for k, u in enumerate(users):
-            if u['user'] and u['user'].artist_set:
-                u['artist'] = u['user'].artist_set.first()
+            if u["user"] and u["user"].artist_set:
+                u["artist"] = u["user"].artist_set.first()
 
                 art_l.append(u)
-
 
     # sometimes nobody know that an name is a pseudo
     # if not pseudo and not art_l:
     if not pseudo:
-        pseudo = f'{firstname} {lastname}'
-    
+        pseudo = f"{firstname} {lastname}"
+
     # PSEUDO
     if pseudo:
         guessArtNN = (
             Artist.objects.annotate(
-                similarity_pseudo=TrigramSimilarity('nickname__unaccent__lower', pseudo),
+                similarity_pseudo=TrigramSimilarity("nickname__unaccent__lower", pseudo),
             )
             .filter(similarity_pseudo__gt=0.3)
-            .order_by('-similarity_pseudo')
+            .order_by("-similarity_pseudo")
         )
         print(pseudo, guessArtNN)
 
@@ -132,20 +129,20 @@ def getArtistByNames(firstname="", lastname="", pseudo="", listing=False):  # TO
                     if kart_nickname == pseudo:
                         # store the artist in potential matches with extreme probability (2)
                         # and continue with next candidate
-                        art_l.append({"artist": artist_kart, 'dist': 2})
+                        art_l.append({"artist": artist_kart, "dist": 2})
                         continue
                     else:
-                        art_l.append({"artist": artist_kart, 'dist': dist_full})
+                        art_l.append({"artist": artist_kart, "dist": dist_full})
                 else:
                     logger.warning(
                         f"""Pseudo globally match {pseudo} but not in pseudo correspondences:
                     Kart pseudo: {kart_nickname} : {pseudo}"""
                     )
-                    art_l.append({"artist": artist_kart, 'dist': dist_full})
+                    art_l.append({"artist": artist_kart, "dist": dist_full})
 
     if art_l:
         # Take the highest distance score
-        art_l.sort(key=lambda i: i['dist'], reverse=True)
+        art_l.sort(key=lambda i: i["dist"], reverse=True)
 
         # Return all results if listing is true, return the max otherwise
         if listing:

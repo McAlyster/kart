@@ -1,5 +1,4 @@
 import factory
-
 from django.utils import timezone
 
 from production.tests.factories import ArtworkFactory, EventFactory, StaffTaskFactory, TagFactory
@@ -13,8 +12,8 @@ class MetaAwardFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.MetaAward
 
-    label = factory.Faker('sentence')
-    description = factory.Faker('paragraph')
+    label = factory.Faker("sentence")
+    description = factory.Faker("paragraph")
     type = factory.fuzzy.FuzzyChoice(models.MetaAward.TYPE_CHOICES, getter=first)
     event = factory.SubFactory(EventFactory, main_event=True)
     task = factory.SubFactory(StaffTaskFactory)
@@ -26,7 +25,7 @@ class AwardFactory(factory.django.DjangoModelFactory):
 
     meta_award = factory.SubFactory(MetaAwardFactory)
     event = factory.SubFactory(EventFactory)
-    date = factory.Faker('date_time_this_year', tzinfo=timezone.utc)
+    date = factory.Faker("date_time_this_year", tzinfo=timezone.utc)
 
     @factory.post_generation
     def artwork(self, create, extracted, **kwargs):

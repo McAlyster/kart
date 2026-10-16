@@ -1,21 +1,20 @@
-import json
 import datetime
+import json
 
-# import time
-from django.utils import timezone
-
-from django.contrib.auth.models import User, Group, Permission
-
-from rest_framework.test import APIClient
-from rest_framework import status
-
+from django.contrib.auth.models import Group, Permission, User
 from django.test import TestCase
 from django.urls import reverse
 
+# import time
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APIClient
+
 from people.models import FresnoyProfile
 from people.tests.factories import ArtistFactory
-from school.tests.factories import AdminStudentApplicationFactory, StudentApplicationFactory
-from school.models import StudentApplication, StudentApplicationSetup, Promotion
+from school.models import Promotion, StudentApplication, StudentApplicationSetup
+from school.tests.factories import AdminStudentApplicationFactory, StudentApplicationFactory, StudentFactory
+from utils.tests.factories import UserFactory
 
 
 class TestApplicationEndPoint(TestCase):
@@ -249,7 +248,7 @@ class TestApplicationSetupEndPoint(TestCase):
 
     def _get_current_campaign(self):
         url = reverse("studentapplicationsetup-list")
-        return self.client.get("{}?is_current_setup=true".format(url))
+        return self.client.get(f"{url}?is_current_setup=true")
 
     def test_list(self):
         """
@@ -352,3 +351,59 @@ class TestAdminApplicationEndPoint(TestCase):
         )
         response = self.client_auth.put(adminstudentapplication_url, data={"selected": "true"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class TestStudentEndPoint(TestCase):
+    """
+    Tests concernants le endpoint des Student
+    """
+
+    fixtures = ["people/fixtures/groups.json"]
+
+    def setUp(self):
+        # set up a student
+        self.student = StudentFactory(diploma_mention="Mention", diploma_file="path/to/diploma.pdf")
+        # staff user
+        self.user_staff = UserFactory(is_staff=True)
+
+        # save generate token
+        self.token = ""
+        self.client_auth = APIClient()
+
+    def tearDown(self):
+        pass
+
+    def _get_list(self):
+        url = reverse("student-list")
+        return self.client.get(url)
+
+    def _get_list_auth(self):
+        url = reverse("student-list")
+        return self.client_auth.get(url)
+
+    def test_staff_data_auth(self):
+        """
+        Test list of students with staff authentification
+        """
+        self.client_auth.force_authenticate(user=self.user_staff)
+        response = self._get_list_auth()
+        students = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(students)
+
+        student = students[0]
+        self.assertEqual(student["diploma_mention"], "Mention")
+        self.assertIn("path/to/diploma.pdf", student["diploma_file"])
+
+    def test_staff_data_no_auth(self):
+        """
+        Test list of students without staff authentification
+        """
+        response = self._get_list()
+        students = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(students)
+
+        student = students[0]
+        self.assertEqual(student["diploma_mention"], "Mention")
+        self.assertEqual(student["diploma_file"], None)
+        

@@ -1,11 +1,10 @@
-# -*- encoding: utf-8 -*-
 import sys
 
 from django.core.management.base import BaseCommand
+from geopy.exc import GeocoderServiceError, GeocoderTimedOut
 from geopy.geocoders import Nominatim
 from geopy.location import Location
 from geopy.point import Point
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 
 from diffusion.models import Place
 
@@ -19,11 +18,11 @@ def arg_to_unicode(bytestring):
 
 
 class Command(BaseCommand):
-    help = 'Quickly create Place like: tourcoing france'
+    help = "Quickly create Place like: tourcoing france"
 
     def add_arguments(self, parser):
-        parser.add_argument('city', type=arg_to_unicode, help='City')
-        parser.add_argument('country', type=arg_to_unicode, help='Country')
+        parser.add_argument("city", type=arg_to_unicode, help="City")
+        parser.add_argument("country", type=arg_to_unicode, help="Country")
 
     def get_location(self, address):
         location = None
@@ -41,8 +40,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        city = options['city']
-        country = options['country']
+        city = options["city"]
+        country = options["country"]
 
         try:
             # get or create duplicplaces (why?)
@@ -50,20 +49,21 @@ class Command(BaseCommand):
 
         except Exception:
             # Place doesnt'exist
-            address = u"{0} {1}".format(city, country)
+            address = f"{city} {country}"
             location = self.get_location(address)
             if location is None:
                 location = self.get_location(city)
 
-            country_code = location.raw['address']['country_code'] if location.raw else ""
+            country_code = location.raw["address"]["country_code"] if location.raw else ""
 
-            place = Place(name=city,
-                          description=city,
-                          address=location.address,
-                          latitude=location.latitude,
-                          longitude=location.longitude,
-                          city=city,
-                          country=country_code,
-                          )
+            place = Place(
+                name=city,
+                description=city,
+                address=location.address,
+                latitude=location.latitude,
+                longitude=location.longitude,
+                city=city,
+                country=country_code,
+            )
             place.save()
             print("Place created : " + place.__str__())

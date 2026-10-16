@@ -1,29 +1,21 @@
-from django.db import models
-from django.db.models import Q
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+from django.db import models
+from django.db.models import Q
 from django_countries.fields import CountryField
 from languages.fields import LanguageField
 
+from common.models import Website
 from common.utils import make_filepath
 
-from common.models import Website
+from .choices import GENDER_CHOICES
 
 
 class FresnoyProfile(models.Model):
     class Meta:
-        ordering = ['user__first_name']
+        ordering = ["user__first_name"]
 
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('T', 'Transgender'),
-        ('O', 'Other'),
-    )
-
-    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
 
     preferred_first_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Prénom d'usage")
     preferred_last_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Nom d'usage")
@@ -63,7 +55,7 @@ class FresnoyProfile(models.Model):
     cursus = models.TextField(blank=True)
 
     def __str__(self):
-        return 'Profile {}'.format(self.user)
+        return f"Profile {self.user}"
 
     @property
     def is_artist(self):
@@ -73,12 +65,12 @@ class FresnoyProfile(models.Model):
         return self.user.staff_set.count() > 0
 
     def is_student(self):
-        return hasattr(self.user, 'student')
+        return hasattr(self.user, "student")
 
 
 class Artist(models.Model):
     class Meta:
-        ordering = ['user__last_name']
+        ordering = ["user__last_name"]
         # set user / nickname constraints
         constraints = [
             models.CheckConstraint(
@@ -96,7 +88,7 @@ class Artist(models.Model):
     # Artist join a collective
     # symmetrical=False : beacause related_name has no effect on ManyToManyField with a symmetrical relationship
     collectives = models.ManyToManyField(
-        'self', blank=True, symmetrical=False, related_name='members', help_text="Member of collectives"
+        "self", blank=True, symmetrical=False, related_name="members", help_text="Member of collectives"
     )
 
     nickname = models.CharField(max_length=255, blank=True)
@@ -125,13 +117,13 @@ class Artist(models.Model):
 
     def __str__(self):
         if self.nickname != "":
-            return '{}'.format(self.nickname)
+            return f"{self.nickname}"
         if self.user:
-            if hasattr(self.user, 'profile') and (
+            if hasattr(self.user, "profile") and (
                 self.user.profile.preferred_first_name or self.user.profile.preferred_last_name
             ):
-                return '{} {}'.format(self.user.profile.preferred_first_name, self.user.profile.preferred_last_name)
-            return '{} {}'.format(self.user.first_name, self.user.last_name)
+                return f"{self.user.profile.preferred_first_name} {self.user.profile.preferred_last_name}"
+            return f"{self.user.first_name} {self.user.last_name}"
         return "???"
 
 
@@ -145,17 +137,17 @@ class Staff(models.Model):
 
     def __str__(self):
         # display artist name if any
-        if self.user.artist_set.count() > 0 and self.user.artist_set.all().first().nickname != '':
-            return "{}".format(self.user.artist_set.all().first().__str__())
+        if self.user.artist_set.count() > 0 and self.user.artist_set.all().first().nickname != "":
+            return f"{self.user.artist_set.all().first().__str__()}"
         # preferred name
-        if hasattr(self.user, 'profile') and (
+        if hasattr(self.user, "profile") and (
             self.user.profile.preferred_first_name or self.user.profile.preferred_last_name
         ):
-            return '{} {}'.format(self.user.profile.preferred_first_name, self.user.profile.preferred_last_name)
-        return '{0}'.format(self.user)
+            return f"{self.user.profile.preferred_first_name} {self.user.profile.preferred_last_name}"
+        return f"{self.user}"
 
     class Meta:
-        ordering = ['user__first_name']
+        ordering = ["user__first_name"]
 
 
 class Organization(models.Model):

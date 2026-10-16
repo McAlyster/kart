@@ -1,12 +1,14 @@
-import os
 import datetime
+import os
 import secrets
+
 from django.template.defaultfilters import slugify
+
 from kart import settings
 
 
-def make_random_password(length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
-    return ''.join(secrets.choice(allowed_chars) for i in range(length))
+def make_random_password(length=10, allowed_chars="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"):
+    return "".join(secrets.choice(allowed_chars) for i in range(length))
 
 
 def make_filepath(instance, filename, prefix_folder=None):
@@ -15,7 +17,7 @@ def make_filepath(instance, filename, prefix_folder=None):
     # Date directory
     _t = datetime.datetime.today()
     # slug filename
-    default_folder = "{}/{}".format(_t.strftime('%Y'), _t.strftime('%m'))
+    default_folder = "{}/{}".format(_t.strftime("%Y"), _t.strftime("%m"))
     # get file name and extension (with '.')
     file_name, file_extension = os.path.splitext(filename)
     # truncate long filename without accent and such
@@ -23,9 +25,7 @@ def make_filepath(instance, filename, prefix_folder=None):
     # making unique file in path
     carry_on = True
     while carry_on:
-        new_filename = "{name}_{random}{extension}".format(
-            name=file_name, random=make_random_password(3), extension=file_extension
-        )
+        new_filename = f"{file_name}_{make_random_password(3)}{file_extension}"
         path = "{app}/{model}/{date}/{name}".format(
             app=instance.__class__._meta.app_label,
             model=instance.__class__.__name__.lower(),

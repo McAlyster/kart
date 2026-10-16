@@ -1,25 +1,24 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 from django.http import HttpRequest
+from django.utils import timezone
 
 from people.models import Artist
-from django.contrib.auth.models import User
-
+from school.models import AdminStudentApplication, StudentApplication, StudentApplicationSetup
 from school.utils import (
-    send_activation_email,
     send_account_information_email,
-    send_candidature_completed_email_to_user,
-    send_candidature_completed_email_to_admin,
+    send_activation_email,
     send_candidature_complete_email_to_candidat,
+    send_candidature_completed_email_to_admin,
+    send_candidature_completed_email_to_user,
+    send_candidature_not_finalized_to_candidats,
     send_interview_selection_email_to_candidat,
     send_interview_selection_on_waitlist_email_to_candidat,
+    send_not_selected_candidature_email_to_candidat,
     send_selected_candidature_email_to_candidat,
     send_selected_on_waitlist_candidature_email_to_candidat,
-    send_not_selected_candidature_email_to_candidat,
-    send_candidature_not_finalized_to_candidats,
 )
-from school.models import StudentApplication, AdminStudentApplication, StudentApplicationSetup
 
 
 def getTemporaryAdminApplication(email):

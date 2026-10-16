@@ -1,16 +1,14 @@
 import json
 
 from django.contrib.auth.models import User
-
 from django.test import TestCase
 from django.urls import reverse
-
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from people.models import FresnoyProfile
-
 from utils.tests.factories import UserFactory
+
 from .factories import ArtistFactory, FresnoyProfileFactory
 
 
@@ -29,7 +27,7 @@ class UserEndPoint(TestCase):
         pass
 
     def _get_list(self):
-        url = reverse('user-list')
+        url = reverse("user-list")
         return self.client.get(url)
 
     def test_list(self):
@@ -43,17 +41,17 @@ class UserEndPoint(TestCase):
         """
         Test user register link
         """
-        url = reverse('rest_register')
+        url = reverse("rest_register")
         user_registration = {
-            'username': 'newuser',
-            'email': 'newuser@ac.art',
-            'password1': 'zc7h88',
-            'password2': 'zc7h88',
+            "username": "newuser",
+            "email": "newuser@ac.art",
+            "password1": "zc7h88",
+            "password2": "zc7h88",
         }
         response = self.client.post(url, user_registration)
         self.assertEqual(response.status_code, 201)
         user_on_base = User.objects.get(
-            email=user_registration.get('email'), username=user_registration.get('username')
+            email=user_registration.get("email"), username=user_registration.get("username")
         )
         assert user_on_base.pk > 0
 
@@ -61,8 +59,8 @@ class UserEndPoint(TestCase):
         """
         Test user exist endpoint
         """
-        url = reverse('user-list')
-        search = {'user': 'awarhol'}
+        url = reverse("user-list")
+        search = {"user": "awarhol"}
         response = self.client.get(url, search)
         self.assertEqual(response.status_code, 200)
 
@@ -73,15 +71,15 @@ class UserEndPoint(TestCase):
         client_auth = APIClient()
         client_auth.force_authenticate(user=self.user)
 
-        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        url = reverse("user-detail", kwargs={"pk": self.user.pk})
         # send a part of info - must have profile on patch
-        info = {'first_name': "Andy", "profile": {"id": self.user.profile.id}}
-        response = client_auth.patch(url, data=info, format='json')
+        info = {"first_name": "Andy", "profile": {"id": self.user.profile.id}}
+        response = client_auth.patch(url, data=info, format="json")
         # update ok
         self.assertEqual(response.status_code, 200)
         # info maj
         response = client_auth.get(url)
-        self.assertEqual(response.data['first_name'], "Andy")
+        self.assertEqual(response.data["first_name"], "Andy")
 
     def test_put_user_infos(self):
         """
@@ -94,18 +92,18 @@ class UserEndPoint(TestCase):
         self.user.first_name = "Mickey"
         self.user.save()
 
-        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        url = reverse("user-detail", kwargs={"pk": self.user.pk})
         # PUT : must send All info
         user_data = client_auth.get(url).data
         # set new name
-        user_data['first_name'] = "Andy"
+        user_data["first_name"] = "Andy"
         # Put request
-        response = client_auth.put(url, data=user_data, format='json')
+        response = client_auth.put(url, data=user_data, format="json")
         # test update ok
         self.assertEqual(response.status_code, 200)
         response = client_auth.get(url)
         # test info maj
-        self.assertEqual(response.data['first_name'], "Andy")
+        self.assertEqual(response.data["first_name"], "Andy")
 
     def test_put_anotheruser_infos(self):
         """
@@ -119,18 +117,18 @@ class UserEndPoint(TestCase):
         self.user.first_name = "Mickey"
         self.user.save()
         # get details from another user
-        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        url = reverse("user-detail", kwargs={"pk": self.user.pk})
         # PUT : must send All info
         user_data = client_auth.get(url).data
         # set new name
-        user_data['first_name'] = "Andy"
+        user_data["first_name"] = "Andy"
         # Put request
-        response = client_auth.put(url, data=user_data, format='json')
+        response = client_auth.put(url, data=user_data, format="json")
         # test update
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         response = client_auth.get(url)
         # test info maj
-        self.assertEqual(response.data['first_name'], "Mickey")
+        self.assertEqual(response.data["first_name"], "Mickey")
 
     def test_staff_put_anotheruser_infos(self):
         """
@@ -145,18 +143,18 @@ class UserEndPoint(TestCase):
         self.user.first_name = "Mickey"
         self.user.save()
         # get details from another user
-        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        url = reverse("user-detail", kwargs={"pk": self.user.pk})
         # PUT : must send All info
         user_data = client_auth.get(url).data
         # set new name
-        user_data['first_name'] = "Andy"
+        user_data["first_name"] = "Andy"
         # Put request
-        response = client_auth.put(url, data=user_data, format='json')
+        response = client_auth.put(url, data=user_data, format="json")
         # test update : OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = client_auth.get(url)
         # test info maj
-        self.assertEqual(response.data['first_name'], "Andy")
+        self.assertEqual(response.data["first_name"], "Andy")
 
 
 class ArtistEndPoint(TestCase):
@@ -175,7 +173,7 @@ class ArtistEndPoint(TestCase):
         """
         Test list of artist
         """
-        url = reverse('artist-list')
+        url = reverse("artist-list")
         self.response = self.client.get(url)
         self.assertEqual(self.response.status_code, 200)
 
@@ -183,8 +181,8 @@ class ArtistEndPoint(TestCase):
         """
         Test filter by Nationality for artist endpoint
         """
-        url = reverse('artist-list')
-        filter = {'user__profile__nationality__icontains': 'fr'}
+        url = reverse("artist-list")
+        filter = {"user__profile__nationality__icontains": "fr"}
         self.response = self.client.get(url, filter)
         # load json
         artists = json.loads(self.response.content)
@@ -194,8 +192,8 @@ class ArtistEndPoint(TestCase):
         """
         Test filter by Artwork for artist endpoint
         """
-        url = reverse('artist-list')
-        filter = {'artworks__isnull': False}
+        url = reverse("artist-list")
+        filter = {"artworks__isnull": False}
         self.response = self.client.get(url, filter)
         # load json
         artists = json.loads(self.response.content)
@@ -205,8 +203,8 @@ class ArtistEndPoint(TestCase):
         """
         Test filter by student for artist endpoint
         """
-        url = reverse('artist-list')
-        filter = {'student__isnull': False}
+        url = reverse("artist-list")
+        filter = {"student__isnull": False}
         self.response = self.client.get(url, filter)
         # load json
         artists = json.loads(self.response.content)
@@ -216,8 +214,8 @@ class ArtistEndPoint(TestCase):
         """
         Test filter by student for artist endpoint
         """
-        url = reverse('artist-list')
-        filter = {'teacher__isnull': False}
+        url = reverse("artist-list")
+        filter = {"teacher__isnull": False}
         self.response = self.client.get(url, filter)
         # load json
         artists = json.loads(self.response.content)
@@ -227,14 +225,14 @@ class ArtistEndPoint(TestCase):
         """
         Test filter by student for artist endpoint
         """
-        url = reverse('artist-list')
-        pagination = {'page_size': 20}
+        url = reverse("artist-list")
+        pagination = {"page_size": 20}
         self.response = self.client.get(url, pagination)
         headers = self.response.headers
-        self.assertEqual(headers['count'], '1')
+        self.assertEqual(headers["count"], "1")
 
     def test_list_fields(self):
-        url = reverse('artist-list')
+        url = reverse("artist-list")
         self.response = self.client.get(url)
         # load json
         artists = json.loads(self.response.content)
@@ -259,18 +257,18 @@ class ArtistEndPoint(TestCase):
         self.artist.nickname = ""
         self.artist.save()
 
-        url = reverse('artist-detail', kwargs={'pk': self.artist.pk})
+        url = reverse("artist-detail", kwargs={"pk": self.artist.pk})
         # PUT : must send All info
         artist_data = client_auth.get(url).data
         # set new name
-        artist_data['nickname'] = "JR"
+        artist_data["nickname"] = "JR"
         # Put request
-        response = client_auth.put(url, data=artist_data, format='json')
+        response = client_auth.put(url, data=artist_data, format="json")
         # test update ok
         self.assertEqual(response.status_code, 200)
         response = client_auth.get(url)
         # test info maj
-        self.assertEqual(response.data['nickname'], "JR")
+        self.assertEqual(response.data["nickname"], "JR")
 
     def test_anotheruser_put_artist_infos(self):
         """
@@ -284,15 +282,15 @@ class ArtistEndPoint(TestCase):
         self.artist.nickname = ""
         self.artist.save()
 
-        url = reverse('artist-detail', kwargs={'pk': self.artist.pk})
+        url = reverse("artist-detail", kwargs={"pk": self.artist.pk})
         # PUT : must send All info
         artist_data = client_auth.get(url).data
         # set new name
-        artist_data['nickname'] = "JR"
+        artist_data["nickname"] = "JR"
         # Put request
-        response = client_auth.put(url, data=artist_data, format='json')
+        response = client_auth.put(url, data=artist_data, format="json")
         # test update
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         response = client_auth.get(url)
         # test info maj
-        self.assertEqual(response.data['nickname'], "")
+        self.assertEqual(response.data["nickname"], "")

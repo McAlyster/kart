@@ -1,16 +1,14 @@
+import graphene
 from django.test import TestCase
 
-import graphene
-
 from kart.schema import Query
-
-from people.tests.factories import FresnoyProfileFactory
+from people.tests.factories import FresnoyProfileFactory, StaffFactory
 from school.tests.factories import (
     ArtistFactory,
+    ScienceStudentFactory,
     StudentFactory,
     TeachingArtistFactory,
-    ScienceStudentFactory,
-    VisitingStudentFactory
+    VisitingStudentFactory,
 )
 from utils.tests.factories import UserFactory
 
@@ -30,35 +28,35 @@ class TestGQLQueries(TestCase):
     def test_query_all_artists(self):
         ArtistFactory.create_batch(5)
         # Test the query for all artists
-        query = 'query Artists {\
+        query = "query Artists {\
                     artists {\
                         id\
                         displayName\
                         displayPhoto\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
         self.assertIsNone(result.errors)
         # Check that we have 5 artists in the result
-        self.assertEqual(len(result.data['artists']), 5)
+        self.assertEqual(len(result.data["artists"]), 5)
 
     def test_query_filtering_artists(self):
         artists = ArtistFactory.create_batch(5)
         nickname = artists[0].nickname
 
         # Test the query for all artists
-        query = 'query ArtistsSearch($name: String) {\
+        query = "query ArtistsSearch($name: String) {\
                     artists(name: $name) {\
                         id\
                         displayName\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query, variables={"name": nickname})
         self.assertIsNone(result.errors)
         # Check that we have 1 artists in the result
-        self.assertEqual(len(result.data['artists']), 1)
+        self.assertEqual(len(result.data["artists"]), 1)
 
     def test_query_specific_artist_displayName(self):
         # test a user that have an first name different thant preferred first_name thant artistic name
@@ -67,37 +65,41 @@ class TestGQLQueries(TestCase):
         ArtistFactory(id="1", user=user, nickname="")
         ArtistFactory(id="2", user=user, nickname="JD")
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists {\
                         id\
                         displayName\
                         artistPhoto\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][1]['displayName'] == "JD"
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][1]["displayName"] == "JD"
 
     def test_query_specific_artists(self):
-        ArtistFactory(id="1", nickname="John Doe", artist_photo="jdoe.jpg",)
+        ArtistFactory(
+            id="1",
+            nickname="John Doe",
+            artist_photo="jdoe.jpg",
+        )
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists {\
                         id\
                         displayName\
                         artistPhoto\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['id'] == "1"
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['artistPhoto'] == "jdoe.jpg"
+        assert result.data["artists"][0]["id"] == "1"
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["artistPhoto"] == "jdoe.jpg"
         self.assertIsNone(result.errors)
 
     # Following tests about artist filter
@@ -105,76 +107,76 @@ class TestGQLQueries(TestCase):
         artist = ArtistFactory(nickname="John Doe")
         StudentFactory(artist=artist)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isStudent: true) {\
                         displayName\
                         student {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['student']['displayName'] == "John Doe"
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["student"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_not_student(self):
         ArtistFactory(nickname="John Doe")
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isStudent: true) {\
                         displayName\
                         student {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'] == []
+        assert result.data["artists"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_also_teacher(self):
         artist = ArtistFactory(nickname="John Doe")
         TeachingArtistFactory(artist=artist)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isTeacher: true) {\
                         displayName\
                         teacher {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['teacher']['displayName'] == "John Doe"
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["teacher"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_not_teacher(self):
         ArtistFactory(nickname="John Doe")
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isTeacher: true) {\
                         displayName\
                         teacher {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'] == []
+        assert result.data["artists"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_also_science_student(self):
@@ -182,7 +184,7 @@ class TestGQLQueries(TestCase):
         student = StudentFactory(artist=artist)
         ScienceStudentFactory(student=student)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isScienceStudent: true) {\
                         displayName\
                         student {\
@@ -194,20 +196,20 @@ class TestGQLQueries(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['student']['displayName'] == "John Doe"
-        assert result.data['artists'][0]['student']['scienceStudent']['student']['displayName'] is not None
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["student"]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["student"]["scienceStudent"]["student"]["displayName"] is not None
 
     def test_query_artists_no_filter_also_student_but_not_science_student(self):
         artist = ArtistFactory(nickname="John Doe")
         StudentFactory(artist=artist)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists {\
                         displayName\
                         student {\
@@ -219,21 +221,21 @@ class TestGQLQueries(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['student']['displayName'] == "John Doe"
-        assert result.data['artists'][0]['student']['scienceStudent'] is None
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["student"]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["student"]["scienceStudent"] is None
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_also_student_but_not_science_student(self):
         artist = ArtistFactory(nickname="John Doe")
         StudentFactory(artist=artist)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isScienceStudent: true) {\
                         displayName\
                         student {\
@@ -245,52 +247,52 @@ class TestGQLQueries(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
         print(result.errors)
 
-        assert result.data['artists'] == []
+        assert result.data["artists"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_also_visiting_student(self):
         artist = ArtistFactory(nickname="John Doe")
         VisitingStudentFactory(artist=artist)
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isVisitingStudent: true) {\
                         displayName\
                         visitingStudent {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'][0]['displayName'] == "John Doe"
-        assert result.data['artists'][0]['visitingStudent']['displayName'] == "John Doe"
+        assert result.data["artists"][0]["displayName"] == "John Doe"
+        assert result.data["artists"][0]["visitingStudent"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_filter_not_visiting_student(self):
         ArtistFactory(nickname="John Doe")
 
-        query = 'query FetchArtists {\
+        query = "query FetchArtists {\
                     artists(isVisitingStudent: true) {\
                         displayName\
                         visitingStudent {\
                             displayName\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artists'] == []
+        assert result.data["artists"] == []
         self.assertIsNone(result.errors)
 
     # Following tests about artist pagination filter
@@ -314,8 +316,8 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'][0]['node']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['student']['displayName'] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["student"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_not_student(self):
@@ -337,7 +339,7 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'] == []
+        assert result.data["artistsPagination"]["edges"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_also_teacher(self):
@@ -360,8 +362,8 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'][0]['node']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['teacher']['displayName'] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["teacher"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_not_teacher(self):
@@ -383,7 +385,7 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'] == []
+        assert result.data["artistsPagination"]["edges"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_also_science_student(self):
@@ -410,9 +412,9 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'][0]['node']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['student']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['student']['scienceStudent']['id'] is not None
+        assert result.data["artistsPagination"]["edges"][0]["node"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["student"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["student"]["scienceStudent"]["id"] is not None
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_no_filter_also_student_but_not_science_student(self):
@@ -438,9 +440,9 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'][0]['node']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['student']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['student']['scienceStudent'] is None
+        assert result.data["artistsPagination"]["edges"][0]["node"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["student"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["student"]["scienceStudent"] is None
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_also_student_but_not_science_student(self):
@@ -466,7 +468,7 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'] == []
+        assert result.data["artistsPagination"]["edges"] == []
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_also_visiting_student(self):
@@ -489,8 +491,8 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'][0]['node']['displayName'] == "John Doe"
-        assert result.data['artistsPagination']['edges'][0]['node']['visitingStudent']['displayName'] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["displayName"] == "John Doe"
+        assert result.data["artistsPagination"]["edges"][0]["node"]["visitingStudent"]["displayName"] == "John Doe"
         self.assertIsNone(result.errors)
 
     def test_query_artists_pagination_filter_not_visiting_student(self):
@@ -512,5 +514,54 @@ class TestGQLQueries(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artistsPagination']['edges'] == []
+        assert result.data["artistsPagination"]["edges"] == []
+        self.assertIsNone(result.errors)
+
+    # Staff tests
+    def test_staff_query(self):
+        # Create a staff user
+        staff_user = StaffFactory(user=UserFactory(first_name="Cou", last_name="Cou"))
+        # set user profile
+        FresnoyProfileFactory(user=staff_user.user, preferred_first_name="CO", preferred_last_name="U")
+        # set artist
+        staff_user.user.artist_set.add(ArtistFactory(user=staff_user.user, nickname="Coucou"))
+        query = "query Staff($idStaff: Int) {\
+                        staff(id: $idStaff) {\
+                            id\
+                            user {\
+                                displayName\
+                            }\
+                        }\
+                    }"
+        schema = graphene.Schema(query=Query)
+        result = schema.execute(
+            query,
+            variables={
+                "idStaff": staff_user.id,
+            },
+        )
+        # prefered artist nickname if any
+        assert result.data["staff"]["user"]["displayName"] == "Coucou"
+        self.assertIsNone(result.errors)
+
+    # Staffs tests
+    def test_staffs_query(self):
+        # Create a staff user
+        staff_user = StaffFactory(user=UserFactory(first_name="Cou", last_name="COU"))
+        # set user profile
+        FresnoyProfileFactory(user=staff_user.user, preferred_first_name="CO", preferred_last_name="U")
+
+        query = "query Staffs {\
+                    staffs {\
+                        id\
+                        user {\
+                            displayName\
+                        }\
+                    }\
+                }"
+
+        schema = graphene.Schema(query=Query)
+        result = schema.execute(query)
+
+        assert result.data["staffs"][0]["user"]["displayName"] == "CO U"
         self.assertIsNone(result.errors)

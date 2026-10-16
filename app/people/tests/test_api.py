@@ -1,8 +1,8 @@
 import pytest
 
-from common.tests.conftest import *  # noqa
-from diffusion.tests.conftest import *  # noqa
-from production.tests.conftest import *  # noqa
+from common.tests.conftest import *  # NOQA
+from diffusion.tests.conftest import *  # NOQA
+from production.tests.conftest import *  # NOQA
 from utils.tests.utils import HelpTestForReadOnlyModelRessource, parametrize_user_roles
 
 from .. import api
@@ -17,10 +17,10 @@ def pytest_generate_tests(metafunc):
 class TestUserRessource(HelpTestForReadOnlyModelRessource):
     resource = api.UserResource
 
-    fixtures = ['user', 'profile']
+    fixtures = ["user", "profile"]
 
     expected_list_size = 2
-    expected_fields = ['first_name']
+    expected_fields = ["first_name"]
 
     def target(self):
         return self.user
@@ -28,10 +28,10 @@ class TestUserRessource(HelpTestForReadOnlyModelRessource):
 
 @pytest.mark.django_db
 class TestUserProfileRessource(TestUserRessource):
-    fixtures = ['profile']
+    fixtures = ["profile"]
 
     expected_list_size = 1
-    expected_fields = ['first_name', 'nationality']
+    expected_fields = ["first_name", "nationality"]
 
     def target(self):
         return self.profile.user
@@ -44,13 +44,13 @@ class TestUserProfileRessource(TestUserRessource):
 class TestArtistRessource(HelpTestForReadOnlyModelRessource):
     resource = api.ArtistResource
 
-    fixtures = ['artist', 'artist_profile', 'artist_website', 'artwork']
+    fixtures = ["artist", "artist_profile", "artist_website", "artwork"]
 
     expected_list_size = 1
-    expected_fields = ['nickname', 'artworks', 'websites']
+    expected_fields = ["nickname", "artworks", "websites"]
 
-    post_fields = ['user']
-    hyperlinked_fields = {'user': 'people/user'}
+    post_fields = ["user"]
+    hyperlinked_fields = {"user": "people/user"}
 
     def requestor(self, role):
         return self.artist.user
@@ -60,13 +60,13 @@ class TestArtistRessource(HelpTestForReadOnlyModelRessource):
 class TestStaffRessource(HelpTestForReadOnlyModelRessource):
     resource = api.StaffResource
 
-    fixtures = ['staff', 'staff_profile']
+    fixtures = ["staff", "staff_profile"]
 
     expected_list_size = 1
-    expected_fields = ['user']
+    expected_fields = ["user"]
 
-    post_fields = ['user']
-    hyperlinked_fields = {'user': 'people/user'}
+    post_fields = ["user"]
+    hyperlinked_fields = {"user": "people/user"}
 
     def requestor(self, role):
         return self.staff.user
@@ -76,7 +76,7 @@ class TestStaffRessource(HelpTestForReadOnlyModelRessource):
 class TestOrganizationRessource(HelpTestForReadOnlyModelRessource):
     resource = api.OrganizationResource
 
-    fixtures = ['organization', 'place', 'user']
+    fixtures = ["organization", "place", "user"]
 
     expected_list_size = 2
-    expected_fields = ['name']
+    expected_fields = ["name"]

@@ -1,18 +1,16 @@
+import logging
+
 import unidecode
 from django.contrib.auth.models import User
-
-from django.contrib.postgres.search import TrigramSimilarity
 from django.contrib.postgres.lookups import Unaccent
-
-from django.db.models.functions import Concat, Lower
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import CharField, Value
+from django.db.models.functions import Concat, Lower
 
 from utils.kart_tools import dist2
 
-import logging
-
 # Logging
-logger = logging.getLogger('artist_utils')
+logger = logging.getLogger("artist_utils")
 logger.setLevel(logging.DEBUG)
 #####
 
@@ -71,20 +69,19 @@ def getUserByNames(firstname="", lastname="", listing=False, dist_min=False):
             # Concat the full name "first last" to detect misclassifications like: "Hee Won -- Lee"
             # where Hee Won is first
             # name but can be stored as "Hee  -- Won Lee"
-            search_name=Concat('first_name__unaccent__lower', Value(' '), 'last_name__unaccent__lower')
+            search_name=Concat("first_name__unaccent__lower", Value(" "), "last_name__unaccent__lower")
         )
         .annotate(
-            similarity=TrigramSimilarity('search_name', fullname),
+            similarity=TrigramSimilarity("search_name", fullname),
         )
         .filter(similarity__gt=0.3)
-        .order_by('-similarity')
+        .order_by("-similarity")
     )
 
     # Refine results
     if guessArtLN:
         # TODO: Optimize by checking a same artist does not get tested several times
         for user_kart in guessArtLN:
-
             # Clear accents (store a version with accents for further accents issue detection)
             kart_lastname_accent = user_kart.last_name
             kart_lastname = unidecode.unidecode(kart_lastname_accent).lower().strip()
@@ -110,18 +107,17 @@ def getUserByNames(firstname="", lastname="", listing=False, dist_min=False):
                 if kart_fullname == fullname:
                     # store the artist in potential matches with extreme probability (2)
                     # and continue with next candidate
-                    users_l.append({"user": user_kart, 'dist': 2})
+                    users_l.append({"user": user_kart, "dist": 2})
                     continue
                 # Check if Kart and candidate names are exactly the same
                 elif kart_lastname != lastname or kart_firstname != firstname:
-
                     logger.warning(
                         f"""Fullnames globally match {fullname} but not in first and last name correspondences:
                     Kart       first: >{kart_firstname}< last: >{kart_lastname}<
                     candidate  first: >{firstname}< last: >{lastname}<
                                             """
                     )
-                    users_l.append({"user": user_kart, 'dist': dist_full})
+                    users_l.append({"user": user_kart, "dist": dist_full})
 
                     # ### Control for accents TODO still necessary ?
                     #
@@ -148,25 +144,24 @@ def getUserByNames(firstname="", lastname="", listing=False, dist_min=False):
                     if kart_lastname.find(" ") >= 0:
                         # cor = Correction(kart_lastname,kart_lastname.strip())
                         pass
-                    bef = f"\"{kart_lastname}\" <> \"{lastname}\""
+                    bef = f'"{kart_lastname}" <> "{lastname}"'
                     logger.warning(f"Leading/trailing whitespace {bef}")
 
                 # Check distance btw lastnames without spaces
                 elif dist2(kart_lastname.replace(" ", ""), lastname.replace(" ", "")) > 0.9:
-                    bef = f"\"{kart_lastname}\" <> \"{lastname}\""
+                    bef = f'"{kart_lastname}" <> "{lastname}"'
                     logger.warning(f"whitespace problem ? {bef}")
 
             if kart_firstname.find(" ") >= 0 or firstname.find(" ") >= 0:
-
                 if kart_firstname.strip() == firstname.strip():
-                    bef = f"\"{kart_firstname}\" <> \"{firstname}\""
+                    bef = f'"{kart_firstname}" <> "{firstname}"'
                     logger.warning(f"Leading/trailing whitespace {bef}")
 
                 # Check distance btw firstnames without spaces
                 elif dist2(kart_firstname.replace(" ", ""), firstname.replace(" ", "")) > 0.9:
-                    bef = f"\"{kart_firstname}\" <> \"{firstname}\""
+                    bef = f'"{kart_firstname}" <> "{firstname}"'
                     logger.warning(f"whitespace problem ? {bef}")
-                    users_l.append({"user": user_kart, 'dist': dist_full})
+                    users_l.append({"user": user_kart, "dist": dist_full})
             ###
 
             # Artists whose lastname is the candidate's with similar firstname
@@ -181,43 +176,42 @@ def getUserByNames(firstname="", lastname="", listing=False, dist_min=False):
 
             guessUserFN = (
                 User.objects.annotate(
-                    similarity=TrigramSimilarity('first_name__unaccent', firstname),
+                    similarity=TrigramSimilarity("first_name__unaccent", firstname),
                 )
                 .filter(last_name=lastname, similarity__gt=0.8)
-                .order_by('-similarity')
+                .order_by("-similarity")
             )
 
             # if user whose lastname is the candidate's with similar firstname names are found
             if guessUserFN:
-
                 # Check users with same lastname than candidate and approaching firstname
                 for userfn_kart in guessUserFN:
                     kart_firstname = unidecode.unidecode(userfn_kart.first_name)
                     # Dist btw candidate firstname and a similar found in Kart
                     dist_firstname = dist2(f"{kart_firstname}", f"{firstname}")
                     # Add the candidate in potential matches add sum the distances last and firstname
-                    users_l.append({"user": userfn_kart, 'dist': dist_firstname + dist_lastname})
+                    users_l.append({"user": userfn_kart, "dist": dist_firstname + dist_lastname})
 
                     # Distance evaluation with both first and last name at the same time
                     dist_name = dist2(f"{kart_firstname} {kart_lastname}", f"{firstname} {lastname}")
                     # Add the candidate in potential matches add double the name_dist (to score on 2)
-                    users_l.append({"user": userfn_kart, 'dist': dist_name * 2})
+                    users_l.append({"user": userfn_kart, "dist": dist_name * 2})
 
             else:
                 # If no close firstname found, store with the sole dist_lastname (unlikely candidate)
-                users_l.append({"user": user_kart, 'dist': dist_lastname})
+                users_l.append({"user": user_kart, "dist": dist_lastname})
 
             # ## end for user_kart in guessArtLN
 
         # Take the highest distance score
-        users_l.sort(key=lambda i: i['dist'], reverse=True)
+        users_l.sort(key=lambda i: i["dist"], reverse=True)
 
         # Return all results if listing is true, return the max otherwise
         if listing:
             return users_l
         else:
             # Return the result if dist_min is respected (if required)
-            if (dist_min is not False and users_l[0]['dist'] > dist_min) or (not dist_min):
+            if (dist_min is not False and users_l[0]["dist"] > dist_min) or (not dist_min):
                 return users_l[0]
             else:
                 return False

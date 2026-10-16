@@ -1,22 +1,19 @@
-# -*- encoding: utf-8 -*-
+import datetime
 import os
 
-import datetime
-
 from django.core.management.base import BaseCommand
+from geopy.exc import GeocoderServiceError, GeocoderTimedOut
 from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 
-from diffusion.models import Place, Diffusion
+from diffusion.models import Diffusion, Place
 from production.models import Artwork, Event
 
-
 # Clear terminal
-os.system('clear')
+os.system("clear")
 
 
 class Command(BaseCommand):
-    help = 'Create diffusion step by step, no argument'
+    help = "Create diffusion step by step, no argument"
 
     def handle(self, *args, **options):
 
@@ -26,7 +23,7 @@ class Command(BaseCommand):
 def init():
 
     # Clear terminal
-    os.system('clear')
+    os.system("clear")
 
     print("Coller le texte de la diffusion")
     diff_text = input("")
@@ -45,10 +42,10 @@ def init():
 
     diffusion = search_or_create_Diffusion(artwork=artwork, event=event)
     if diffusion:
-        print("Diffusion crée : {} - {}".format(diffusion.id, diffusion))
-        print("Ajout de l'œuvre {} à l'événement {}".format(artwork, event))
+        print(f"Diffusion crée : {diffusion.id} - {diffusion}")
+        print(f"Ajout de l'œuvre {artwork} à l'événement {event}")
         # add artwork in event
-        getattr(event, artwork_type + 's').add(artwork)
+        getattr(event, artwork_type + "s").add(artwork)
         event.save()
 
     print("FIN")
@@ -107,14 +104,13 @@ def search_or_create_Place():
         location_search = searchLocation(ev_place_str)
         location = input_choices(location_search)
         if location:
-
             city = (
-                location.raw['address'].get('village')
-                or location.raw['address'].get('town')
-                or location.raw['address'].get('city')
+                location.raw["address"].get("village")
+                or location.raw["address"].get("town")
+                or location.raw["address"].get("city")
             )
 
-            country_code = location.raw['address'].get('country_code')
+            country_code = location.raw["address"].get("country_code")
 
             place, created = Place.objects.get_or_create(
                 name=ev_place_str,
@@ -155,7 +151,7 @@ def createEvent(name, date):
     # create it
     print("Type de l'événement")
 
-    ev_type = input_choices(Event.TYPE_CHOICES)[0] or 'PROJ'
+    ev_type = input_choices(Event.TYPE_CHOICES)[0] or "PROJ"
     event, created = Event.objects.get_or_create(
         title=ev_name_str, starting_date=ev_date_start, ending_date=ev_date_end, place=place, type=ev_type
     )
@@ -179,7 +175,7 @@ def input_choices(values):
 
     print("Plusieurs valeurs sont possibles, selectionnez-en une :")
     for id, value in enumerate(values):
-        print("{} : {}".format(id, value))
+        print(f"{id} : {value}")
 
     select = input("Votre choix : ")
 

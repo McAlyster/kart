@@ -1,18 +1,19 @@
-from django.test import TestCase
-
 import graphene
 import pytest
+from django.test import TestCase
+from graphene_django.utils.testing import GraphQLTestCase
 
 from kart.schema import Query
-from production.tests.factories import (
-    EventFactory,
-    PerformanceFactory,
-    ArtworkFactory,
-    KeywordFactory,
-    FilmFactory,
-    InstallationFactory
-)
 from people.tests.factories import ArtistFactory
+from production.tests.factories import (
+    ArtworkFactory,
+    EventFactory,
+    FilmFactory,
+    InstallationFactory,
+    KeywordFactory,
+    PerformanceFactory,
+)
+from utils.tests.factories import UserFactory
 
 
 class TestGQLPages(TestCase):
@@ -70,7 +71,7 @@ class TestGQLPages(TestCase):
                     }\
                 }"
         schema = graphene.Schema(query=Query)
-        result = schema.execute(query, variables={'expo': self.event.id, 'oeuvre': self.performance.id})
+        result = schema.execute(query, variables={"expo": self.event.id, "oeuvre": self.performance.id})
         self.assertIsNone(result.errors)
 
     def test_query_exhibx(self):
@@ -80,7 +81,7 @@ class TestGQLPages(TestCase):
         event.performances.add(performance)
         event.save()
 
-        query = 'query exhib($idExhib: Int) {\
+        query = "query exhib($idExhib: Int) {\
                     exhibition(id: $idExhib) {\
                         artworks {\
                             id\
@@ -90,19 +91,24 @@ class TestGQLPages(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
-        result = schema.execute(query, variables={'idExhib': event.id, })
+        result = schema.execute(
+            query,
+            variables={
+                "idExhib": event.id,
+            },
+        )
         self.assertIsNone(result.errors)
 
     # Following tests about artworks queries
     def test_query_all_artworks(self):
-        query = 'query Artworks {\
+        query = "query Artworks {\
                     artworks {\
                         id\
                         title\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
         self.assertIsNone(result.errors)
@@ -120,7 +126,7 @@ class TestGQLPages(TestCase):
                 }'
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
-        assert result.data['artworks'][0]["title"] == "Vol au-dessus d'un nid de coucou"
+        assert result.data["artworks"][0]["title"] == "Vol au-dessus d'un nid de coucou"
         self.assertIsNone(result.errors)
 
     def test_query_artworks_title_with_wrong_filter(self):
@@ -135,7 +141,7 @@ class TestGQLPages(TestCase):
                 }'
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
-        assert result.data['artworks'] == []
+        assert result.data["artworks"] == []
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_production_year_filter(self):
@@ -157,13 +163,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['productionDate'] == "2019-01-01"
+        assert result.data["artworks"][0]["productionDate"] == "2019-01-01"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_keyword_filters(self):
         artwork = ArtworkFactory()
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         artwork.keywords.add(firstKeyword, secondKeyword)
         artwork.save()
 
@@ -182,13 +188,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['keywords'][0]['name'] == "mythe"
+        assert result.data["artworks"][0]["keywords"][0]["name"] == "mythe"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_date_and_keyword_filters(self):
         artwork = ArtworkFactory(production_date="2019-01-01")
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         artwork.keywords.add(firstKeyword, secondKeyword)
         artwork.save()
 
@@ -208,8 +214,8 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['productionDate'] == "2019-01-01"
-        assert result.data['artworks'][0]['keywords'][0]['name'] == "mythe"
+        assert result.data["artworks"][0]["productionDate"] == "2019-01-01"
+        assert result.data["artworks"][0]["keywords"][0]["name"] == "mythe"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_type_film_filters(self):
@@ -230,7 +236,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['type'] == "Film"
+        assert result.data["artworks"][0]["type"] == "Film"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_type_film_lowercase_filters(self):
@@ -251,7 +257,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['type'] == "Film"
+        assert result.data["artworks"][0]["type"] == "Film"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_type_installation_filters(self):
@@ -272,7 +278,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['type'] == "Installation"
+        assert result.data["artworks"][0]["type"] == "Installation"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_type_performance_filters(self):
@@ -293,7 +299,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['type'] == "Performance"
+        assert result.data["artworks"][0]["type"] == "Performance"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_wrong_type_filters(self):
@@ -314,13 +320,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'] == []
+        assert result.data["artworks"] == []
         self.assertIsNone(result.errors)
 
     def test_query_with_four_artworks_filters(self):
         film = FilmFactory(production_date="2019-01-01", title="Vol au-dessus d'un nid de coucou")
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         film.keywords.add(firstKeyword, secondKeyword)
         film.save()
 
@@ -343,10 +349,10 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['title'] == "Vol au-dessus d'un nid de coucou"
-        assert result.data['artworks'][0]['productionDate'] == "2019-01-01"
-        assert result.data['artworks'][0]['keywords'][0]['name'] == "mythe"
-        assert result.data['artworks'][0]['type'] == "Film"
+        assert result.data["artworks"][0]["title"] == "Vol au-dessus d'un nid de coucou"
+        assert result.data["artworks"][0]["productionDate"] == "2019-01-01"
+        assert result.data["artworks"][0]["keywords"][0]["name"] == "mythe"
+        assert result.data["artworks"][0]["type"] == "Film"
         self.assertIsNone(result.errors)
 
     def test_query_with_empty_artworks_filters(self):
@@ -371,14 +377,14 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'] is not None
+        assert result.data["artworks"] is not None
         self.assertIsNone(result.errors)
 
     def test_query_with_no_artworks_filters(self):
         film = FilmFactory()
         film.save()
 
-        query = 'query ArtworksFilters {\
+        query = "query ArtworksFilters {\
                     artworks {\
                         keywords {\
                             name\
@@ -386,29 +392,29 @@ class TestGQLPages(TestCase):
                         productionDate\
                         type\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'] is not None
+        assert result.data["artworks"] is not None
         self.assertIsNone(result.errors)
 
     # Following tests about artwork's keywords
     def test_query_all_artworks_keywords(self):
-        query = 'query ArtworksKeywords {\
+        query = "query ArtworksKeywords {\
                     artworks {\
                         keywords {\
                         name\
                         }\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
         self.assertIsNone(result.errors)
 
     def test_query_all_productions_artworks_keywords(self):
-        query = 'query AllProductionsArtworksKeywords {\
+        query = "query AllProductionsArtworksKeywords {\
                     productions {\
                         ... on ArtworkType {\
                             keywords {\
@@ -416,7 +422,7 @@ class TestGQLPages(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
         self.assertIsNone(result.errors)
@@ -427,51 +433,51 @@ class TestGQLPages(TestCase):
         artwork.keywords.add(keyword)
         artwork.save()
 
-        query = 'query ArtworkKeywords($artworkId: Int) {\
+        query = "query ArtworkKeywords($artworkId: Int) {\
                     artwork(id: $artworkId) {\
                         keywords {\
                         name\
                         }\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
-        result = schema.execute(query, variables={'artworkId': artwork.id})
+        result = schema.execute(query, variables={"artworkId": artwork.id})
         self.assertIsNone(result.errors)
 
     def test_query_specific_artwork_keywords_with_two_keywords(self):
         artwork = ArtworkFactory()
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         artwork.keywords.add(firstKeyword, secondKeyword)
         artwork.save()
 
-        query = 'query ArtworkKeywords($artworkId: Int) {\
+        query = "query ArtworkKeywords($artworkId: Int) {\
                     artwork(id: $artworkId) {\
                         keywords {\
                         name\
                         }\
                     }\
-                }'
+                }"
         schema = graphene.Schema(query=Query)
-        result = schema.execute(query, variables={'artworkId': artwork.id})
-        assert result.data['artwork']['keywords'][0]['name'] == "mythe"
-        assert result.data['artwork']['keywords'][1]['name'] == "société"
+        result = schema.execute(query, variables={"artworkId": artwork.id})
+        assert result.data["artwork"]["keywords"][0]["name"] == "mythe"
+        assert result.data["artwork"]["keywords"][1]["name"] == "société"
         self.assertIsNone(result.errors)
 
     # Following test about artworks query's production date
     def test_artworks_query_production_date(self):
         ArtworkFactory()
 
-        query = 'query ArtworksProductionDate {\
+        query = "query ArtworksProductionDate {\
                     artworks {\
                         productionDate\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworks'][0]['productionDate'] is not None
+        assert result.data["artworks"][0]["productionDate"] is not None
 
     # following tests about artworks pagination filters
     def test_query_with_artworks_pagination_production_year_filter(self):
@@ -497,13 +503,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['productionDate'] == "2019-01-01"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["productionDate"] == "2019-01-01"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_keyword_filters(self):
         artwork = ArtworkFactory()
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         artwork.keywords.add(firstKeyword, secondKeyword)
         artwork.save()
 
@@ -526,13 +532,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['keywords'][0]['name'] == "mythe"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["keywords"][0]["name"] == "mythe"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_date_and_keyword_filters(self):
         artwork = ArtworkFactory(production_date="2019-01-01")
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         artwork.keywords.add(firstKeyword, secondKeyword)
         artwork.save()
 
@@ -556,8 +562,8 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['productionDate'] == "2019-01-01"
-        assert result.data['artworksPagination']['edges'][0]['node']['keywords'][0]['name'] == "mythe"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["productionDate"] == "2019-01-01"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["keywords"][0]["name"] == "mythe"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_type_film_filters(self):
@@ -582,7 +588,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['type'] == "Film"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["type"] == "Film"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_type_installation_filters(self):
@@ -607,7 +613,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['type'] == "Installation"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["type"] == "Installation"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_type_performance_filters(self):
@@ -632,7 +638,7 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['type'] == "Performance"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["type"] == "Performance"
         self.assertIsNone(result.errors)
 
     def test_query_with_artworks_pagination_wrong_type_filters(self):
@@ -657,13 +663,13 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'] == []
+        assert result.data["artworksPagination"]["edges"] == []
         self.assertIsNone(result.errors)
 
     def test_query_with_four_artworks_pagination_filters(self):
         film = FilmFactory(production_date="2019-01-01", title="Vol au-dessus d'un nid de coucou")
-        firstKeyword = KeywordFactory(name='mythe')
-        secondKeyword = KeywordFactory(name='société')
+        firstKeyword = KeywordFactory(name="mythe")
+        secondKeyword = KeywordFactory(name="société")
         film.keywords.add(firstKeyword, secondKeyword)
         film.save()
 
@@ -689,10 +695,10 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][0]['node']['title'] == "Vol au-dessus d'un nid de coucou"
-        assert result.data['artworksPagination']['edges'][0]['node']['productionDate'] == "2019-01-01"
-        assert result.data['artworksPagination']['edges'][0]['node']['keywords'][0]['name'] == "mythe"
-        assert result.data['artworksPagination']['edges'][0]['node']['type'] == "Film"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["title"] == "Vol au-dessus d'un nid de coucou"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["productionDate"] == "2019-01-01"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["keywords"][0]["name"] == "mythe"
+        assert result.data["artworksPagination"]["edges"][0]["node"]["type"] == "Film"
         self.assertIsNone(result.errors)
 
     def test_query_with_empty_artworks_pagination_filters(self):
@@ -720,14 +726,14 @@ class TestGQLPages(TestCase):
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination'] is not None
+        assert result.data["artworksPagination"] is not None
         self.assertIsNone(result.errors)
 
     def test_query_with_no_artworks_pagination_filters(self):
         film = FilmFactory()
         film.save()
 
-        query = 'query artworksPaginationFilters {\
+        query = "query artworksPaginationFilters {\
                     artworksPagination {\
                         edges {\
                             node {\
@@ -739,19 +745,19 @@ class TestGQLPages(TestCase):
                             }\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination'] is not None
+        assert result.data["artworksPagination"] is not None
         self.assertIsNone(result.errors)
 
     # Following tests about artwork pagination
     def test_query_in_first_page_of_a_three_artwork_per_page(self):
         [ArtworkFactory() for _ in range(9)]
 
-        query = 'query artworksPaginationFilters {\
+        query = "query artworksPaginationFilters {\
                     artworksPagination(first: 3) {\
                         edges {\
                             node {\
@@ -767,20 +773,20 @@ class TestGQLPages(TestCase):
                             endCursor\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][2] is not None
-        assert result.data['artworksPagination']['pageInfo']['hasNextPage'] is True
-        assert result.data['artworksPagination']['pageInfo']['endCursor'] is not None
+        assert result.data["artworksPagination"]["edges"][2] is not None
+        assert result.data["artworksPagination"]["pageInfo"]["hasNextPage"] is True
+        assert result.data["artworksPagination"]["pageInfo"]["endCursor"] is not None
         self.assertIsNone(result.errors)
 
     def test_query_out_of_range_first_page_of_a_three_artwork_per_page(self):
         [ArtworkFactory() for _ in range(9)]
 
-        query = 'query artworksPaginationFilters {\
+        query = "query artworksPaginationFilters {\
                     artworksPagination(first: 3) {\
                         edges {\
                             node {\
@@ -795,18 +801,18 @@ class TestGQLPages(TestCase):
                             hasNextPage\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
         with pytest.raises(IndexError):
-            result.data['artworksPagination']['edges'][5]
+            result.data["artworksPagination"]["edges"][5]
 
     def test_query_offset_intermediary_page_of_a_three_artwork_per_page(self):
         [ArtworkFactory() for _ in range(9)]
 
-        query = 'query artworksPaginationFilters {\
+        query = "query artworksPaginationFilters {\
                     artworksPagination(first: 3, offset: 3) {\
                         edges {\
                             node {\
@@ -821,19 +827,19 @@ class TestGQLPages(TestCase):
                             hasNextPage\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][2] is not None
-        assert result.data['artworksPagination']['pageInfo']['hasNextPage'] is True
+        assert result.data["artworksPagination"]["edges"][2] is not None
+        assert result.data["artworksPagination"]["pageInfo"]["hasNextPage"] is True
         self.assertIsNone(result.errors)
 
     def test_query_offset_last_page_of_a_three_artwork_per_page(self):
         [ArtworkFactory() for _ in range(9)]
 
-        query = 'query artworksPaginationFilters {\
+        query = "query artworksPaginationFilters {\
                     artworksPagination(first: 3, offset: 6) {\
                         edges {\
                             node {\
@@ -848,19 +854,19 @@ class TestGQLPages(TestCase):
                             hasNextPage\
                         }\
                     }\
-                }'
+                }"
 
         schema = graphene.Schema(query=Query)
         result = schema.execute(query)
 
-        assert result.data['artworksPagination']['edges'][2] is not None
-        assert result.data['artworksPagination']['pageInfo']['hasNextPage'] is False
+        assert result.data["artworksPagination"]["edges"][2] is not None
+        assert result.data["artworksPagination"]["pageInfo"]["hasNextPage"] is False
         self.assertIsNone(result.errors)
 
     def test_query_endcursor_intermediary_page_of_a_three_artwork_per_page(self):
         [ArtworkFactory() for _ in range(9)]
 
-        firstPageQuery = 'query artworksPaginationFilters {\
+        firstPageQuery = "query artworksPaginationFilters {\
                     artworksPagination(first: 3) {\
                         edges {\
                             node {\
@@ -872,16 +878,16 @@ class TestGQLPages(TestCase):
                             endCursor\
                         }\
                     }\
-                }'
+                }"
 
         firstSchema = graphene.Schema(query=Query)
         firstResult = firstSchema.execute(firstPageQuery)
 
-        firstPageEndCursorValue = firstResult.data['artworksPagination']['pageInfo']['endCursor']
+        firstPageEndCursorValue = firstResult.data["artworksPagination"]["pageInfo"]["endCursor"]
         assert firstPageEndCursorValue is not None
         self.assertIsNone(firstResult.errors)
 
-        secondPageQuery = 'query artworksPaginationFilters($firstPageEndCursorValue: String) {\
+        secondPageQuery = "query artworksPaginationFilters($firstPageEndCursorValue: String) {\
                     artworksPagination(first: 3, after: $firstPageEndCursorValue) {\
                         edges {\
                             node {\
@@ -894,11 +900,61 @@ class TestGQLPages(TestCase):
                             endCursor\
                         }\
                     }\
-                }'
+                }"
 
         secondSchema = graphene.Schema(query=Query)
         secondResult = secondSchema.execute(secondPageQuery)
 
-        assert secondResult.data['artworksPagination']['edges'] is not None
-        assert secondResult.data['artworksPagination']['pageInfo']['hasNextPage'] is True
+        assert secondResult.data["artworksPagination"]["edges"] is not None
+        assert secondResult.data["artworksPagination"]["pageInfo"]["hasNextPage"] is True
         self.assertIsNone(secondResult.errors)
+
+
+class TestGQLData(GraphQLTestCase):
+    """
+    
+    """
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_query_artworkx_no_auth(self):
+            artwork = ArtworkFactory(production_contract="path/to/file.pdf")
+    
+            query = """
+                query ArtworkX($artworkID: Int!) {
+                    artwork(id: $artworkID) {
+                        productionContract
+                    }
+                }
+            """
+    
+            response = self.query(query, variables={"artworkID": artwork.id})
+    
+            content = response.json()
+            self.assertIn("errors", content)
+            self.assertNotEqual(content["data"]["artwork"]["productionContract"], artwork.production_contract)
+
+    def test_query_artworkx_with_staff_auth(self):
+            artwork = ArtworkFactory(production_contract="path/to/file.pdf")
+            user_staff = UserFactory(is_staff=True)
+    
+            # Authentifie directement le client de test
+            self.client.force_login(user_staff)
+    
+            query = """
+                query ArtworkX($artworkID: Int!) {
+                    artwork(id: $artworkID) {
+                        productionContract
+                    }
+                }
+            """
+    
+            response = self.query(query, variables={"artworkID": artwork.id})
+    
+            content = response.json()
+            self.assertNotIn("errors", content)
+            self.assertEqual(content["data"]["artwork"]["productionContract"], artwork.production_contract)

@@ -1,18 +1,15 @@
-# -*- encoding: utf-8 -*-
 import os
-
-from django.core.files import File
-from django.test import TestCase
 from io import BytesIO
 
-from PIL import Image
-
 from django.conf import settings
+from django.core.files import File
+from django.test import TestCase
+from PIL import Image
 
 from assets.tests.factories import MediumFactory
 
 
-def create_image(filename, size=(100, 100), image_mode='RGB', image_format='PNG'):
+def create_image(filename, size=(100, 100), image_mode="RGB", image_format="PNG"):
     """
     Generate a test image, returning the data.
     """
@@ -24,7 +21,7 @@ def create_image(filename, size=(100, 100), image_mode='RGB', image_format='PNG'
 
 class UploadTestCase(TestCase):
     """
-        Tests Upload Commands
+    Tests Upload Commands
     """
 
     def setUp(self):
@@ -36,10 +33,10 @@ class UploadTestCase(TestCase):
     def test_upload_file_image(self):
         "simple TEST upload"
         # set up file name
-        image_name = '#éavatar!$*'
-        image_name_slug = 'avatar'
+        image_name = "#éavatar!$*"
+        image_name_slug = "avatar"
         # create image file
-        image_file = create_image(image_name+'.png')
+        image_file = create_image(image_name + ".png")
         # set to medium
         self.medium.picture = image_file
         self.medium.save()
@@ -49,7 +46,7 @@ class UploadTestCase(TestCase):
         # name without accent
         self.assertNotIn(image_name[1], self.medium.picture.name)
         # name without root path
-        self.assertNotIn(settings.MEDIA_ROOT.replace(os.sep, '/'), self.medium.picture.name)
+        self.assertNotIn(settings.MEDIA_ROOT.replace(os.sep, "/"), self.medium.picture.name)
         # media url with url settings
         self.assertIn(settings.MEDIA_URL, self.medium.picture.url)
         # media path with root settings

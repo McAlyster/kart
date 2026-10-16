@@ -1,9 +1,8 @@
 from django.contrib.auth.models import User
+from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
-from django_countries.serializer_fields import CountryField
-
-from .models import Artist, Staff, Organization, FresnoyProfile
+from .models import Artist, FresnoyProfile, Organization, Staff
 
 
 class FresnoyProfileSerializer(serializers.ModelSerializer):
@@ -62,7 +61,14 @@ class PublicFresnoyProfileSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_student",
         )
-        read_only_fields = ("id", "photo", "nationality", "is_artist", "is_staff", "is_student",)
+        read_only_fields = (
+            "id",
+            "photo",
+            "nationality",
+            "is_artist",
+            "is_staff",
+            "is_student",
+        )
 
     id = serializers.ReadOnlyField()
 
@@ -77,7 +83,7 @@ class UserRegisterSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'is_superuser', 'url', 'username', 'first_name', 'last_name', 'email', 'profile')
+        fields = ("id", "is_superuser", "url", "username", "first_name", "last_name", "email", "profile")
 
     profile = FresnoyProfileSerializer(required=False)
 
@@ -85,16 +91,16 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile', {})
+        profile_data = validated_data.pop("profile", {})
 
         # Update User data
-        instance.username = validated_data.get('username', instance.username)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.email = validated_data.get('email', instance.email)
+        instance.username = validated_data.get("username", instance.username)
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.email = validated_data.get("email", instance.email)
 
         # Update UserProfile data
-        if not hasattr(instance, 'profile'):
+        if not hasattr(instance, "profile"):
             FresnoyProfile.objects.create(user=instance, **profile_data)
 
         # set Values for UserProfile
@@ -111,8 +117,8 @@ class UserSerializer(serializers.ModelSerializer):
 class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'url', 'first_name', 'last_name', 'profile')
-        read_only_fields = ('id', 'url', 'first_name', 'last_name', 'profile')
+        fields = ("id", "url", "first_name", "last_name", "profile")
+        read_only_fields = ("id", "url", "first_name", "last_name", "profile")
 
     profile = PublicFresnoyProfileSerializer(required=False, read_only=True)
 
@@ -121,26 +127,27 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Artist
         fields = (
-            'id',
-            'url',
-            'nickname',
-            'artist_photo',
-            'bio_short_fr',
-            'bio_short_en',
-            'bio_fr',
-            'bio_en',
-            'twitter_account',
-            'facebook_profile',
-            'user',
-            'collectives',
-            'members',
-            'websites',
-            'artworks',
-            'teacher',
-            'student',
-            'visiting_student',
+            "id",
+            "url",
+            "nickname",
+            "artist_photo",
+            "bio_short_fr",
+            "bio_short_en",
+            "bio_fr",
+            "bio_en",
+            "twitter_account",
+            "facebook_profile",
+            "user",
+            "collectives",
+            "members",
+            "websites",
+            "artworks",
+            "teacher",
+            "student",
+            "visiting_student",
         )
-    members = serializers.HyperlinkedIdentityField(view_name='artist-detail', many=True, required=False)
+
+    members = serializers.HyperlinkedIdentityField(view_name="artist-detail", many=True, required=False)
     artworks = serializers.SerializerMethodField()
     teacher = serializers.SerializerMethodField()
     student = serializers.SerializerMethodField()
@@ -149,12 +156,14 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
     def get_artworks(self, obj):
         # prevent circular import
         from production.serializers import ProductionSerializer
+
         return ProductionSerializer(obj.artworks.all(), many=True, context=self.context).data
 
     def get_teacher(self, obj):
         try:
             # prevent circular import
             from school.serializers import TeachingArtistSerializer
+
             return TeachingArtistSerializer(obj.teacher, context=self.context).data
         except Exception:
             return None
@@ -163,6 +172,7 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
         try:
             # prevent circular import
             from school.serializers import StudentSerializer
+
             return StudentSerializer(obj.student, context=self.context).data
         except Exception:
             return None
@@ -171,6 +181,7 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
         try:
             # prevent circular import
             from school.serializers import VisitingStudentSerializer
+
             return VisitingStudentSerializer(obj.visiting_student, context=self.context).data
         except Exception:
             return None
@@ -180,28 +191,29 @@ class ArtistUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Artist
         fields = (
-            'id',
-            'url',
-            'nickname',
-            'bio_short_fr',
-            'bio_short_en',
-            'bio_fr',
-            'bio_en',
-            'twitter_account',
-            'facebook_profile',
-            'user',
-            'websites',
+            "id",
+            "url",
+            "nickname",
+            "bio_short_fr",
+            "bio_short_en",
+            "bio_fr",
+            "bio_en",
+            "twitter_account",
+            "facebook_profile",
+            "user",
+            "websites",
         )
+
     user = UserSerializer()
 
 
 class StaffSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Staff
-        fields = ('user',)
+        fields = ("user",)
 
     # user = PublicUserSerializer()
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
+    user = serializers.HyperlinkedRelatedField(view_name="user-detail", read_only=True)
 
 
 class StaffSerializer(serializers.ModelSerializer):
@@ -210,14 +222,14 @@ class StaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Staff
-        fields = ('user', 'production_task')
+        fields = ("user", "production_task")
         # fields = ('user',)
 
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
+    user = serializers.HyperlinkedRelatedField(view_name="user-detail", read_only=True)
     production_task = ProductionTaskSerializer(source="productionstafftask_set", many=True, read_only=True)
 
 
 class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Organization
-        fields = '__all__'
+        fields = "__all__"

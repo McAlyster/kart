@@ -1,9 +1,8 @@
 import io
+
 from django.test import TestCase
 from django.urls import reverse
-
 from PIL import Image
-
 from rest_framework.test import APIClient
 
 from utils.tests.factories import AdminFactory
@@ -15,6 +14,7 @@ class GalleryEndPoint(TestCase):
     """
     Tests concernants Gallery's endpoint
     """
+
     def setUp(self):
         self.user = AdminFactory()
         self.gallery = GalleryFactory()
@@ -26,7 +26,7 @@ class GalleryEndPoint(TestCase):
         """
         Test list of gallery endpoint
         """
-        url = reverse('gallery-list')
+        url = reverse("gallery-list")
         self.response = self.client.get(url)
         self.assertEqual(self.response.status_code, 200)
 
@@ -34,7 +34,7 @@ class GalleryEndPoint(TestCase):
         """
         Test acces detail of gallery endpoint
         """
-        url = reverse('gallery-detail', kwargs={'pk': self.gallery.pk})
+        url = reverse("gallery-detail", kwargs={"pk": self.gallery.pk})
         self.response = self.client.get(url)
         self.assertEqual(self.response.status_code, 200)
 
@@ -46,10 +46,8 @@ class GalleryEndPoint(TestCase):
         self.client_auth = APIClient()
         self.client_auth.force_authenticate(user=self.user)
 
-        url = reverse('gallery-list')
-        data = {
-            'label': 'test',
-            'description': 'test'}
+        url = reverse("gallery-list")
+        data = {"label": "test", "description": "test"}
         self.response = self.client_auth.post(url, data)
         self.assertEqual(self.response.status_code, 201)
 
@@ -58,6 +56,7 @@ class MediumEndPoint(TestCase):
     """
     Tests concernants Medium's endpoint
     """
+
     def setUp(self):
         # User
         self.user = AdminFactory()
@@ -73,9 +72,9 @@ class MediumEndPoint(TestCase):
 
     def generate_photo_file(self):
         file = io.BytesIO()
-        image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
-        image.save(file, 'png')
-        file.name = 'test.png'
+        image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))
+        image.save(file, "png")
+        file.name = "test.png"
         file.seek(0)
         return file
 
@@ -83,7 +82,7 @@ class MediumEndPoint(TestCase):
         """
         Test list of medium
         """
-        url = reverse('medium-list')
+        url = reverse("medium-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -91,7 +90,7 @@ class MediumEndPoint(TestCase):
         """
         Test detail of media
         """
-        url = reverse('medium-detail', kwargs={'pk': self.medium.pk})
+        url = reverse("medium-detail", kwargs={"pk": self.medium.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -100,13 +99,13 @@ class MediumEndPoint(TestCase):
         Test upload file
         """
         self.client_auth.force_authenticate(user=self.user)
-        url_post_media = reverse('medium-detail', kwargs={'pk': self.medium.pk})
+        url_post_media = reverse("medium-detail", kwargs={"pk": self.medium.pk})
         file = self.generate_photo_file()
         data = {
-            'label': 'Upload',
-            'description': 'test',
-            'gallery': reverse('gallery-detail', kwargs={'pk': self.gallery.id}),
-            'picture': file,
+            "label": "Upload",
+            "description": "test",
+            "gallery": reverse("gallery-detail", kwargs={"pk": self.gallery.id}),
+            "picture": file,
         }
         response = self.client_auth.patch(url_post_media, data=data)
         assert response.status_code == 200

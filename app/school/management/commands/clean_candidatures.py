@@ -1,23 +1,21 @@
-# -*- encoding: utf-8 -*-
 import datetime
-import requests
 from itertools import chain
 
+import requests
 from django.core.management.base import BaseCommand
-
 from django.db.models import Q
 
-from school.models import (
-    StudentApplication,
-    AdminStudentApplication,
-    Student,
-    ScienceStudent,
-    StudentApplicationSetup,
-    VisitingStudent,
-    TeachingArtist,
-)
 from people.models import Staff
 from production.models import Artwork
+from school.models import (
+    AdminStudentApplication,
+    ScienceStudent,
+    Student,
+    StudentApplication,
+    StudentApplicationSetup,
+    TeachingArtist,
+    VisitingStudent,
+)
 
 current_app_settings = StudentApplicationSetup.objects.filter(is_current_setup=True).first()
 
@@ -83,17 +81,23 @@ class Command(BaseCommand):
         # sa expired mean
         #   user is too old to candidate or
         #   we dont keep infos greater than 5 years (grpd)
-        sa_expired = StudentApplication.objects.filter(
-            # Q to make OR (|) statement
-            Q(created_on__year__lte=expired_candidatures)
-            | Q(artist__user__profile__birthdate__year__lte=expired_user),
-        ).exclude(
-            # exclude selected user (= Artist)
-            artist__user__in=keep_users,
+        sa_expired = (
+            StudentApplication.objects.filter(
+                # Q to make OR (|) statement
+                Q(created_on__year__lte=expired_candidatures)
+                | Q(artist__user__profile__birthdate__year__lte=expired_user),
+            )
+            .exclude(
+                # exclude selected user (= Artist)
+                Q(artist__user__in=keep_users),
+            )
+            .exclude(
+                # archive
+                Q(administration__selected=True),
+            )
         )
         # All sa
         sa_all = StudentApplication.objects.exclude(
-            #
             Q(identity_card__isnull=True)
             | Q(experience_justification__isnull=True)
             | Q(cursus_justifications__isnull=True)
@@ -107,24 +111,28 @@ class Command(BaseCommand):
         # Display messages
         print("Traitement des candidatures <= ", year)
         print("**** Total de : ")
-        print("**** {} candidatures".format(StudentApplication.objects.all().count()))
+        print(f"**** {StudentApplication.objects.all().count()} candidatures")
         print(
-            "**** {} candidature a garder (are Student, Staff, visiting Artist, Teaching, )".format(
-                StudentApplication.objects.all().count() - len(sa_expired)
-            )
+            f"**** {StudentApplication.objects.all().count() - len(sa_expired)} candidature a garder (are Student, Staff, visiting Artist, Teaching, )"
         )
-        print("**** {} user a garder (are Student, Staff, visiting Artist, Teaching, )".format(len(keep_users)))
-        print("**** {} étudiants".format(Student.objects.all().count()))
+        print(f"**** {len(keep_users)} user a garder (are Student, Staff, visiting Artist, Teaching, )")
+        print(f"**** {Student.objects.all().count()} étudiants")
 
         print("Liste des informations qui vont être supprimées : ")
-        print("/!\\ Supression complète de {} candidatures expirées".format(sa_expired.count()))
-        print("/!\\ Supression des informations critiques de {} candidatures".format(sa_all.count()))
-        print("/!\\ Nettoyage, si besoin, des informations de {} anciennes candidatures".format(sa_olds.count()))
+        print(f"/!\\ Supression complète de {sa_expired.count()} candidatures expirées")
+        print(f"/!\\ Supression des informations critiques de {sa_all.count()} candidatures")
+        print(f"/!\\ Nettoyage, si besoin, des informations de {sa_olds.count()} anciennes candidatures")
         print(
             "/!\\ Suppression de {} vidéos VIMEO liées aux candidatures : {}".format(
-                sa_olds.filter(presentation_video__icontains="player.vimeo.com").count(),
-                [sa for sa in sa_olds.filter(presentation_video__icontains="player.vimeo.com")
-                 .values_list("presentation_video", flat=True)]
+                sa_olds.filter(
+                    administration__selected=False, presentation_video__icontains="player.vimeo.com"
+                ).count(),
+                [
+                    sa
+                    for sa in sa_olds.filter(
+                        administration__selected=False, presentation_video__icontains="player.vimeo.com"
+                    ).values_list("presentation_video", flat=True)
+                ],
             )
         )
 
@@ -152,19 +160,14 @@ class Command(BaseCommand):
         for sa in sa_expired:
             list_delete.extend([(sa, "all", sa)])
 
-        #
         for infos in list_delete:
             model, field, value = infos
             print(model, " : ", value)
-        #
         confirm = self.ask_user("Voulez-vous supprimer toutes ces informations ? (Y/n)")
-        #
         if not confirm:
             print("Aucun fichier n'a été supprimé")
             return
-        #
         print("C'est parti ...")
-        #
         for infos in list_delete:
             model, field, value = infos
             self.del_info(model, field, value)
@@ -199,7 +202,22 @@ class Command(BaseCommand):
         sa_fields_files = [
             "identity_card",
             "cursus_justifications",
+            "curriculum_vitae",
+            "considered_project_1",
+            "considered_project_2",
+            "artistic_referencies_project_1",
+            "artistic_referencies_project_2",
             "experience_justification",
+            "presentation_video",
+            "remote_interview_type",
+            "remote_interview_info",
+            "free_document",
+            "experience_justification",
+            "justification_letter",
+            "reference_letter",
+            "reference_letter",
+            "binomial_application_with",
+            "INE",
         ]
         for field in sa_fields_files:
             value = getattr(sa, field)
@@ -227,7 +245,7 @@ class Command(BaseCommand):
 
         user_fields_infos = [
             "photo",
-            # "social_insurance_number",
+            "social_insurance_number",
             "cursus",
             "birthdate",
             "birthplace",
@@ -235,6 +253,7 @@ class Command(BaseCommand):
             "homeland_zipcode",
             "homeland_town",
             "homeland_phone",
+            "gender",
         ]
         if not hasattr(sa, "artist") or not hasattr(sa.artist, "user") or not hasattr(sa.artist.user, "profile"):
             return a
@@ -255,7 +274,7 @@ class Command(BaseCommand):
                 a.append((sa.artist, field, value))
         # websites problem : 'common.Website.None' doesn't mean that is empty
         if sa.artist.websites.count() > 0:
-            a.append((sa.artist, "websites", getattr(sa.artist, "websites")))
+            a.append((sa.artist, "websites", sa.artist.websites))
 
         return a
 
@@ -281,11 +300,15 @@ class Command(BaseCommand):
         elif value.__class__.__name__ in ("str",):
             # special delete vimeo url
             if field == "presentation_video" and "player.vimeo.com" in value:
+                if hasattr(model, "administration") and model.administration.selected:
+                    # don't delete selected user's vimeo video
+                    return
+                # delete non selected user's vimeo video
                 print("delete vimeo video")
                 # make an REST delete to vimeo api id video
                 video_id = value.split("/")[-1]
                 # keep only digits
-                video_id = ''.join(filter(str.isdigit, video_id))
+                video_id = "".join(filter(str.isdigit, video_id))
                 delete_req = requests.delete(
                     f"{current_app_settings.video_service_url}/videos/{video_id}",
                     headers={"Authorization": f"Bearer {current_app_settings.video_service_token}"},

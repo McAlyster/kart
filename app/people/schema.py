@@ -1,24 +1,22 @@
 import re
-import graphene
-from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
+
 import django_filters
-
-from django.db.models import F, Q, Value
-from django.db.models.functions import Concat
-
+import graphene
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-
-from .models import Artist, FresnoyProfile, Staff
-from school.models import Student
-from diffusion.models import Diffusion
+from django.db.models import F, Q, Value
+from django.db.models.functions import Concat, Coalesce, NullIf
+from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+from graphql import GraphQLError
 
 from common.schema import WebsiteType
+from diffusion.models import Diffusion
 from diffusion.schema import DiffusionType
+from production.models import ProductionStaffTask
+from school.models import Student
 
-
-from graphql import GraphQLError
+from .models import Artist, FresnoyProfile, Staff
 
 
 def require_staff(info):
@@ -52,7 +50,7 @@ def order(artists, orderby):
                 art = x.alphabetical_order
             elif x.nickname != "":
                 art = x.nickname
-            elif hasattr(x.user, 'profile') and x.user.profile.preferred_last_name:
+            elif hasattr(x.user, "profile") and x.user.profile.preferred_last_name:
                 art = x.user.profile.preferred_last_name
             else:
                 art = x.user.last_name
@@ -63,14 +61,28 @@ def order(artists, orderby):
     return sorted(artists, key=lambda x: tt(x))
 
 
+def orderSQL(artists, orderby):
+    if orderby == "displayName":
+        return artists.order_by(
+            Coalesce(
+                NullIf(F("alphabetical_order"), Value("")),
+                NullIf(F("nickname"), Value("")),
+                NullIf(F("user__profile__preferred_last_name"), Value("")),
+                NullIf(F("user__last_name"), Value("")),
+                Value("z"),  # Valeur fallback pour mettre les sans-noms à la fin
+            )
+        )
+    else:
+        raise Exception("orderby value is undefined or unknown")
+
+
 def camel2snake(cam):
     # Camel to snake case
-    camSnakPat = re.compile(r'(?<!^)(?=[A-Z])')
-    return camSnakPat.sub('_', cam).lower()
+    camSnakPat = re.compile(r"(?<!^)(?=[A-Z])")
+    return camSnakPat.sub("_", cam).lower()
 
 
 class DynNameResolver:
-
     def __init__(self, interface="", confidential=False, fallback="Private Info"):
         self.interface = interface
         self.confidential = confidential
@@ -147,7 +159,7 @@ class DynNameResolver:
 
 
 class UserEmbeddedInterface(graphene.Interface):
-    '''Interface of models embedding a user field (indirect polymorphism)'''
+    """Interface of models embedding a user field (indirect polymorphism)"""
 
     firstName = graphene.String(resolver=DynNameResolver())
     lastName = graphene.String()
@@ -155,7 +167,7 @@ class UserEmbeddedInterface(graphene.Interface):
 
 
 class ArtistEmbeddedInterface(graphene.Interface):
-    '''Interface of models embedding an artist field (indirect polymorphism)'''
+    """Interface of models embedding an artist field (indirect polymorphism)"""
 
     # User fields
     firstName = graphene.String(resolver=DynNameResolver(interface="ArtistEmbedded"))
@@ -222,13 +234,13 @@ class ArtistEmbeddedInterface(graphene.Interface):
     def resolve_displayPhoto(parent, info):
         if parent.artist.artist_photo and parent.artist.artist_photo != "":
             return parent.artist.artist_photo
-        if hasattr(parent.artist, 'user') and hasattr(parent.artist.user, 'profile'):
+        if hasattr(parent.artist, "user") and hasattr(parent.artist.user, "profile"):
             return parent.artist.user.profile.photo if parent.artist.user.profile.photo else ""
         return ""
 
 
 class ProfileEmbeddedInterface(graphene.Interface):
-    '''Interface of models embedding an artist field (indirect polymorphism)'''
+    """Interface of models embedding an artist field (indirect polymorphism)"""
 
     gender = graphene.String()
     nationality = graphene.String()
@@ -259,7 +271,7 @@ class ProfileEmbeddedInterface(graphene.Interface):
 
 
 class UserInterface(graphene.Interface):
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
 
 class UserType(DjangoObjectType):
@@ -299,10 +311,24 @@ class UserType(DjangoObjectType):
     cursus = graphene.String(resolver=DynNameResolver())
     # foreignkeys resolver
     artist = graphene.Field("people.schema.ArtistType")
+    # name
+    displayName = graphene.String()
 
     def resolve_artist(self, info):
-        artist = Artist.objects.filter(user__id=self.id)
-        return artist.first() if artist.count() > 0 else None
+        return getattr(self, "artist", None) or Artist.objects.filter(user=self).first()
+
+    def resolve_displayName(self, info):
+        # Return nickname if exists, first + last name otherwise
+        artist = UserType.resolve_artist(self, info)
+        if artist:
+            return ArtistType.resolve_displayName(artist, info)
+        # when no user profile exists, use user's name
+        if not hasattr(self, "profile"):
+            return f"{self.first_name} {self.last_name}"
+        # when profile exists, use preferred names if available
+        first_name = self.profile.preferred_first_name or self.first_name
+        last_name = self.profile.preferred_last_name or self.last_name
+        return f"{first_name} {last_name}"
 
 
 # FresnoProfile
@@ -316,19 +342,16 @@ class FresnoyProfileType(DjangoObjectType):
 
 
 # Artist
-
-
 class ArtistInterface(graphene.Interface):
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
 
 class ArtistType(UserType):
-
     class Meta:
         model = Artist
         interfaces = (graphene.relay.Node, ArtistInterface)
 
-    id = graphene.ID(required=True, source='pk')
+    id = graphene.ID(required=True, source="pk")
 
     nickname = graphene.String(resolver=DynNameResolver())
     artist_photo = graphene.String(resolver=DynNameResolver())
@@ -343,26 +366,32 @@ class ArtistType(UserType):
     twitterAccount = graphene.String(resolver=DynNameResolver())
     facebookProfile = graphene.String(resolver=DynNameResolver())
     websites = graphene.List(WebsiteType, resolver=DynNameResolver())
-    teacher = graphene.Field('school.schema.TeachingArtistType')
+    teacher = graphene.Field("school.schema.TeachingArtistType")
+    studentApplication = graphene.List("school.schema.StudentApplicationType",
+                                       resolver=DynNameResolver(confidential=True, fallback=None))
 
     # Display Name
     displayName = graphene.String()
     displayPhoto = graphene.String()
 
     def resolve_displayName(parent, info):
-        '''Return nickname if exists, first + last name otherwise'''
+        """Return nickname if exists, first + last name otherwise"""
         if parent.nickname != "":
             return parent.nickname
-        if parent.user.profile.preferred_first_name or parent.user.profile.preferred_last_name:
-            return f"{parent.user.profile.preferred_first_name} {parent.user.profile.preferred_last_name}"
+        if hasattr(parent.user, "profile") and (
+            parent.user.profile.preferred_first_name or parent.user.profile.preferred_last_name
+        ):
+            first_name = parent.user.profile.preferred_first_name or parent.user.first_name
+            last_name = parent.user.profile.preferred_last_name or parent.user.last_name
+            return f"{first_name} {last_name}"
         else:
             return f"{parent.user.first_name} {parent.user.last_name}"
 
     def resolve_displayPhoto(parent, info):
-        '''Return artist photo if exists, user photo otherwise'''
+        """Return artist photo if exists, user photo otherwise"""
         if parent.artist_photo and parent.artist_photo != "":
             return parent.artist_photo
-        if hasattr(parent, 'user') and hasattr(parent.user, 'profile'):
+        if hasattr(parent, "user") and hasattr(parent.user, "profile"):
             return parent.user.profile.photo if parent.user.profile.photo else ""
         return ""
 
@@ -383,6 +412,13 @@ class StaffType(UserType):
     class Meta:
         model = Staff
 
+    # tasksProductionStaffTask
+    tasks = graphene.List("production.schema.ProductionStaffTaskType")
+
+    def resolve_tasks(self, info):
+        tasks = ProductionStaffTask.objects.filter(staff__id=self.id)
+        return tasks
+
 
 class ProfileType(DjangoObjectType):
     class Meta:
@@ -397,6 +433,7 @@ class Query(graphene.ObjectType):
     artists = graphene.List(
         ArtistType,
         name=graphene.String(required=False),
+        nationality=graphene.String(required=False),
         isStudent=graphene.Boolean(required=False),
         isTeacher=graphene.Boolean(required=False),
         isScienceStudent=graphene.Boolean(required=False),
@@ -407,6 +444,7 @@ class Query(graphene.ObjectType):
         ArtistType,
         filterset_class=ArtistPagination,
         name=graphene.String(required=False),
+        nationality=graphene.String(required=False),
         isStudent=graphene.Boolean(required=False),
         isTeacher=graphene.Boolean(required=False),
         isScienceStudent=graphene.Boolean(required=False),
@@ -416,27 +454,30 @@ class Query(graphene.ObjectType):
     profile = graphene.Field(FresnoyProfileType, id=graphene.Int())
     profiles = graphene.List(FresnoyProfileType)
 
+    staff = graphene.Field(StaffType, id=graphene.Int())
+    staffs = graphene.List(StaffType)
+
     def resolve_users(root, info, **kwargs):
         require_staff(info)
         users = get_user_model().objects.all()
-        name = kwargs.get('name')
+        name = kwargs.get("name")
         if name:
             users = users.annotate(
                 name=Concat(
-                    F('first_name'),
-                    Value(' '),
-                    F('last_name'),
-                    Value(' '),
-                    F('profile__preferred_first_name'),
-                    Value(' '),
-                    F('profile__preferred_last_name'),
+                    F("first_name"),
+                    Value(" "),
+                    F("last_name"),
+                    Value(" "),
+                    F("profile__preferred_first_name"),
+                    Value(" "),
+                    F("profile__preferred_last_name"),
                 )
             ).filter(Q(artist__nickname__unaccent__icontains=name) | Q(name__unaccent__icontains=name))
         return users
 
     def resolve_user(root, info, **kwargs):
         require_staff(info)
-        id = kwargs.get('id')
+        id = kwargs.get("id")
         if id is not None:
             return User.objects.get(pk=id)
         return None
@@ -445,19 +486,21 @@ class Query(graphene.ObjectType):
         root, info, isStudent=None, isTeacher=None, isScienceStudent=None, isVisitingStudent=None, **kwargs
     ):
         # get current (is_current_setup)
-        name = kwargs.get('name')
+        name = kwargs.get("name")
+        nationality = kwargs.get("nationality")
+
         artists = Artist.objects.all()
         if name != "" and name is not None:
             # Item.objects.filter(Q(creator=owner) | Q(moderated=False))
             artists = Artist.objects.annotate(
                 name=Concat(
-                    F('user__first_name'),
-                    Value(' '),
-                    F('user__last_name'),
-                    Value(' '),
-                    F('user__profile__preferred_first_name'),
-                    Value(' '),
-                    F('user__profile__preferred_last_name'),
+                    F("user__first_name"),
+                    Value(" "),
+                    F("user__last_name"),
+                    Value(" "),
+                    F("user__profile__preferred_first_name"),
+                    Value(" "),
+                    F("user__profile__preferred_last_name"),
                 )
             ).filter(
                 Q(nickname__unaccent__icontains=name)
@@ -465,6 +508,9 @@ class Query(graphene.ObjectType):
                 | Q(user__last_name__unaccent__icontains=name)
                 | Q(name__unaccent__icontains=name)
             )
+        # nationality
+        if nationality != "" and nationality is not None:
+            artists = artists.filter(user__profile__nationality__icontains=nationality)
         if isStudent:
             artists = artists.filter(student__isnull=False)
         if isTeacher:
@@ -474,10 +520,10 @@ class Query(graphene.ObjectType):
         if isVisitingStudent:
             artists = artists.filter(visiting_student__isnull=False)
         # order by displayName by default
-        return order(artists, "displayName")
+        return orderSQL(artists, "displayName")
 
     def resolve_artist(root, info, **kwargs):
-        id = kwargs.get('id')
+        id = kwargs.get("id")
         if id is not None:
             return Artist.objects.get(pk=id)
         return None
@@ -485,18 +531,23 @@ class Query(graphene.ObjectType):
     def resolve_artists_pagination(
         root, info, isStudent=None, isTeacher=None, isScienceStudent=None, isVisitingStudent=None, **kwargs
     ):
-        name = kwargs.get('name')
+        name = kwargs.get("name")
+        nationality = kwargs.get("nationality")
+
         artists = Artist.objects.all()
-        if name != "":
+        if name != "" and name is not None:
             # Item.objects.filter(Q(creator=owner) | Q(moderated=False))
             artists = Artist.objects.annotate(
-                name=Concat(F('user__first_name'), Value(' '), F('user__last_name'))
+                name=Concat(F("user__first_name"), Value(" "), F("user__last_name"))
             ).filter(
                 Q(nickname__unaccent__icontains=name)
                 | Q(user__first_name__unaccent__icontains=name)
                 | Q(user__last_name__unaccent__icontains=name)
                 | Q(name__unaccent__icontains=name)
             )
+        # nationality
+        if nationality != "" and nationality is not None:
+            artists = artists.filter(user__profile__nationality__icontains=nationality)
         if isStudent:
             artists = artists.filter(student__isnull=False)
         if isTeacher:
@@ -505,7 +556,7 @@ class Query(graphene.ObjectType):
             artists = artists.filter(student__science_student__isnull=False)
         if isVisitingStudent:
             artists = artists.filter(visiting_student__isnull=False)
-        return artists
+        return orderSQL(artists, "displayName")
 
     def resolve_profiles(root, info, **kwargs):
         require_staff(info)
@@ -513,7 +564,16 @@ class Query(graphene.ObjectType):
 
     def resolve_profile(root, info, **kwargs):
         require_staff(info)
-        id = kwargs.get('id')
+        id = kwargs.get("id")
         if id is not None:
             return FresnoyProfile.objects.get(pk=id)
         return None
+
+    def resolve_staff(root, info, **kwargs):
+        id = kwargs.get("id")
+        if id is not None:
+            return Staff.objects.get(pk=id)
+        return None
+
+    def resolve_staffs(root, info, **kwargs):
+        return Staff.objects.all()

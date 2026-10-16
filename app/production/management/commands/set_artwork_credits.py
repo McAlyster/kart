@@ -1,32 +1,27 @@
-# -*- encoding: utf-8 -*-
 import os
 import re
 import sys
 
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
-from django.contrib.auth.models import User
-
-from production.models import Artwork, ProductionStaffTask, StaffTask, Staff
-
-from people.utils.user_tools import getUserByNames
 from people.utils.artist_tools import getArtistByNames
-
+from people.utils.user_tools import getUserByNames
+from production.management.commands.import_catalog import Command as ImportCatalogCommand
+from production.models import Artwork, ProductionStaffTask, Staff, StaffTask
 from utils.kart_tools import usernamize
-from production.management.commands.import_catalog import getOrCreateMultiInstancesByStr
-
 
 stats = {}
 
 
 class Command(BaseCommand):
-    help = 'Set credits for artwork step by step, no argument'
+    help = "Set credits for artwork step by step, no argument"
 
     def handle(self, *args, **options):
 
         # Clear terminal
-        if '--test-mode' not in sys.argv:
-            os.system('clear')
+        if "--test-mode" not in sys.argv:
+            os.system("clear")
 
         init()
 
@@ -87,7 +82,6 @@ def setArtworkCredits(aw, credits):
     credits_arr = credits.split("\n")
 
     for credit in credits_arr:
-
         if ":" not in credit:
             print("/!\\ credit n'a pas de ':'" + credit)
             continue
@@ -109,11 +103,10 @@ def setArtworkCredits(aw, credits):
         # OR Nina Guseva et Anna Collard (or Nina Guseva / Anna Collard)
         # on demande si "&"" : "Good Loc & Co"
         char_split = [",", "/", ";", " et "]
-        #
         if " & " in user_str:
-            print(f"'&' est présent dans { user_str }, s'agit il de plusieurs personnes ?")
+            print(f"'&' est présent dans {user_str}, s'agit il de plusieurs personnes ?")
             if input_choices([False, True]):
-                char_split.append('&')
+                char_split.append("&")
 
         if any(sep in user_str for sep in char_split):
             for sep in char_split:
@@ -144,7 +137,8 @@ def setArtworkCredits(aw, credits):
         # search for task
         task_str = credit.split(":")[taskIndex].strip()
         # sometimes Benjamin Griere : Graphisme 3D, Développeur 3D
-        tasks = getOrCreateMultiInstancesByStr(StaffTask, 'label', task_str)
+        # TODO : have to change (refactor move to utils ?) : ImportCatalogCommand().getOrCreateMultiInstancesByStr
+        tasks = ImportCatalogCommand().getOrCreateMultiInstancesByStr(StaffTask, "label", task_str)
 
         # HAVE TO
         # ONE user ONE task
@@ -197,17 +191,17 @@ def is_staff_task_reverse(credit):
         task_upper = sum(1 for c in credit_task if c.isupper())
         # si l'un ou l'autre a des lettres en majuscules successif c'est surement un task
         if (
-            re.search(r'[A-Z]{2,}', credit_staff)
-            or re.search(r'[A-Z]{2,}', credit_task)
+            re.search(r"[A-Z]{2,}", credit_staff)
+            or re.search(r"[A-Z]{2,}", credit_task)
             # si c'est un chiffre ex +216
-            or re.search(r'[1-9]{2,}', credit_staff)
+            or re.search(r"[1-9]{2,}", credit_staff)
             # egalite : même nombre de majuscule
             or task_upper == staff_upper
             # rare : Estelle, Benazet : Chargée De Production
             or (task_upper > staff_upper and "," in credit_staff)
         ):
             print("Le credit n'est pas clair : " + credit)
-            print("Est ce que {} est une tache ?".format(credit_staff))
+            print(f"Est ce que {credit_staff} est une tache ?")
             isReverseStaffTask = input_choices([False, True])
             return isReverseStaffTask
         if task_upper > staff_upper:
@@ -234,9 +228,9 @@ def input_choices(values):
 
     print("Plusieurs valeurs sont possibles, selectionnez-en une :")
     for id, value in enumerate(values):
-        print("{} : {}".format(id, value))
+        print(f"{id} : {value}")
 
-    select = int(input("Votre choix : "))
+    select = input("Votre choix : ")
 
     try:
         select_int = int(select)
@@ -247,7 +241,6 @@ def input_choices(values):
         return False
 
 
-#
 def get_first_last_name_from_str(str):
     str = str.strip()
     if " " in str:
@@ -257,9 +250,6 @@ def get_first_last_name_from_str(str):
 
         return [first_name, last_name]
     return ["", str]
-
-
-#
 
 
 def get_or_create_user(user_str):
@@ -308,7 +298,7 @@ def get_or_create_user(user_str):
                     user = select_with_result_list["user"]
 
                 if "artist" in select_with_result_list:
-                    artist = select_with_result_list['artist']
+                    artist = select_with_result_list["artist"]
                     user = artist.user
                 created = False
         else:

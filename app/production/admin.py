@@ -1,37 +1,37 @@
 from django.contrib import admin
 from django.db import models
-
 from pagedown.widgets import AdminPagedownWidget
-from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 
 from .models import (
-    Production,
     Artwork,
-    FilmGenre,
-    Film,
-    InstallationGenre,
-    Installation,
-    Performance,
-    StaffTask,
-    OrganizationTask,
     Event,
+    Film,
+    FilmGenre,
+    Installation,
+    InstallationGenre,
     Itinerary,
+    OrganizationTask,
+    Performance,
+    Production,
+    StaffTask,
 )
+from .forms import FilmAdminForm
 
 
 class CollaboratorsInline(admin.TabularInline):
     model = Production.collaborators.through
-    raw_id_fields = ('staff', 'task')
+    raw_id_fields = ("staff", "task")
     autocomplete_lookup_fields = {
-        'fk': ['staff', 'task'],
+        "fk": ["staff", "task"],
     }
 
 
 class PartnersInline(admin.TabularInline):
     model = Production.partners.through
-    raw_id_fields = ('organization',)
+    raw_id_fields = ("organization",)
     autocomplete_lookup_fields = {
-        'fk': ['organization'],
+        "fk": ["organization"],
     }
 
 
@@ -44,13 +44,13 @@ class ProductionChildAdmin(PolymorphicChildModelAdmin):
 @admin.register(Production)
 class ProductionParentAdmin(PolymorphicParentModelAdmin):
     list_display = (
-        'title',
-        'subtitle',
+        "title",
+        "subtitle",
     )
-    search_fields = ['title']
+    search_fields = ["title"]
     inlines = (CollaboratorsInline, PartnersInline)
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
 
     base_model = Production
@@ -61,42 +61,42 @@ class ProductionParentAdmin(PolymorphicParentModelAdmin):
         Event,
     )
 
+
 @admin.register(Artwork)
 class ArtworkAdmin(ProductionChildAdmin):
-
     base_model = Production
     show_in_index = True
 
-    list_display = ('title', 'get_authors', 'get_diffusions', 'get_awards')
+    list_display = ("title", "get_authors", "get_diffusions", "get_awards")
     search_fields = [
-        'title',
+        "title",
     ]
     inlines = (CollaboratorsInline, PartnersInline)
     filter_vertical = (
-        'authors',
-        'beacons',
+        "authors",
+        "beacons",
     )
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
     raw_id_fields = (
-        'authors',
-        'process_galleries',
-        'mediation_galleries',
-        'in_situ_galleries',
-        'press_galleries',
-        'teaser_galleries',
-        'websites',
+        "authors",
+        "process_galleries",
+        "mediation_galleries",
+        "in_situ_galleries",
+        "press_galleries",
+        "teaser_galleries",
+        "websites",
     )
     autocomplete_lookup_fields = {
-        'm2m': [
-            'authors',
-            'process_galleries',
-            'mediation_galleries',
-            'in_situ_galleries',
-            'press_galleries',
-            'teaser_galleries',
-            'websites',
+        "m2m": [
+            "authors",
+            "process_galleries",
+            "mediation_galleries",
+            "in_situ_galleries",
+            "press_galleries",
+            "teaser_galleries",
+            "websites",
         ]
     }
 
@@ -106,23 +106,23 @@ class ArtworkAdmin(ProductionChildAdmin):
     get_authors.short_description = "Artist(s)"
 
     def get_diffusions(self, obj):
-        if hasattr(obj, 'events'):
+        if hasattr(obj, "events"):
             return ", ".join([event.__str__() for event in obj.events.all()])
         return ""
 
     get_diffusions.short_description = "Diffusion(s)"
-    get_diffusions.admin_order_field = 'events'
+    get_diffusions.admin_order_field = "events"
 
     def get_awards(self, obj):
         return ", ".join(
             [
-                '{0} {1} ({2})'.format(award.meta_award.label, award.date.year, award.meta_award.event.title)
+                f"{award.meta_award.label} {award.date.year} ({award.meta_award.event.title})"
                 for award in obj.award.all()
             ]
         )
 
     get_awards.short_description = "Award(s)"
-    get_awards.admin_order_field = 'award'
+    get_awards.admin_order_field = "award"
 
 
 @admin.register(Installation)
@@ -132,10 +132,11 @@ class InstallationAdmin(ArtworkAdmin):
 
 @admin.register(Film)
 class FilmAdmin(ArtworkAdmin):
+    form = FilmAdminForm  # Ajout du formulaire ici
     # filter_vertical = ('shooting_place', )
-    raw_id_fields = ArtworkAdmin.raw_id_fields + ('shooting_place',)
+    raw_id_fields = ArtworkAdmin.raw_id_fields + ("shooting_place",)
     autocomplete_lookup_fields = {
-        'm2m': ArtworkAdmin.autocomplete_lookup_fields.get('m2m', []) + ['shooting_place'],
+        "m2m": ArtworkAdmin.autocomplete_lookup_fields.get("m2m", []) + ["shooting_place"],
     }
 
 
@@ -147,21 +148,21 @@ class PerformanceAdmin(ArtworkAdmin):
 @admin.register(Event)
 class EventAdmin(ProductionChildAdmin):
     show_in_index = True
-    list_display = ('title', 'starting_date', 'type', 'main_event')
-    search_fields = ['title', 'parent_event__title']
+    list_display = ("title", "starting_date", "type", "main_event")
+    search_fields = ["title", "parent_event__title"]
     inlines = (CollaboratorsInline, PartnersInline)
-    filter_vertical = ('subevents', "films", "installations", "performances")
-    raw_id_fields = ('subevents', 'installations', 'performances', 'films', "websites")
+    filter_vertical = ("subevents", "films", "installations", "performances")
+    raw_id_fields = ("subevents", "installations", "performances", "films", "websites")
     autocomplete_lookup_fields = {
-        'm2m': ['subevents', 'installations', 'performances', 'films', "websites"],
+        "m2m": ["subevents", "installations", "performances", "films", "websites"],
     }
 
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
 
     def get_ordering(self, request):
-        return ['id']  # sort case insensitive
+        return ["id"]  # sort case insensitive
 
 
 class ItineraryArtworkInline(admin.TabularInline):
@@ -170,42 +171,44 @@ class ItineraryArtworkInline(admin.TabularInline):
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
-    search_fields = ['label_fr', 'event__title']
+    search_fields = ["label_fr", "event__title"]
     inlines = (ItineraryArtworkInline,)
 
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
 
 
 @admin.register(FilmGenre)
 class FilmGenreAdmin(admin.ModelAdmin):
-    search_fields = ['label']
-    list_display = ('label',)
+    search_fields = ["label"]
+    list_display = ("label",)
 
 
 @admin.register(InstallationGenre)
 class InstallationGenreAdmin(admin.ModelAdmin):
-    search_fields = ['label']
-    list_display = ('label',)
+    search_fields = ["label"]
+    list_display = ("label",)
 
 
 @admin.register(OrganizationTask)
 class OrganizationTaskAdmin(admin.ModelAdmin):
-    search_fields = ['label', 'description']
-    list_display = ('label',)
+    search_fields = ["label", "description"]
+    list_display = ("label",)
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
-    ordering = ('label',)
+    ordering = ("label",)
 
 
 @admin.register(StaffTask)
 class StaffTaskAdmin(admin.ModelAdmin):
-    search_fields = ['label', 'description']
-    list_display = ('label',)
+    search_fields = ["label", "description"]
+    list_display = ("label",)
     formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget},
+        models.TextField: {"widget": AdminPagedownWidget},
     }
-    ordering = ('label',)
-    search_fields = ['label',]
+    ordering = ("label",)
+    search_fields = [
+        "label",
+    ]

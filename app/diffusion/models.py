@@ -1,11 +1,10 @@
-from django.db.models import Q
 from django.db import models
+from django.db.models import Q
 from django_countries.fields import CountryField
-
-from taggit.managers import TaggableManager
 from multiselectfield import MultiSelectField
+from taggit.managers import TaggableManager
 
-from people.models import User, Organization
+from people.models import Organization, User
 
 
 # TODO: Add field is_city - is_country
@@ -26,7 +25,7 @@ class Place(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     organization = models.ForeignKey(
-        Organization, blank=True, null=True, related_name='places', on_delete=models.CASCADE
+        Organization, blank=True, null=True, related_name="places", on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -41,9 +40,9 @@ class Place(models.Model):
             address += ", " + self.city
 
         if not address.lower().find(self.name.lower()):
-            return f'{self.name} {self.city} ({extra_info})'
+            return f"{self.name} {self.city} ({extra_info})"
         else:
-            return f'{self.name} {address} ({extra_info})'
+            return f"{self.name} {address} ({extra_info})"
 
 
 def main_event_true():
@@ -66,27 +65,27 @@ class MetaAward(models.Model):
     """
 
     TYPE_CHOICES = (
-        ('INDIVIDUAL', 'Individual'),
-        ('GROUP', 'Group'),
-        ('CAREER', 'Career'),
-        ('OTHER', 'Other'),
+        ("INDIVIDUAL", "Individual"),
+        ("GROUP", "Group"),
+        ("CAREER", "Career"),
+        ("OTHER", "Other"),
     )
 
     label = models.CharField(max_length=255, null=True)
     description = models.TextField(null=True)
 
     event = models.ForeignKey(
-        'production.Event',
+        "production.Event",
         limit_choices_to=main_event_true,
         help_text="Main Event only",
-        related_name='meta_award',
+        related_name="meta_award",
         null=True,
         on_delete=models.SET_NULL,
     )
     type = models.CharField(max_length=10, null=True, choices=TYPE_CHOICES)
 
     task = models.ForeignKey(
-        'production.StaffTask', blank=True, null=True, related_name='meta_award', on_delete=models.PROTECT
+        "production.StaffTask", blank=True, null=True, related_name="meta_award", on_delete=models.PROTECT
     )
 
     def __str__(self):
@@ -94,11 +93,11 @@ class MetaAward(models.Model):
         if self.event:
             event = str(self.event)[:-13]
         else:
-            event = ''
+            event = ""
         if self.task:
-            return f'{self.label} ({event}, cat. {self.task})'
+            return f"{self.label} ({event}, cat. {self.task})"
         else:
-            return f'{self.label} ({event})'
+            return f"{self.label} ({event})"
 
 
 def staff_and_artist_user_limit():
@@ -112,11 +111,11 @@ class Award(models.Model):
     Awards given to artworks & such.
     """
 
-    meta_award = models.ForeignKey(MetaAward, null=True, blank=False, related_name='award', on_delete=models.PROTECT)
+    meta_award = models.ForeignKey(MetaAward, null=True, blank=False, related_name="award", on_delete=models.PROTECT)
     artwork = models.ManyToManyField(
-        'production.Artwork',
+        "production.Artwork",
         blank=True,
-        related_name='award',
+        related_name="award",
         help_text="Artwork(s) that received the award (may be empty for artistic awards)",
     )
     # artist is Artist or Staff
@@ -124,24 +123,24 @@ class Award(models.Model):
         User,
         blank=True,
         limit_choices_to=staff_and_artist_user_limit,
-        related_name='award',
+        related_name="award",
         help_text="Staffs or Artists only",
     )
     event = models.ForeignKey(
-        'production.Event',
+        "production.Event",
         null=True,
         blank=False,
         limit_choices_to=main_event_false,
-        related_name='award',
+        related_name="award",
         help_text="Event where the award has been given (not main event)",
         on_delete=models.PROTECT,
     )
 
     ex_aequo = models.BooleanField(default=False)
 
-    giver = models.ManyToManyField(User, blank=True, help_text="Who hands the arward", related_name='give_award')
+    giver = models.ManyToManyField(User, blank=True, help_text="Who hands the arward", related_name="give_award")
 
-    sponsor = models.ForeignKey(Organization, null=True, blank=True, related_name='award', on_delete=models.SET_NULL)
+    sponsor = models.ForeignKey(Organization, null=True, blank=True, related_name="award", on_delete=models.SET_NULL)
 
     date = models.DateField(null=True)
 
@@ -151,7 +150,7 @@ class Award(models.Model):
 
     def __str__(self):
         artworks = ", ".join([artwork.__str__() for artwork in self.artwork.all()])
-        return '{0} - {1} pour {2}'.format(self.date.year if self.date else None, self.meta_award, artworks)
+        return f"{self.date.year if self.date else None} - {self.meta_award} pour {artworks}"
 
 
 class MetaEvent(models.Model):
@@ -160,17 +159,17 @@ class MetaEvent(models.Model):
     """
 
     GENRES_CHOICES = (
-        ('FILM', 'Films'),
-        ('PERF', 'Performances'),
-        ('INST', 'Installations'),
+        ("FILM", "Films"),
+        ("PERF", "Performances"),
+        ("INST", "Installations"),
     )
     # Add only one meta to Main Event (primary_key=True)
     # fixMe
     event = models.OneToOneField(
-        'production.Event',
+        "production.Event",
         primary_key=True,
         limit_choices_to=main_event_true,
-        related_name='meta_event',
+        related_name="meta_event",
         on_delete=models.PROTECT,
     )
 
@@ -179,7 +178,7 @@ class MetaEvent(models.Model):
     important = models.BooleanField(default=True, help_text="Helps hide minor events")
 
     def __str__(self):
-        return '{0}'.format(self.event.title)
+        return f"{self.event.title}"
 
 
 class Diffusion(models.Model):
@@ -188,13 +187,13 @@ class Diffusion(models.Model):
     """
 
     FIRST_CHOICES = (
-        ('WORLD', 'Mondial'),
-        ('INTER', 'International'),
-        ('NATIO', 'National'),
+        ("WORLD", "Mondial"),
+        ("INTER", "International"),
+        ("NATIO", "National"),
     )
 
     event = models.ForeignKey(
-        'production.Event',
+        "production.Event",
         blank=False,
         null=False,
         limit_choices_to=main_event_false,
@@ -203,10 +202,10 @@ class Diffusion(models.Model):
     )
 
     artwork = models.ForeignKey(
-        'production.Artwork',
+        "production.Artwork",
         null=False,
         blank=False,
-        related_name='diffusion',
+        related_name="diffusion",
         help_text="Artwork that has been shown",
         on_delete=models.PROTECT,
     )
@@ -223,9 +222,9 @@ class Diffusion(models.Model):
     published = models.BooleanField(default=False, help_text="Diffusion information is validated and can be published")
 
     def __str__(self):
-        in_or_not = 'IN' if self.on_competition else 'OFF'
-        return '{0} au {1} ({2})'.format(self.artwork.title, self.event.title, in_or_not)
+        in_or_not = "IN" if self.on_competition else "OFF"
+        return f"{self.artwork.title} au {self.event.title} ({in_or_not})"
 
     class Meta:
         # NO DUPLI DIFF
-        unique_together = ('id', 'artwork', 'event')
+        unique_together = ("id", "artwork", "event")

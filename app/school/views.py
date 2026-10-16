@@ -1,64 +1,57 @@
-from django.contrib.auth.tokens import default_token_generator
+import django_filters
+from dj_rest_auth.views import PasswordResetView
 from django.contrib.auth.models import Group
+from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.http import base36_to_int
-
-import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import viewsets, permissions, filters, status
-from rest_framework.response import Response
+from guardian.shortcuts import assign_perm
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from dj_rest_auth.views import PasswordResetView
-
-from guardian.shortcuts import assign_perm
-
-from people.models import User, FresnoyProfile, Artist
-from people.serializers import UserRegisterSerializer
 from common.utils import make_random_password
+from people.models import Artist, FresnoyProfile, User
+from people.serializers import UserRegisterSerializer
 
 from .models import (
-    Promotion,
-    Student,
+    AdminStudentApplication,
     PhdStudent,
+    Promotion,
     ScienceStudent,
-    TeachingArtist,
-    VisitingStudent,
+    Student,
     StudentApplication,
     StudentApplicationSetup,
-    AdminStudentApplication,
+    TeachingArtist,
+    VisitingStudent,
 )
-
 from .serializers import (
-    StudentPasswordResetSerializer,
-    PromotionSerializer,
-    StudentSerializer,
+    AdminStudentApplicationSerializer,
     PhdStudentSerializer,
-    ScienceStudentSerializer,
-    TeachingArtistSerializer,
-    VisitingStudentSerializer,
+    PromotionSerializer,
     PublicStudentApplicationSerializer,
+    ScienceStudentSerializer,
     StudentApplicationSerializer,
     StudentApplicationSetupSerializer,
-    AdminStudentApplicationSerializer,
+    StudentPasswordResetSerializer,
+    StudentSerializer,
+    TeachingArtistSerializer,
+    VisitingStudentSerializer,
 )
-
 from .utils import (
-    send_activation_email,
+    candidature_close,
     send_account_information_email,
-    send_candidature_completed_email_to_user,
-    send_candidature_completed_email_to_admin,
+    send_activation_email,
     send_candidature_complete_email_to_candidat,
+    send_candidature_completed_email_to_admin,
+    send_candidature_completed_email_to_user,
     send_interview_selection_email_to_candidat,
     send_interview_selection_on_waitlist_email_to_candidat,
+    send_not_selected_candidature_email_to_candidat,
     send_selected_candidature_email_to_candidat,
     send_selected_on_waitlist_candidature_email_to_candidat,
-    send_not_selected_candidature_email_to_candidat,
-    candidature_close,
 )
 
 
@@ -453,7 +446,6 @@ def user_activate(request, uidb64, token):
         user = None
 
     if user is not None:
-
         setup = StudentApplicationSetup.objects.filter(is_current_setup=True).first()
 
         route = "candidature.account.login"
@@ -461,7 +453,7 @@ def user_activate(request, uidb64, token):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
-        change_password_link = "{0}/{1}/{2}".format(setup.reset_password_url, access_token, route)
+        change_password_link = f"{setup.reset_password_url}/{access_token}/{route}"
 
         token_is_valid = default_token_generator.check_token(user, token)
 

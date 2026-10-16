@@ -1,7 +1,7 @@
 from django.http import JsonResponse
-from kart.schema import schema
 from django.views import View
 
+from kart.schema import schema
 
 # Exhibs ids
 idPano24 = 1949
@@ -9,19 +9,18 @@ idPano25 = 1952
 
 
 class Artworks25ViewGQL(View):
-
     def get(self, request, *args, **kwargs):
         # artwork id
-        id = kwargs.get('id')
-        query = '''
+        id = kwargs.get("id")
+        query = """
         query exhib($idExhib: Int)
             { exhibition(id: $idExhib) {
-        '''
+        """
 
         # if an id is provided, get data for that artwork ...
         if id:
             query += "artworkExhib(id: " + str(id) + "){"
-            query += '''
+            query += """
                       artwork {
                         id
                         title
@@ -97,12 +96,12 @@ class Artworks25ViewGQL(View):
                     }
                   }
                 }
-            '''
+            """
         # ... otherwise display all artworks
         else:
             query += "artworks"
 
-            query += ''' {
+            query += """ {
                       id
                       title
                       picture
@@ -153,15 +152,13 @@ class Artworks25ViewGQL(View):
                     }
                   }
                   }
-                '''
+                """
         # print("query", query)
 
         context = {}
-        result = schema.execute(
-            query,  variables={'idExhib': idPano25}, context=context)
+        result = schema.execute(query, variables={"idExhib": idPano25}, context=context)
 
         if result.errors:
-            return JsonResponse(
-                {'errors': [str(error) for error in result.errors]}, status=400)
+            return JsonResponse({"errors": [str(error) for error in result.errors]}, status=400)
 
         return JsonResponse(result.data, status=200)

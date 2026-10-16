@@ -1,7 +1,7 @@
 import pytest
 
-from production.tests.conftest import *  # noqa
-from utils.tests.conftest import *  # noqa
+from production.tests.conftest import *  # NOQA
+from utils.tests.conftest import *  # NOQA
 
 from . import factories
 

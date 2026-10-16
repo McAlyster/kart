@@ -1,9 +1,7 @@
 from django import template
-
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from people.models import User
-
 from school.models import StudentApplicationSetup
 
 register = template.Library()
@@ -20,13 +18,12 @@ def authfront_reset_password_link(token, email):
         user = None
 
     if user is not None:
-
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
         route = "candidature.account.login"
 
         # reverse('password-reset')
-        url = "{0}/{1}/{2}".format(setup.reset_password_url, access_token, route)
+        url = f"{setup.reset_password_url}/{access_token}/{route}"
 
     return url

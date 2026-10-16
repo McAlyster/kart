@@ -1,11 +1,10 @@
-import graphene
 import operator
 from functools import reduce
 
-from graphene_django import DjangoObjectType
-
+import graphene
+from django.db.models import CharField, F, Q
 from django.db.models.functions import Concat
-from django.db.models import Q, F, CharField
+from graphene_django import DjangoObjectType
 
 from .models import Gallery, Medium
 
@@ -90,7 +89,6 @@ class GalleryType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-
     gallery = graphene.Field(GalleryType, id=graphene.ID(required=True), media_type=graphene.String(required=False))
 
     medium = graphene.Field(MediumType, id=graphene.ID(required=True))

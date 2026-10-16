@@ -1,15 +1,14 @@
 import pytest
-
 from django.urls import reverse
 from django.utils import timezone
 
-from people.tests.conftest import *  # noqa
+from people.tests.conftest import *  # NOQA
 from utils.tests.utils import (
+    HelpTestForModelViewSet,
     IgnoreModelViewSetMixin,
     IsArtistOrReadOnlyModelViewSetMixin,
     IsAuthenticatedOrReadOnlyModelViewSetMixin,
     ReadOnlyModelViewSetMixin,
-    HelpTestForModelViewSet,
     parametrize_user_roles,
 )
 
@@ -116,7 +115,6 @@ class TestUserStudentApplicationViewSet(TestArtistStudentApplicationViewSet):
 
 @pytest.mark.django_db
 class TestUserStudentApplicationClosedCampaign(IgnoreModelViewSetMixin, TestUserStudentApplicationViewSet):
-
     methods_behavior = {
         "post": 403,
         "put": 404,
@@ -167,7 +165,7 @@ class TestUserStudentApplicationClosedCampaign(IgnoreModelViewSetMixin, TestUser
             "data": {action: 1},
             "content_type": "application/json",
         }
-        response = client.patch("{}/{}".format(self.base_url, self.target_uri_suffix()), **kwargs)
+        response = client.patch(f"{self.base_url}/{self.target_uri_suffix()}", **kwargs)
         assert response.status_code == 200
         assert len(mailoutbox) == mailsent
 

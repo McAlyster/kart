@@ -2,13 +2,11 @@ from django.db import models
 
 
 class Website(models.Model):
-    """ Dedicated model for websites.
+    """Dedicated model for websites."""
 
-    """
     LANGUAGES = (
-        ('FR', 'Français'),
-        ('EN', 'English'),
-
+        ("FR", "Français"),
+        ("EN", "English"),
     )
     title_fr = models.CharField(max_length=255)
     title_en = models.CharField(max_length=255)
@@ -19,9 +17,8 @@ class Website(models.Model):
         """Return the litterate form of a website.
         Example : Le site du Fresn(...) - http://www.lefresnoy.net
         """
-        title = (self.title_fr[:20] + '(...)' if len(self.title_fr) > 20
-                 else self.title_fr)
-        return "{} - {:40}".format(title, self.url)
+        title = self.title_fr[:20] + "(...)" if len(self.title_fr) > 20 else self.title_fr
+        return f"{title} - {self.url:40}"
 
 
 class BTBeacon(models.Model):
@@ -33,4 +30,4 @@ class BTBeacon(models.Model):
     y = models.FloatField()
 
     def __str__(self):
-        return '{0} ({1})'.format(self.label, self.uuid)
+        return f"{self.label} ({self.uuid})"

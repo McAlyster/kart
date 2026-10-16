@@ -1,42 +1,37 @@
+import csv
+import datetime
 import os
 import re
 import unicodedata
+
+import markdownify
 import requests
-
-from django.core.management.base import BaseCommand
-from django.db.models import Count
+import unidecode
 from django.contrib.contenttypes.models import ContentType
-
+from django.core.management.base import BaseCommand
 from django.db import transaction
-
+from django.db.models import Count
+from langdetect import detect
 from taggit.models import Tag
 
 from common.models import Website
-from people.models import User, Artist, Staff
-from production.models import (
-    Film,
-    Installation,
-    Performance,
-    Event,
-    Organization,
-    FilmGenre,
-    InstallationGenre,
-    OrganizationTask,
-    ProductionOrganizationTask,
-    StaffTask,
-    ProductionStaffTask,
-)
-
-import markdownify
-import csv
-import unidecode
-import datetime
-from langdetect import detect
-
+from people.models import Artist, Staff, User
 from people.utils.artist_tools import getArtistByNames
 from people.utils.user_tools import getUserByNames
+from production.models import (
+    Event,
+    Film,
+    FilmGenre,
+    Installation,
+    InstallationGenre,
+    Organization,
+    OrganizationTask,
+    Performance,
+    ProductionOrganizationTask,
+    ProductionStaffTask,
+    StaffTask,
+)
 from utils.kart_tools import usernamize
-
 
 """
     USAGE : ./manage.py import_catalog --path_to_csv <path_to_csv_file>
@@ -244,7 +239,7 @@ class Command(BaseCommand):
         artist = artist_search["artist"]
 
         print("START WITH ARTIST")
-        print("  {} ".format(artist))
+        print(f"  {artist} ")
         print("*********")
 
         # BIO
@@ -300,7 +295,7 @@ class Command(BaseCommand):
         artist_db = artist
 
         print("ARTWORK")
-        print("  {} - {}".format(artwork_title, artwork_type))
+        print(f"  {artwork_title} - {artwork_type}")
         print("*********")
 
         artwork = None
@@ -313,7 +308,7 @@ class Command(BaseCommand):
         # artist bio
         artist_db = self.updateArtistBio(artist_db, bio_fr, bio_en)
 
-        # update user email 
+        # update user email
         if artist_db.user and data["user_email"] and artist_db.user.email != data["user_email"]:
             artist_db.user.email = data["user_email"]
             artist_db.user.save()
@@ -357,7 +352,6 @@ class Command(BaseCommand):
             # 00:20:00
             if len(duration) > 2:
                 seconds = int(duration[2])
-            #
             if hours > 2:
                 seconds = minutes
                 minutes = hours
@@ -524,7 +518,7 @@ class Command(BaseCommand):
 
         print("Plusieurs valeurs sont possibles, selectionnez-en une :")
         for id, value in enumerate(values):
-            print("{} : {} {}".format(id, value, self.highlightChoices(value)))
+            print(f"{id} : {value} {self.highlightChoices(value)}")
 
         print("n : pas dans la liste")
         select = input("Votre choix : ")
@@ -727,7 +721,6 @@ class Command(BaseCommand):
 
         list = []
         str_list = str.split(",")
-        #
         contentype_id = ContentType.objects.get_for_model(instance).id
         for s in str_list:
             # sanitize
@@ -839,7 +832,6 @@ class Command(BaseCommand):
             # OR Nina Guseva et Anna Collard (or Nina Guseva / Anna Collard)
             # on demande si "&"" : "Good Loc & Co"
             char_split = [",", "/", ";", " et "]
-            #
             if " & " in user_str:
                 print(f"'&' est présent dans {user_str}, s'agit il de plusieurs personnes ?")
                 if self.input_choices([False, True]):
@@ -1047,7 +1039,7 @@ class Command(BaseCommand):
             website_url = "https://www.instagram.com/{}".format(website_url.replace("@", ""))
 
         if "http" not in website_url:
-            website_url = "https://{}".format(website_url)
+            website_url = f"https://{website_url}"
 
         if any(rs in url for rs in rs_list):
             # get the good one
@@ -1201,7 +1193,6 @@ class Command(BaseCommand):
 
         return task
 
-    #
     def get_first_last_name_from_str(self, str):
         str = str.strip()
         sep_list = [",", " "]
@@ -1215,10 +1206,9 @@ class Command(BaseCommand):
 
         return ["", str]
 
-    #
     def getPlace(self, str_place):
-        from geopy.geocoders import Nominatim
         from geopy import distance
+        from geopy.geocoders import Nominatim
 
         from diffusion.models import Place
 
@@ -1327,10 +1317,11 @@ class Command(BaseCommand):
         return None
 
     def createFileFromUrl(self, url):
+        import shutil
+        import urllib.request
+
         from django.core.files import File
         from django.core.files.temp import NamedTemporaryFile
-        import urllib.request
-        import shutil
 
         if not url:
             return None
@@ -1345,15 +1336,15 @@ class Command(BaseCommand):
             # 1. On ouvre la connexion une seule fois
             with urllib.request.urlopen(url, timeout=60) as response:
                 # Récupération de la taille depuis les headers (évite de télécharger pour rien)
-                file_size_bytes = int(response.headers.get('Content-Length', 0))
+                file_size_bytes = int(response.headers.get("Content-Length", 0))
                 file_size_mb = f"{round(file_size_bytes / (1024 * 1024), 2)}MB" if file_size_bytes else "Inconnue"
-                
+
                 print(f"téléchargement du media ({file_size_mb}) : {url}")
 
                 # 2. On écrit directement dans le fichier temporaire par blocs (Buffer de 16 Ko)
                 # Cela consomme 16 Ko de RAM au lieu de 31 Mo !
                 shutil.copyfileobj(response, img_temp)
-                
+
                 # On force l'écriture sur le disque
                 img_temp.flush()
 
@@ -1364,9 +1355,6 @@ class Command(BaseCommand):
         # On replace le curseur au début du fichier pour que Django puisse le lire
         img_temp.seek(0)
         return File(img_temp)
-
-
-
 
     def createMediaFromUrl(self, url, gallery_id):
         from assets.models import Medium
@@ -1388,13 +1376,13 @@ class Command(BaseCommand):
     def createGalleryFromArtwork(self, artwork, authors, gallery_type):
         from assets.models import Gallery
 
-        label = "{0} - {1}".format(gallery_type, artwork.title)
+        label = f"{gallery_type} - {artwork.title}"
         gallery, created = self.get_or_create(Gallery, {"label": label})
 
-        gallery.description = "{0} \n {1}".format(authors, artwork.title)
-        gallery.description += "{0} {1}".format(artwork.polymorphic_ctype.name, artwork.production_date.year)
+        gallery.description = f"{authors} \n {artwork.title}"
+        gallery.description += f"{artwork.polymorphic_ctype.name} {artwork.production_date.year}"
         gallery.description += "\nProduction Le Fresnoy – Studio national des arts contemporains"
-        gallery.description += "\n© {}".format(authors)
+        gallery.description += f"\n© {authors}"
 
         gallery.save()
         return [gallery, created]

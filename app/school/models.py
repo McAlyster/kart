@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from assets.models import Gallery
 from common.utils import make_filepath
 from people.models import Artist, Organization
-from assets.models import Gallery
 from production.models import Artwork
 
 
@@ -24,7 +24,7 @@ class Promotion(models.Model):
     picture = models.ImageField(upload_to=make_filepath, blank=True)
 
     def __str__(self):
-        return "{0} ({1}-{2})".format(self.name, self.starting_year, self.ending_year)
+        return f"{self.name} ({self.starting_year}-{self.ending_year})"
 
 
 class Student(models.Model):
@@ -38,16 +38,18 @@ class Student(models.Model):
     number = models.CharField(max_length=50, null=True, blank=True)
     promotion = models.ForeignKey(Promotion, null=True, on_delete=models.SET_NULL)
     graduate = models.BooleanField(default=False)
-    diploma_mention = models.CharField(max_length=150, null=True, blank=True, help_text="Diploma mention")
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.PROTECT,
-                                help_text="User account (optional)")
+    diploma_mention = models.CharField(max_length=255, null=True, blank=True, help_text="Diploma mention")
+    diploma_file = models.FileField(upload_to=make_filepath, null=True, blank=True, help_text="Diploma file")
+    user = models.OneToOneField(
+        User, null=True, blank=True, on_delete=models.PROTECT, help_text="User account (optional)"
+    )
     artist = models.OneToOneField(Artist, related_name="student", on_delete=models.PROTECT)
 
     def __str__(self):
         if self.artist.nickname:
-            return "{0} ({1})".format(self.artist, self.artist.user)
+            return f"{self.artist} ({self.artist.user})"
         else:
-            return "{0}".format(self.artist)
+            return f"{self.artist}"
 
 
 class TeachingArtist(models.Model):
@@ -71,7 +73,7 @@ class TeachingArtist(models.Model):
     artworks_supervision = models.ManyToManyField(Artwork, related_name="mentoring", blank=True)
 
     def __str__(self):
-        return "{0}".format(self.artist)
+        return f"{self.artist}"
 
 
 class ScienceStudent(models.Model):
@@ -86,7 +88,7 @@ class ScienceStudent(models.Model):
     field = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return "{0}".format(self.student)
+        return f"{self.student}"
 
 
 class PhdStudent(models.Model):
@@ -108,7 +110,7 @@ class PhdStudent(models.Model):
     thesis_file = models.FileField(upload_to=make_filepath, null=True, blank=True, help_text="thesis pdf file")
 
     def __str__(self):
-        return "{0}".format(self.student)
+        return f"{self.student}"
 
 
 class VisitingStudent(models.Model):
@@ -126,7 +128,7 @@ class VisitingStudent(models.Model):
     reason = models.CharField(max_length=255, null=True, blank=True, help_text="Reason for visiting")
 
     def __str__(self):
-        return "{0} ({1})".format(self.artist, self.number)
+        return f"{self.artist} ({self.number})"
 
 
 class StudentApplicationSetup(models.Model):
@@ -183,16 +185,18 @@ class StudentApplicationSetup(models.Model):
         if self.is_current_setup:
             StudentApplicationSetup.objects.filter(is_current_setup=True).update(is_current_setup=False)
 
-        super(StudentApplicationSetup, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{0} ({1})".format(self.name, self.promotion.name)
+        return f"{self.name} ({self.promotion.name})"
 
 
 class StudentApplication(models.Model):
     """
     Fresnoy's School application procedure
     """
+    class Meta:
+        ordering = ["created_on"]
 
     artist = models.ForeignKey(Artist, related_name="student_application", null=True, on_delete=models.SET_NULL)
     campaign = models.ForeignKey(
@@ -203,9 +207,7 @@ class StudentApplication(models.Model):
         max_length=8, default=None, blank=True, help_text=_("Auto generated field (current year - increment number)")
     )
 
-    identity_card = models.FileField(
-        upload_to=make_filepath, null=True, blank=True, help_text="Identity justificative"
-    )
+    identity_card = models.FileField(upload_to=make_filepath, null=True, blank=True, help_text="Identity justificative")
     INE = models.CharField(
         max_length=11,
         null=True,
@@ -296,7 +298,7 @@ class StudentApplication(models.Model):
         inc = 0
         while carry_on:
             inc += 1
-            application_number = "{0}-{1:03d}".format(year, default_number + inc)
+            application_number = f"{year}-{default_number + inc:03d}"
             carry_on = StudentApplication.objects.filter(current_year_application_count=application_number).exists()
 
         return application_number
@@ -306,10 +308,10 @@ class StudentApplication(models.Model):
         if not self.current_year_application_count:
             self.current_year_application_count = self._make_application_number()
 
-        super(StudentApplication, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{0} ({1})".format(self.current_year_application_count, self.artist)
+        return f"{self.current_year_application_count} ({self.artist})"
 
 
 class AdminStudentApplication(models.Model):
@@ -343,4 +345,4 @@ class AdminStudentApplication(models.Model):
     application_complete = models.BooleanField(default=False, help_text="Candidature is complete")
 
     def __str__(self):
-        return "{0} ({1})".format(self.application.artist, self.application.current_year_application_count)
+        return f"{self.application.artist} ({self.application.current_year_application_count})"

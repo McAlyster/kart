@@ -1,7 +1,7 @@
 import pytest
 
-from people.tests.conftest import *  # noqa
-from utils.tests.conftest import *  # noqa
+from people.tests.conftest import *  # NOQA
+from utils.tests.conftest import *  # NOQA
 
 from . import factories
 
@@ -90,4 +90,4 @@ def itinerary(db_ready):
 
 @pytest.fixture
 def exhibition(db_ready):
-    return factories.EventFactory(type='EXHIB')
+    return factories.EventFactory(type="EXHIB")

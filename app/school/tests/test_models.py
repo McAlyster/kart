@@ -1,4 +1,8 @@
+from datetime import timedelta
+from django.utils import timezone
+
 import pytest
+from school.models import StudentApplication
 
 
 @pytest.mark.django_db
@@ -67,3 +71,13 @@ class TestStudentApplication:
         student_application_str = str(student_application)
         assert str(student_application.artist) in student_application_str
         assert str(student_application.current_year_application_count) in student_application_str
+
+    def test_order(self, student_application):
+        past_time = timezone.now() - timedelta(days=1)
+        student_application.created_on = past_time
+        student_application.save()
+        newer_application = StudentApplication.objects.create(
+            created_on=timezone.now()
+        )
+        applications = list(StudentApplication.objects.all())
+        assert applications == [student_application, newer_application]

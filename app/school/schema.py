@@ -1,27 +1,28 @@
+from datetime import datetime
+
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import staff_member_required
 
-from datetime import datetime
+from assets.schema import GalleryType
+from diffusion.schema import DiffusionType
 
 # from diffusion.models import Diffusion
 from people.models import FresnoyProfile
+from people.schema import ArtistEmbeddedInterface, DynNameResolver, ProfileType, require_staff
+from production.schema import Artwork, ArtworkType
 from school.models import (
-    Student,
-    Promotion,
-    TeachingArtist,
-    ScienceStudent,
+    AdminStudentApplication,
     PhdStudent,
-    VisitingStudent,
+    Promotion,
+    ScienceStudent,
+    Student,
     StudentApplication,
     StudentApplicationSetup,
-    AdminStudentApplication,
+    TeachingArtist,
+    VisitingStudent,
 )
-from people.schema import ProfileType, DynNameResolver, ArtistEmbeddedInterface
-from production.schema import Artwork, ArtworkType
-from diffusion.schema import DiffusionType
-from assets.schema import GalleryType
 
 
 def order(students, orderby):
@@ -56,6 +57,7 @@ class StudentType(DjangoObjectType):
     artworks = graphene.List(ArtworkType)
     photo = graphene.String()
     displayPhoto = graphene.String()
+    diplomaFile = graphene.String()
 
     # Retrieve the student's artworks
     def resolve_artworks(parent, info):
@@ -81,6 +83,10 @@ class StudentType(DjangoObjectType):
 
     def resolve_displayPhoto(parent, info):
         return StudentType.resolve_photo(parent, info)
+
+    def resolve_diplomaFile(self, info):
+        require_staff(info)
+        return self.diploma_file
 
 
 class StudentEmbeddedInterface(graphene.Interface):

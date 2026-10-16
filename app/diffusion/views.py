@@ -1,12 +1,8 @@
-from rest_framework import viewsets, permissions, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, viewsets
 
-from .models import Place, Award, MetaAward, MetaEvent, Diffusion
-
-from .serializers import (
-    PlaceSerializer, AwardSerializer,
-    MetaAwardSerializer, MetaEventSerializer, DiffusionSerializer
-)
+from .models import Award, Diffusion, MetaAward, MetaEvent, Place
+from .serializers import AwardSerializer, DiffusionSerializer, MetaAwardSerializer, MetaEventSerializer, PlaceSerializer
 
 
 class PlaceViewSet(viewsets.ModelViewSet):
@@ -38,4 +34,4 @@ class DiffusionViewSet(viewsets.ModelViewSet):
     serializer_class = DiffusionSerializer
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filterset_fields = ('event__parent_event__meta_event__important', 'artwork', 'event')
+    filterset_fields = ("event__parent_event__meta_event__important", "artwork", "event")
