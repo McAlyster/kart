@@ -8,7 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-from kart.site_settings import *  # NOQA
+from kart.site_settings import * # NOQA  # NOQA
 from kart.site_settings import DEBUG as DEBUG, BASE_DIR as BASE_DIR, FROM_EMAIL, SETTINGS_SECRET_KEY
 import datetime
 import os
@@ -73,12 +73,12 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
-    'django.middleware.security.SecurityMiddleware',
     # CorsMiddleware doit passer avant les middlewares qui generent la
     # reponse (CommonMiddleware, CsrfViewMiddleware, ...) sinon les headers
     # CORS ne sont jamais ajoutes et le front Vue en localhost:5173 se fait
     # bloquer par le navigateur (voir doc django-cors-headers).
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -193,6 +193,9 @@ GRAPHENE = {
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+# add X-GraphQL-Cache headers
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = (*default_headers, "X-GraphQL-Cache", )
 
 # Grappelli
 GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
