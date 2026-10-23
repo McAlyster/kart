@@ -20,29 +20,26 @@ User = get_user_model()
 
 
 class EmailOrUsernameLoginSerializer(LoginSerializer):
-    username = None  # reset
-    email = None  # reset
-
-    # On redéfinit un champ unique pour la saisie (identifiant ou email)
-    login = serializers.CharField(required=True, allow_blank=False)
+    username = serializers.CharField(required=False, allow_blank=False)
+    email = serializers.EmailField(required=False, allow_blank=False)
+    login = serializers.CharField(required=False, allow_blank=False)
 
     def validate(self, attrs):
-        login_value = attrs.get("login")
+        login_value = attrs.get("login") or attrs.get("email") or attrs.get("username")
         password = attrs.get("password")
 
         if login_value and password:
-            # Vérifier si la valeur saisie est un e-mail
             if "@" in login_value:
                 try:
                     user = User.objects.get(email__iexact=login_value)
-                    print(user)
-                    attrs["username"] = user.username  # dj_rest_auth a besoin du username
+                    attrs["username"] = user.username
                 except User.DoesNotExist:
                     pass
             else:
                 attrs["username"] = login_value
 
-        # Nettoyage des champs inutiles pour la validation
+        # Nettoyage des champs alternatifs pour ne garder que username et password pour le parent
         attrs.pop("login", None)
+        attrs.pop("email", None)
 
         return super().validate(attrs)
