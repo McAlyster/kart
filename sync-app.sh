@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # sync-app.sh — recopie une branche de KART dans app/ (dépôt dockerisé).
 #
-# Le dépôt dockerisé héberge deux branches, chacune calquée sur une branche de KART :
+# Organisation des dossiers (worktrees git d'un même dépôt), dans KART/ :
 #
-#   branche locale             source KART                instance        worktree source
-#   feature/docKART            main                       KART (origine)  ../kart-main
-#   docKART-candidature2027    feature/candidature2027    Kandidature     ../kart-c27
+#   dossier                    branche                            rôle
+#   src-main/                  main                               source (instance KART d'origine)
+#   src-candidature2027/       feature/candidature2027            source (instance Kandidature)
+#   docker-main/               feature/docKART                    version Docker de src-main
+#   docker-candidature2027/    feature/docKART-candidature2027    version Docker de src-candidature2027
+#
+# Lancé depuis un dossier docker-X, le script recopie app/ depuis le dossier src-X voisin.
 #
 # Règle : app/ doit rester identique à la source. Seuls diffèrent les fichiers
 # Docker/outillage (racine du dépôt + exclusions ci-dessous) et un écart de fond
@@ -13,8 +17,8 @@
 # Vue en localhost est bloqué par CORS).
 #
 # Prérequis (une fois) :
-#   git worktree add ../kart-main main
-#   git worktree add ../kart-c27  feature/candidature2027
+#   git worktree add ../src-main              main
+#   git worktree add ../src-candidature2027   feature/candidature2027
 #
 # Usage : ./sync-app.sh                  (source déduite de la branche courante, avec pull)
 #         ./sync-app.sh --no-pull        (sans mettre à jour la source)
@@ -28,9 +32,9 @@ cd "$(dirname "$0")"
 
 branch=$(git branch --show-current)
 case "$branch" in
-  feature/docKART)         SRC_DIR=../kart-main; EXPECTED=main ;;
-  docKART-candidature2027) SRC_DIR=../kart-c27;  EXPECTED=feature/candidature2027 ;;
-  *)                       SRC_DIR="";            EXPECTED="" ;;
+  feature/docKART)                 SRC_DIR=../src-main;              EXPECTED=main ;;
+  feature/docKART-candidature2027) SRC_DIR=../src-candidature2027;   EXPECTED=feature/candidature2027 ;;
+  *)                               SRC_DIR="";                       EXPECTED="" ;;
 esac
 
 PULL=1
